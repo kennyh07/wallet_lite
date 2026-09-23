@@ -63,7 +63,7 @@ body{inset:0 0 auto;height:var(--web-viewport-height);}
 #app{height:var(--web-viewport-height);min-height:0;}
 
 .topbar{padding:max(16px,env(safe-area-inset-top)) 18px 6px;display:flex;align-items:center;justify-content:space-between;position:relative;}
-.topbar .title{position:absolute;left:50%;top:calc(max(16px,env(safe-area-inset-top)) + 6px);transform:translateX(-50%);pointer-events:none;}
+.topbar .title{position:absolute;left:0;right:0;top:calc(max(16px,env(safe-area-inset-top)) + 6px);text-align:center;transform:none;pointer-events:none;}
 .topbar .title{font-size:17px;font-weight:800;}
 .hgroup{display:flex;gap:9px;margin-left:auto;}
 #addAcctBtn{order:1;}#setBtn{order:2;}
@@ -810,7 +810,8 @@ body{
 /* Web-only mobile viewport fixes. The iOS bundle keeps its own copy. */
 .topbar{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;}
 .topbar>*{filter:none!important;}
-.tabbar{position:absolute;bottom:0;padding-bottom:calc(8px + var(--safe));}
+.topbar .icon-btn{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+.tabbar{position:absolute;bottom:0;padding-bottom:calc(8px + var(--safe));background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none;}
 </style>
 </head>
 <body>
@@ -2129,7 +2130,7 @@ $('#recCal').addEventListener('touchstart',e=>{if(!e.target.closest('.cal-fixed'
 $('#recCal').addEventListener('touchend',e=>{if(!calSwipeStart)return;const t=e.changedTouches[0],dx=t.clientX-calSwipeStart.x,dy=t.clientY-calSwipeStart.y;calSwipeStart=null;if(Math.abs(dx)<48||Math.abs(dx)<=Math.abs(dy))return;calShift(dx<0?1:-1);},{passive:true});
 document.addEventListener('pointerdown',e=>{const target=e.target;if(target&&target.id==='eipTotal'){target.readOnly=true;target.inputMode='none';openCalculator('installmentTotal');return;}if(target&&target.closest&&!target.closest('.acct-menu, .acct-trigger, #acctMenuBackdrop'))closeAllAccountMenus();if(calculatorTarget==='installmentTotal'&&target&&target.closest&&target.closest('#sheet .entry-scroll'))return;if(target&&target.closest&&!target.closest('#sheet .amt-line, #sheet .keys'))closeCalculator();});
 
-function syncWebViewportHeight(){const h=window.visualViewport?.height||window.innerHeight;if(h>0)document.documentElement.style.setProperty('--web-viewport-height',Math.round(h)+'px');}
+function syncWebViewportHeight(){const visible=window.visualViewport?.height||window.innerHeight,safe=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe'))||0,h=visible+safe;if(h>0)document.documentElement.style.setProperty('--web-viewport-height',Math.round(h)+'px');}
 syncWebViewportHeight();window.visualViewport?.addEventListener('resize',syncWebViewportHeight);
 initTheme();$('#eyeBtn').innerHTML=hideAmt?ICON_EYEOFF:ICON_EYE;repairTransferFeeBalances();repairCalendarMonthSelection();repairFutureTransactionBalances();postDueRecurrings();postDueInstallments();postDueCardBills();if(!Store.get('accountIllustrationV1')){applyAccountIllustrations(false);Store.set('accountIllustrationV1',true);}renderOverview();recView='cal';Store.set('recView','cal');go('records');syncNativeUpcomingNotifications();fetchRates(false);gdInitOnLoad();
 try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('portrait').catch(()=>{});}catch(e){}
