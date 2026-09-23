@@ -808,7 +808,10 @@ body{
 .notice-action{margin-top:7px;padding:5px 11px;border-radius:10px;background:transparent;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 52%,var(--line));font-size:11px;font-weight:750;}
 .notice-amount{text-align:right;font-family:var(--num);font-size:14px;font-weight:800;white-space:nowrap;}
 /* Web-only mobile viewport fixes. The iOS bundle keeps its own copy. */
-.topbar{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;}
+/* Offscreen transforms still paint shadows and backdrop layers in Safari.
+   Closed dialogs must leave the render tree, including the transparent mask. */
+.sheet:not(.open),.sheet-mask:not(.open){display:none;}
+.topbar{flex-shrink:0;z-index:1;background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;}
 .topbar>*{filter:none!important;}
 .topbar .icon-btn{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
 .tabbar{position:absolute;bottom:0;padding-bottom:calc(8px + var(--safe));background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none;}
@@ -2130,7 +2133,12 @@ $('#recCal').addEventListener('touchstart',e=>{if(!e.target.closest('.cal-fixed'
 $('#recCal').addEventListener('touchend',e=>{if(!calSwipeStart)return;const t=e.changedTouches[0],dx=t.clientX-calSwipeStart.x,dy=t.clientY-calSwipeStart.y;calSwipeStart=null;if(Math.abs(dx)<48||Math.abs(dx)<=Math.abs(dy))return;calShift(dx<0?1:-1);},{passive:true});
 document.addEventListener('pointerdown',e=>{const target=e.target;if(target&&target.id==='eipTotal'){target.readOnly=true;target.inputMode='none';openCalculator('installmentTotal');return;}if(target&&target.closest&&!target.closest('.acct-menu, .acct-trigger, #acctMenuBackdrop'))closeAllAccountMenus();if(calculatorTarget==='installmentTotal'&&target&&target.closest&&target.closest('#sheet .entry-scroll'))return;if(target&&target.closest&&!target.closest('#sheet .amt-line, #sheet .keys'))closeCalculator();});
 
-function syncWebViewportHeight(){const visible=window.visualViewport?.height||window.innerHeight,safe=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe'))||0,h=visible+safe;if(h>0)document.documentElement.style.setProperty('--web-viewport-height',Math.round(h)+'px');}
+function syncWebViewportHeight(){
+  // visualViewport already describes the visible area. Safe-area padding belongs
+  // inside the tab bar; adding it to this height pushes navigation offscreen.
+  const h=window.visualViewport?.height||window.innerHeight;
+  if(h>0)document.documentElement.style.setProperty('--web-viewport-height',h+'px');
+}
 syncWebViewportHeight();window.visualViewport?.addEventListener('resize',syncWebViewportHeight);
 initTheme();$('#eyeBtn').innerHTML=hideAmt?ICON_EYEOFF:ICON_EYE;repairTransferFeeBalances();repairCalendarMonthSelection();repairFutureTransactionBalances();postDueRecurrings();postDueInstallments();postDueCardBills();if(!Store.get('accountIllustrationV1')){applyAccountIllustrations(false);Store.set('accountIllustrationV1',true);}renderOverview();recView='cal';Store.set('recView','cal');go('records');syncNativeUpcomingNotifications();fetchRates(false);gdInitOnLoad();
 try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('portrait').catch(()=>{});}catch(e){}
