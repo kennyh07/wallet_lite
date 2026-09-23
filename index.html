@@ -815,6 +815,27 @@ body{
 .topbar>*{filter:none!important;}
 .topbar .icon-btn{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
 .tabbar{position:absolute;bottom:0;padding-bottom:calc(8px + var(--safe));background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none;}
+/* iOS Safari can rasterize the header through adjacent glass compositing layers.
+   Give the web header its own crisp layer; this selector is web-only. */
+@media (hover:none) and (pointer:coarse){
+  #app{isolation:auto;}
+  .topbar{
+    z-index:30;
+    isolation:isolate;
+    transform:translateZ(0);
+    -webkit-transform:translateZ(0);
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+  }
+  .topbar,.topbar *, .topbar *::before, .topbar *::after{
+    filter:none!important;
+    -webkit-filter:none!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+  .topbar .icon-btn::before,.topbar .icon-btn::after{content:none!important;display:none!important;}
+  .topbar .icon-btn,.topbar .notice-badge{box-shadow:none!important;}
+}
 </style>
 </head>
 <body>
