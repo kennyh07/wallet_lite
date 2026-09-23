@@ -56,6 +56,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input,select{font-family:inherit;}
 ::-webkit-scrollbar{width:0;height:0;}
 #app{max-width:480px;margin:0 auto;height:100%;position:relative;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
+/* Web only: mobile browsers can resolve 100% against a shorter layout viewport,
+   leaving an unused strip below the fixed navigation. Keep the page matched to
+   the visible dynamic viewport; the iOS bundle has its own copied resource. */
+html,body{min-height:100vh;min-height:100dvh;}
+body{height:100vh;height:100dvh;}
+#app{height:100vh;height:100dvh;min-height:100dvh;}
 
 .topbar{padding:max(16px,env(safe-area-inset-top)) 18px 6px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .topbar .title{position:absolute;left:50%;top:calc(max(16px,env(safe-area-inset-top)) + 6px);transform:translateX(-50%);pointer-events:none;}
@@ -186,6 +192,7 @@ input,select{font-family:inherit;}
 .entry-head strong{font-size:24px;letter-spacing:.5px;}
 .tx-action-summary{margin:8px 20px 14px;padding:18px;border-radius:18px;background:var(--bg2);text-align:center;}.tx-action-summary .kind{font-size:13px;color:var(--ink3);font-weight:700;}.tx-action-summary .name{font-size:20px;font-weight:800;margin-top:5px;}.tx-action-summary .amount{font-family:var(--num);font-size:30px;font-weight:850;margin-top:8px;}.tx-action-summary .meta{font-size:12px;color:var(--ink2);margin-top:7px;}.tx-action-buttons{padding:0 20px calc(20px + var(--safe));display:grid;gap:10px;}.tx-action-buttons button{border-radius:14px;padding:14px;font-size:16px;font-weight:800;background:var(--accent);color:#fff;}.tx-action-buttons .delete{background:transparent;color:var(--expense);border:1px solid color-mix(in srgb,var(--expense) 45%,var(--line));}
 #txActionSheet{top:50%;bottom:auto;width:min(420px,calc(100% - 32px));max-height:78dvh;border-radius:26px;transform:translate(-50%,-45%);opacity:0;pointer-events:none;overflow:hidden;}
+#txActionSheet .tx-action-buttons>button[onclick^="closeTxAction"],#txActionSheet .tx-action-buttons>button[onclick^="editTx("]{display:none;}
 #txActionSheet.open{transform:translate(-50%,-50%);opacity:1;pointer-events:auto;}
 #sheet .entry-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:12px;}
 #sheet.account-menu-open .entry-scroll{position:relative;z-index:80;overflow:visible;}
@@ -204,6 +211,13 @@ input,select{font-family:inherit;}
 #entryInstallmentForm .set-row{display:none;}
 .sheet-head{padding:14px 20px 6px;display:flex;align-items:center;justify-content:space-between;}
 .sheet-head .x{font-size:14px;color:var(--ink2);font-weight:600;}
+.sheet-head .x.close-icon{width:42px;height:42px;display:grid;place-items:center;padding:0;border-radius:50%;background:var(--bg2);border:1px solid var(--line);box-shadow:var(--shadow);color:var(--ink);}
+.sheet-head .x.close-icon svg{width:24px;height:24px;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;fill:none;}
+.tx-action-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:42px;}
+.tx-action-head-actions.has-actions{min-width:92px;}
+.tx-action-icon{width:38px;height:38px;display:grid;place-items:center;padding:0;border-radius:12px;background:var(--bg2);border:1px solid var(--line);color:var(--ink);box-shadow:var(--shadow);}
+.tx-action-icon svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.tx-action-icon.delete{color:var(--expense);}
 .sheet-head strong{font-size:15px;}
 
 .type-seg{display:flex;background:var(--bg2);border-radius:13px;padding:4px;margin:6px 20px 14px;}
@@ -573,6 +587,112 @@ body{
   backdrop-filter:blur(14px) saturate(125%);
   -webkit-backdrop-filter:blur(14px) saturate(125%);
 }
+/* Refined glass surfaces: stronger depth, softer corners, and a visible highlight
+   when a control is selected. Keep these rules shared by web and iOS WebView. */
+.icon-btn,.tx-list,.bud,.donut-wrap,.stat-sum,.tf-row,.month-nav button,
+.set-row,.recur-row,.grow input,.grow .mv,.rec-search,.adv-row input,
+#advPanel select,.pad-acct,.installment-acct-picker,.tf-fx,.transfer-fee-inline,
+.picker .opt,.af-photo,.planned-card,.goal,.trip-card,.debt-row,.notice-summary,
+.chart-box,.tabbar,.fab{
+  border-radius:20px;
+  box-shadow:0 14px 34px rgba(4,20,46,.18),
+    inset 0 1px 0 rgba(255,255,255,.46),
+    inset 0 -1px 0 rgba(0,0,0,.08);
+  backdrop-filter:blur(26px) saturate(165%);
+  -webkit-backdrop-filter:blur(26px) saturate(165%);
+}
+.icon-btn,.month-nav button,.cal-nav button,.cal-today,
+.rangeseg button.on,.seg button.on,.type-seg button.on,
+.recur-typeseg button.on,.rec-toggle button.on,.qa,.pad-cam,.tab.on,.fab{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.icon-btn::before,.month-nav button::before,.cal-nav button::before,
+.cal-today::before,.rangeseg button.on::before,.seg button.on::before,
+.type-seg button.on::before,.recur-typeseg button.on::before,
+.rec-toggle button.on::before,.qa::before,.pad-cam::before,.tab.on::before,.fab::before{
+  content:"";
+  position:absolute;
+  inset:1px 1px 48%;
+  border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,0));
+  opacity:.7;
+  pointer-events:none;
+  z-index:-1;
+}
+.icon-btn,.month-nav button,.cal-nav button{border-color:color-mix(in srgb,var(--accent) 34%,var(--line));}
+.cal-nav button,.month-nav button{border-radius:14px;}
+.cal-nav .cal-today{border-radius:16px;box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 28%,transparent),inset 0 1px 0 rgba(255,255,255,.72),inset 0 -1px 0 rgba(0,0,0,.1);}
+.rangeseg button.on,.seg button.on,.type-seg button.on,.recur-typeseg button.on,.rec-toggle button.on{
+  border:1px solid color-mix(in srgb,var(--accent) 48%,rgba(255,255,255,.55));
+  border-radius:16px;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 38%,var(--card)),color-mix(in srgb,var(--accent) 16%,var(--card2)));
+  box-shadow:0 9px 22px color-mix(in srgb,var(--accent) 20%,transparent),inset 0 1px 0 rgba(255,255,255,.72),inset 0 -1px 0 rgba(0,0,0,.08);
+}
+.cal-day.sel{
+  position:relative;
+  outline:none;
+  border:1px solid color-mix(in srgb,var(--chart-line) 70%,rgba(255,255,255,.7));
+  background:linear-gradient(145deg,color-mix(in srgb,var(--chart-line) 26%,var(--card)),color-mix(in srgb,var(--accent) 18%,var(--card2)));
+  box-shadow:0 8px 20px color-mix(in srgb,var(--chart-line) 24%,transparent),inset 0 1px 0 rgba(255,255,255,.78),inset 0 -1px 0 rgba(0,0,0,.1);
+}
+.cal-day.sel::before{content:"";position:absolute;inset:1px 2px 54%;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.34),transparent);pointer-events:none;}
+.tab.on{border-radius:18px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 18%,var(--card)),color-mix(in srgb,var(--accent) 7%,transparent));box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 16%,transparent),inset 0 1px 0 rgba(255,255,255,.42);}
+.tab.on::before{inset:1px 5px 52%;}
+.fab{border-radius:26px;box-shadow:0 14px 30px color-mix(in srgb,var(--accent) 28%,transparent),inset 0 1px 0 rgba(255,255,255,.75),inset 0 -1px 0 rgba(0,0,0,.12);}
+[data-theme="green"] .icon-btn,[data-theme="green"] .month-nav button,[data-theme="green"] .cal-nav button{border-color:rgba(104,239,170,.42);background:linear-gradient(145deg,rgba(72,180,133,.28),rgba(4,43,31,.36));}
+[data-theme="green"] .tab.on{background:linear-gradient(145deg,rgba(53,208,127,.34),rgba(7,68,45,.36));}
+[data-theme="green"] .cal-day.sel{border-color:rgba(107,239,178,.9);background:linear-gradient(145deg,rgba(53,208,127,.34),rgba(10,84,55,.46));box-shadow:0 9px 24px rgba(35,213,130,.24),inset 0 1px 0 rgba(235,255,244,.72),inset 0 -1px 0 rgba(0,0,0,.15);}
+[data-theme="dark"] .tab.on{background:linear-gradient(145deg,rgba(77,163,255,.28),rgba(28,67,111,.38));}
+/* Compact action proportions: the glass button should frame its label instead
+   of stretching across the whole card. */
+.planned-card>button:not([disabled]),.entry-save,.aform .save-btn,
+.tx-action-buttons button,.nlbar .nlgo{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  width:min(280px,88%);
+  min-height:42px;
+  margin-left:auto;
+  margin-right:auto;
+  border-radius:16px;
+  padding:9px 22px;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 78%,rgba(255,255,255,.22)),color-mix(in srgb,var(--accent) 56%,rgba(0,30,30,.28)));
+  border:1px solid color-mix(in srgb,var(--accent) 72%,rgba(255,255,255,.72));
+  box-shadow:0 9px 20px color-mix(in srgb,var(--accent) 24%,transparent),inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.1);
+  backdrop-filter:blur(22px) saturate(165%);
+  -webkit-backdrop-filter:blur(22px) saturate(165%);
+}
+.planned-card>button:not([disabled])::before,.entry-save::before,.aform .save-btn::before,
+.tx-action-buttons button::before,.nlbar .nlgo::before{
+  content:"";display:block;position:absolute;inset:1px 8px 52%;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.34),transparent);pointer-events:none;
+}
+.planned-card>button:not([disabled]){display:block;text-align:center;}
+.planned-card button:disabled{display:block!important;width:min(280px,88%)!important;margin-left:auto!important;margin-right:auto!important;border-radius:16px;min-height:42px;text-align:center;}
+.tab.on{flex:0 0 92px;margin-left:4px;margin-right:4px;padding-left:8px;padding-right:8px;}
+[data-theme="green"] .planned-card>button:not([disabled]),[data-theme="green"] .entry-save,[data-theme="green"] .aform .save-btn,
+[data-theme="green"] .tx-action-buttons button,[data-theme="green"] .nlbar .nlgo{background:linear-gradient(145deg,rgba(53,208,127,.78),rgba(15,112,72,.64));border-color:rgba(171,255,207,.68);box-shadow:0 10px 22px rgba(28,211,127,.22),inset 0 1px 0 rgba(239,255,246,.72),inset 0 -1px 0 rgba(0,0,0,.12);}
+/* Final compact scale for primary actions. */
+.planned-card>button:not([disabled]),.planned-card button:disabled,.entry-save,.aform .save-btn,
+.tx-action-buttons button{width:min(220px,78%)!important;min-height:38px;padding:7px 16px;border-radius:14px;}
+.nlbar .nlgo{width:auto;min-width:76px;min-height:38px;padding:7px 14px;border-radius:14px;}
+.tab.on{flex:0 0 64px;margin-left:6px;margin-right:6px;padding-left:4px;padding-right:4px;}
+/* Slightly larger type for readability on the phone. */
+.planned-card>button,.entry-save,.aform .save-btn,.tx-action-buttons button{font-size:15px;}
+.planned-card .pname{font-size:15.5px;}
+.planned-card .pmeta{font-size:12.5px;}
+.planned-card .pamt{font-size:17px;}
+.cal-nav .m{font-size:18px;}
+.cal-nav button{font-size:16px;}
+.cal-wd{font-size:11.5px;}
+.cal-day .dn{font-size:16px;}
+.cal-day .ce,.cal-day .ci,.cal-day .ct{font-size:8.5px;}
+.cal-sum{font-size:13.5px;}
+.tx .nm2{font-size:15.5px;}
+.tx .sub{font-size:12.5px;}
+.tab .l{font-size:12.5px;}
+.planned-posted{width:min(220px,78%);min-height:38px;margin:10px auto 0;padding:7px 16px;border-radius:14px;text-align:center;font-size:15px;font-weight:800;color:var(--income);background:color-mix(in srgb,var(--income) 16%,var(--card));border:1px solid color-mix(in srgb,var(--income) 48%,var(--line));box-shadow:inset 0 1px 0 rgba(255,255,255,.48),0 7px 16px color-mix(in srgb,var(--income) 14%,transparent);}
 [data-theme="dark"] .chart-box{
   background:linear-gradient(135deg,rgba(47,79,118,.72),rgba(18,35,65,.64));
   border-color:rgba(183,216,249,.46);
@@ -596,7 +716,7 @@ body{
 .cal-day.sun .dn{color:var(--expense);}
 .cal-day.sat .dn{color:var(--income);}
 .cal-day.today{background:var(--bg2);}
-.cal-day.sel{outline:2px solid var(--chart-line);}
+.cal-day.sel{outline:none;}
 .cal-day .ce{font-family:var(--num);font-size:8px;font-weight:700;color:var(--expense);line-height:1.15;}
 .cal-day .ci{font-family:var(--num);font-size:8px;font-weight:700;color:var(--income);line-height:1.15;}
 .cal-day .ct{font-family:var(--num);font-size:8px;font-weight:750;color:#f5c542;line-height:1.15;}
@@ -606,6 +726,22 @@ body{
 .cal-daylist-h{font-size:12.5px;color:var(--ink2);font-weight:600;margin:14px 4px 8px;}
 .planned-card{margin:8px 0;padding:13px 14px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:15px;background:color-mix(in srgb,var(--accent) 9%,var(--card));}
 .planned-card .ptop{display:flex;justify-content:space-between;gap:10px;align-items:center;}.planned-card .pname{font-weight:750;font-size:14px;}.planned-card .pmeta{font-size:11.5px;color:var(--ink3);margin-top:4px;}.planned-card .pamt{font-family:var(--num);font-weight:800;white-space:nowrap;}.planned-card button{width:100%;margin-top:10px;border-radius:10px;padding:9px;background:var(--accent);color:#fff;font-weight:750;}.planned-card button:disabled{background:var(--bg2);color:var(--ink3);}
+.planned-card .paccount{margin-top:4px;font-size:11px;color:var(--ink2);}
+.planned-card.planned-row{position:relative;z-index:1;display:flex;align-items:center;gap:13px;min-height:68px;width:100%;padding:12px 14px;cursor:pointer;text-align:left;font:inherit;color:var(--ink);touch-action:manipulation;-webkit-user-select:none;user-select:none;background:color-mix(in srgb,var(--accent) 8%,var(--card));border-color:color-mix(in srgb,var(--accent) 44%,var(--line));transition:transform .12s,background .12s,border-color .12s;}
+.planned-card.planned-row:active{transform:scale(.985);background:color-mix(in srgb,var(--accent) 16%,var(--card));}
+.planned-row .planned-icon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:0 0 auto;font-size:20px;}
+.planned-row .planned-main{min-width:0;flex:1;}
+.planned-row .planned-name{font-size:15.5px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.planned-row .planned-meta{font-size:12px;color:var(--ink3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.planned-row .planned-amount{font-family:var(--num);font-size:17px;font-weight:800;white-space:nowrap;}
+.planned-row .planned-amount.exp{color:var(--expense);}.planned-row .planned-amount.inc{color:var(--income);}.planned-row .planned-amount.tr{color:var(--accent);}
+.planned-row.is-posted{background:color-mix(in srgb,var(--income) 8%,var(--card));border-color:color-mix(in srgb,var(--income) 38%,var(--line));}
+.planned-row.is-posted .planned-meta{color:color-mix(in srgb,var(--income) 70%,var(--ink3));}
+.planned-actions{display:flex;justify-content:center;gap:9px;margin-top:10px;}
+.planned-actions button,.planned-card .planned-actions button:disabled{width:52px!important;min-height:36px!important;margin:0!important;padding:6px 10px!important;border-radius:12px!important;font-size:18px!important;line-height:1!important;}
+.planned-actions .planned-edit{background:transparent;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 48%,var(--line));}
+.planned-actions .planned-delete{background:transparent;color:var(--expense);border:1px solid color-mix(in srgb,var(--expense) 52%,var(--line));}
+.planned-actions .planned-pay{width:70px!important;background:var(--accent);color:#fff;border:1px solid color-mix(in srgb,var(--accent) 58%,var(--line));}
 .quick-apply-row{display:flex;align-items:center;gap:8px;padding:0 0 10px;}
 .quick-apply-row .quick-amts{flex:1;min-width:0;padding:0;}
 .quick-amts{display:flex;gap:8px;overflow-x:auto;padding:0 8px 12px;}
@@ -659,15 +795,18 @@ body{
 .settle-btn{padding:7px 12px;border-radius:10px;font-size:12px;font-weight:700;background:var(--income);color:#fff;flex-shrink:0;}
 .settle-btn.undo{background:var(--bg2);color:var(--ink2);}
 .fx-line{font-size:11px;color:var(--ink3);margin:2px 2px 10px;line-height:1.6;}
-.notification-btn{position:relative;}
-.notice-badge{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:10px;background:var(--expense);color:#fff;font:800 10px/17px var(--num);box-shadow:0 1px 5px rgba(0,0,0,.22);}
+.notification-btn{position:relative;overflow:visible!important;}
+.notice-badge{position:absolute;top:-4px;right:-4px;z-index:8;min-width:17px;height:17px;padding:0 4px;border-radius:10px;background:var(--expense);color:#fff;font:800 10px/17px var(--num);box-shadow:0 1px 5px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.42);}
 .notice-summary{padding:13px 14px;margin-bottom:12px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink2);font-size:13px;line-height:1.55;}
 .notice-row{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line);}
+.notice-row[role="button"]{cursor:pointer;transition:background .12s,transform .12s;border-radius:14px;padding-left:8px;padding-right:8px;}
+.notice-row[role="button"]:active{transform:scale(.985);background:color-mix(in srgb,var(--accent) 10%,transparent);}
 .notice-row:last-child{border-bottom:0;}
 .notice-icon{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;flex:0 0 auto;font-size:18px;}
 .notice-main{min-width:0;flex:1;}
 .notice-title{font-size:14px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .notice-meta{margin-top:3px;color:var(--ink3);font-size:11.5px;}
+.notice-action{margin-top:7px;padding:5px 11px;border-radius:10px;background:transparent;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 52%,var(--line));font-size:11px;font-weight:750;}
 .notice-amount{text-align:right;font-family:var(--num);font-size:14px;font-weight:800;white-space:nowrap;}
 </style>
 </head>
@@ -753,13 +892,13 @@ body{
 <div class="sheet-mask" id="mask" onclick="closeAll()"></div>
 
 <div class="sheet" id="acctDetailSheet">
-  <div class="sheet-head"><button class="x" onclick="closeAcctDetail()">關閉</button><strong id="adTitle">帳戶</strong><button class="x" style="color:var(--accent)" onclick="openAcct(adId)">編輯</button></div>
+  <div class="sheet-head"><button class="x close-icon" onclick="closeAcctDetail()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong id="adTitle">帳戶</strong><button class="x" style="color:var(--accent)" onclick="openAcct(adId)">編輯</button></div>
   <div class="aform" id="adBody"></div>
 </div>
 
-<div class="sheet" id="cardBillSheet"><div class="sheet-head"><button class="x" onclick="closeCardBill()">關閉</button><strong id="cardBillTitle">信用卡帳單</strong><span style="width:32px"></span></div><div class="aform" id="cardBillBody"></div></div>
+<div class="sheet" id="cardBillSheet"><div class="sheet-head"><button class="x close-icon" onclick="closeCardBill()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong id="cardBillTitle">信用卡帳單</strong><span style="width:32px"></span></div><div class="aform" id="cardBillBody"></div></div>
 
-<div class="sheet" id="noticeSheet"><div class="sheet-head"><button class="x" onclick="closeNotifications()">關閉</button><strong>即將到來</strong><span style="width:32px"></span></div><div class="aform" id="noticeBody"></div></div>
+<div class="sheet" id="noticeSheet"><div class="sheet-head"><button class="x close-icon" onclick="closeNotifications()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong>即將到來</strong><span style="width:32px"></span></div><div class="aform" id="noticeBody"></div></div>
 
 <div class="sheet" id="sheet">
   <div class="sheet-head entry-head"><button class="entry-head-act" onclick="closeSheet()" aria-label="取消">×</button><strong id="sheetTitle">新增記錄</strong><div class="entry-head-actions"><button class="entry-head-act confirm" onclick="saveTx()" aria-label="儲存">✓</button></div><button id="delBtn" style="display:none" onclick="deleteCurrent()">刪除</button></div>
@@ -789,7 +928,7 @@ body{
   </div>
 </div>
 
-<div class="sheet" id="txActionSheet"><div class="sheet-head"><button class="x" onclick="closeTxAction()">關閉</button><strong>紀錄操作</strong><span style="width:32px"></span></div><div id="txActionBody"></div></div>
+<div class="sheet" id="txActionSheet"><div class="sheet-head"><button class="x close-icon" onclick="closeTxAction()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong>紀錄操作</strong><div id="txActionHeaderActions" class="tx-action-head-actions"></div></div><div id="txActionBody"></div></div>
 
 <div class="sheet" id="acctSheet">
   <div class="sheet-head"><button class="x" onclick="closeAcct()">取消</button><strong id="acctTitle">新增帳戶</strong><span style="width:32px"></span></div>
@@ -808,7 +947,7 @@ body{
 </div>
 
 
-<div class="sheet" id="daySheet"><div class="sheet-head"><button class="x" onclick="closeDay()">關閉</button><strong id="daySheetTitle"></strong><span style="width:32px"></span></div><div id="daySum" style="display:flex;gap:24px;justify-content:center;padding:4px 20px 12px"></div><div id="dayList" style="padding:0 16px calc(26px + var(--safe))"></div></div>
+<div class="sheet" id="daySheet"><div class="sheet-head"><button class="x close-icon" onclick="closeDay()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong id="daySheetTitle"></strong><span style="width:32px"></span></div><div id="daySum" style="display:flex;gap:24px;justify-content:center;padding:4px 20px 12px"></div><div id="dayList" style="padding:0 16px calc(26px + var(--safe))"></div></div>
 
 <div class="sheet" id="setSheet">
   <div class="sheet-head"><button class="entry-head-act confirm" onclick="closeSet()" aria-label="完成">✓</button><strong>設定與工具</strong><span style="width:42px"></span></div>
@@ -904,9 +1043,9 @@ body{
 <div class="sheet" id="aliasSheet"><div class="sheet-head"><button class="entry-head-act confirm" onclick="closeAlias()" aria-label="完成">✓</button><strong id="aliasTitle">記帳別名</strong><span style="width:42px"></span></div><div class="aform" id="aliasBody"></div></div>
 
 <div class="sheet" id="tripSheet"><div class="sheet-head"><button class="entry-head-act confirm" onclick="closeTrip()" aria-label="完成">✓</button><strong id="tripTitle">旅行模式</strong><span style="width:42px"></span></div><div class="aform" id="tripBody"></div></div>
-<div class="sheet" id="tripDetailSheet"><div class="sheet-head"><button class="x" onclick="closeTripDetail()">關閉</button><strong id="tripDetailTitle">旅行</strong><button class="x" id="tripEditBtn" style="color:var(--accent)" onclick="openTripForm(curTripId)">編輯</button></div><div class="aform" id="tripDetailBody"></div></div>
+<div class="sheet" id="tripDetailSheet"><div class="sheet-head"><button class="x close-icon" onclick="closeTripDetail()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong id="tripDetailTitle">旅行</strong><button class="x" id="tripEditBtn" style="color:var(--accent)" onclick="openTripForm(curTripId)">編輯</button></div><div class="aform" id="tripDetailBody"></div></div>
 
-<div class="sheet" id="compSheet"><div class="sheet-head"><button class="x" onclick="closeComp()">關閉</button><strong>各分組資產佔比</strong><span style="width:32px"></span></div><div class="comp-wrap" id="compBody"></div></div>
+<div class="sheet" id="compSheet"><div class="sheet-head"><button class="x close-icon" onclick="closeComp()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong>各分組資產佔比</strong><span style="width:32px"></span></div><div class="comp-wrap" id="compBody"></div></div>
 
 <div id="imgViewer" onclick="this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:70;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px"><img id="imgViewerImg" style="max-width:100%;max-height:80%;border-radius:12px"><button onclick="event.stopPropagation();clearTxPhoto()" style="background:rgba(255,255,255,.15);color:#fff;padding:11px 22px;border-radius:14px;font-size:14px;font-weight:600">移除這張照片</button></div>
 
@@ -948,7 +1087,7 @@ const DEF_EXP=[
  {id:'fun',n:'娛樂',ic:'🎮',c:'#9775fa'},{id:'med',n:'醫療',ic:'💊',c:'#ff8787'},
  {id:'edu',n:'教育',ic:'📚',c:'#f783ac'},{id:'util',n:'水電',ic:'💡',c:'#ffd43b'},
  {id:'phone',n:'通訊',ic:'📱',c:'#3bc9db'},{id:'electronics',n:'電器設備',ic:'💻',c:'#5c7cfa'},{id:'travel',n:'旅遊',ic:'✈️',c:'#74c0fc'},
- {id:'gift',n:'禮物',ic:'🎁',c:'#ff922b'},{id:'pet',n:'寵物',ic:'🐱',c:'#a9854c'},
+ {id:'gift',n:'禮物',ic:'🎁',c:'#ff922b'},{id:'pet',n:'寵物',ic:'🐱',c:'#a9854c'},{id:'creditCard',n:'信用卡',ic:'💳',c:'#748ffc'},
  {id:'beauty',n:'美容',ic:'💄',c:'#e64980'},{id:'sport',n:'運動',ic:'🏋️',c:'#20c997'},
  {id:'other',n:'其他',ic:'📦',c:'#868e96'}];
 const DEF_INC=[
@@ -1052,6 +1191,7 @@ accounts.forEach(a=>{if(!groupOrder.includes(a.group))groupOrder.push(a.group);}
 if(!expCats.some(c=>c.id==='fee'))expCats.push({id:'fee',n:'手續費',ic:'🏦',c:'#868e96'});
 if(!expCats.some(c=>c.id==='electronics')){const phoneIndex=expCats.findIndex(c=>c.id==='phone');expCats.splice(phoneIndex<0?expCats.length:phoneIndex+1,0,{id:'electronics',n:'電器設備',ic:'💻',c:'#5c7cfa'});Store.set('expCats',expCats);}
 if(!expCats.some(c=>c.id==='coffee')){const foodIndex=expCats.findIndex(c=>c.id==='food');expCats.splice(foodIndex<0?0:foodIndex+1,0,{id:'coffee',n:'零食',ic:'☕',c:'#a9854c'});Store.set('expCats',expCats);}else{const coffeeCat=expCats.find(c=>c.id==='coffee');if(coffeeCat&&coffeeCat.n==='咖啡'){coffeeCat.n='零食';Store.set('expCats',expCats);}}
+if(!expCats.some(c=>c.id==='creditCard'||c.n==='信用卡')){expCats.push({id:'creditCard',n:'信用卡',ic:'💳',c:'#748ffc'});Store.set('expCats',expCats);}
 if(transactions.some(t=>t.feeOf)){transactions.forEach(ft=>{if(ft.feeOf){const par=transactions.find(x=>x.id===ft.feeOf);if(par&&!par.fee){par.fee=ft.amt;par.feeBalanceApplied=true;}}});transactions=transactions.filter(t=>!t.feeOf);Store.set('transactions',transactions);}
 const CATMAP={};
 function rebuildCatMap(){for(const k in CATMAP)delete CATMAP[k];[...expCats,...incCats].forEach(c=>CATMAP[c.id]=c);}
@@ -1156,18 +1296,22 @@ function refreshPlannedTransactions(){const start=planStart(),limit=new Date(sta
  installments.forEach(p=>{if(p.active===false||p.needsSetup)return;for(let n=p.paid||0;n<p.count;n++){const date=installmentDate(p,n);add({id:planKey('installment',p.id,date,n+1),source:'installment',sourceId:p.id,sequence:n+1,type:'expense',amt:installmentAmount(p,n),cat:p.cat,acct:p.acct,note:`${p.note||p.name||'分期付款'}（第 ${n+1}/${p.count} 期）`,date});}});
  debts.filter(d=>isLoan(d)&&!d.settled&&d.dueDay&&d.monthly&&d.acct).forEach(d=>{let date=nextMonthlyDate(d.dueDay),remaining=d.amt,count=d.term?Math.max(0,d.term-(d.payments||[]).length):12;for(let n=0;n<count&&remaining>0;n++){const amt=Math.min(d.monthly,remaining);add({id:planKey('loan',d.id,date,n+1),source:'loan',sourceId:d.id,sequence:(d.payments||[]).length+n+1,type:'expense',amt,cat:loanInfo(d).cat,acct:d.acct,note:`${d.name||loanInfo(d).n}還款`,date});remaining-=amt;date=new Date(date.getFullYear(),date.getMonth()+1,Math.min(d.dueDay,new Date(date.getFullYear(),date.getMonth()+2,0).getDate()),12,0,0,0);}});
  plannedTransactions.splice(0,plannedTransactions.length,...next);persistPlans();return next;}
-function isCreditCardDuePlan(p){return CATMAP[p.cat]?.n==='信用卡';}
-function plannedRowHTML(p){const income=p.type==='income',transfer=p.type==='transfer',scheduled=new Date(p.date),today=planStart();scheduled.setHours(0,0,0,0);const past=scheduled<=today;const sign=income?'+':transfer?'↔':'-';const kind=p.source==='manual'?'預計':p.source==='recurringOverride'?'本期調整':p.source==='recurring'?'定期':p.source==='installment'?'分期':'貸款';const manualActions=p.source==='manual'?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button style="margin-top:10px;background:transparent;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 48%,var(--line))" onclick="editManualPlanned('${p.id}')">修改預計項目</button><button style="margin-top:10px;background:transparent;color:var(--expense);border:1px solid color-mix(in srgb,var(--expense) 52%,var(--line))" onclick="deleteManualPlanned('${p.id}')">刪除</button></div>`:'';const recurAction=(p.source==='recurring'||p.source==='recurringOverride')&&isCreditCardDuePlan(p)?`<button style="margin-top:10px;background:transparent;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 48%,var(--line))" onclick="editRecurringOccurrence('${p.id}')">調整本期金額</button>`:'';return `<div class="planned-card"><div class="ptop"><div><div class="pname">${noticeEsc(p.note)}</div><div class="pmeta">待確認 · ${kind} · ${new Date(p.date).getMonth()+1}/${new Date(p.date).getDate()}</div></div><div class="pamt" style="color:${income?'var(--income)':transfer?'var(--accent)':'var(--expense)'}">${sign}$${fmtN(p.amt)}</div></div>${manualActions}${recurAction}<button ${past?'': 'disabled'} onclick="confirmPlannedTransaction('${p.id}')">${past?'確認記帳':'尚未到期'}</button></div>`;}
+function isCreditCardDuePlan(p){const names=[];const add=c=>{const n=String(CATMAP[c]?.n||'').replace(/\s+/g,'');if(n)names.push(n);};add(p?.cat);if(p?.sourceId){const source=recurrings.find(r=>r.id===p.sourceId);add(source?.cat);}if(names.some(n=>n==='信用卡'||n.includes('信用卡')||n.includes('卡費')||n.includes('卡款')))return true;const note=String(p?.note||'');return (p?.source==='recurring'||p?.source==='recurringOverride')&&/(信用卡|卡費|卡款|帳單|卡)/.test(note);}
+function plannedPosted(p){return transactions.some(t=>t.plannedId===p.id||(p.source==='loan'&&t.debtPayment===p.sourceId&&dayKey(t.date)===dayKey(p.date))||(p.source==='installment'&&t.installmentId===p.sourceId&&t.installmentNo===p.sequence));}
+function plannedRowHTML(p){const income=p.type==='income',transfer=p.type==='transfer',posted=plannedPosted(p),acct=accounts.find(a=>a.id===p.acct),c=CATMAP[p.cat]||{ic:p.source==='loan'?'💳':'🗓️',n:'其他',c:'var(--accent)'},iconColor=c.c,sign=income?'+':transfer?'↔':'-',kind=p.source==='manual'?'預計':p.source==='recurringOverride'?'本期調整':p.source==='recurring'?'定期':p.source==='installment'?'分期':'貸款',date=new Date(p.date),dateText=`${date.getMonth()+1}/${date.getDate()}`,meta=posted?`已入帳 · ${dateText}`:`${kind} · ${dateText} · 付款帳戶：${acct?.n||'未設定'}`,amountClass=income?'inc':transfer?'tr':'exp';return `<button type="button" class="planned-card planned-row ${posted?'is-posted':''}" data-plan-id="${p.id}" aria-label="${noticeEsc(p.note||'預計項目')}，${noticeEsc(meta)}" onpointerup="handlePlannedTap(this.dataset.planId,this)" onclick="handlePlannedTap(this.dataset.planId,this)"><div class="planned-icon" style="background:color-mix(in srgb,${iconColor} 14%,transparent);color:${iconColor}">${catIcon(c,'large')}</div><div class="planned-main"><div class="planned-name">${noticeEsc(p.note||c.n)}</div><div class="planned-meta">${noticeEsc(meta)}</div></div><div class="planned-amount ${amountClass}">${sign}$${fmtN(p.amt)}</div></button>`;}
+function handlePlannedTap(id,node){if(node&&node.dataset.planTapLock==='1')return;if(node){node.dataset.planTapLock='1';setTimeout(()=>{delete node.dataset.planTapLock;},450);}refreshPlannedTransactions();if(!plannedTransactions.some(p=>p.id===id)){toast('這筆預計項目已更新，請重新選取日期');renderCalendar();return;}openPlannedAction(id);}
+function openPlannedAction(id){const p=plannedTransactions.find(x=>x.id===id);if(!p){toast('找不到這筆預計項目');return;}const linked=transactions.find(t=>t.plannedId===p.id)||(p.source==='loan'&&transactions.find(t=>t.debtPayment===p.sourceId&&dayKey(t.date)===dayKey(p.date)));if(linked){editTx(linked.id);return;}const income=p.type==='income',transfer=p.type==='transfer',acct=accounts.find(a=>a.id===p.acct),c=CATMAP[p.cat]||{n:'其他'},due=new Date(p.date);due.setHours(0,0,0,0);const past=due<=planStart(),cardDue=!past&&isCreditCardDuePlan(p),kind=p.source==='manual'?'預計紀錄':p.source==='recurringOverride'?'本期調整':p.source==='recurring'?'定期交易':p.source==='installment'?'分期付款':'貸款還款',amount=transfer?'↔ '+fmtN(p.amt):(income?'+':'-')+'$'+fmtN(p.amt),color=transfer?'var(--accent)':income?'var(--income)':'var(--expense)';let actions='';if(p.source==='manual')actions+=`<button onclick="closeTxAction();editManualPlanned('${id}')">修改預計項目</button>`;if(!past&&(p.source==='recurring'||p.source==='recurringOverride')&&isCreditCardDuePlan(p))actions+=`<button onclick="closeTxAction();editRecurringOccurrence('${id}')">調整本期金額</button>`;if(p.source==='manual')actions+=`<button class="delete" onclick="deleteManualPlanned('${id}')">刪除預計項目</button>`;if(cardDue)actions+=`<button onclick="confirmPlannedTransaction('${id}')">提前繳款</button>`;else if(past)actions+=`<button onclick="confirmPlannedTransaction('${id}')">確認記帳</button>`;else actions+=`<button disabled>尚未到期</button>`;$('#txActionBody').innerHTML=`<div class="tx-action-summary"><div class="kind" style="color:${color}">${kind}</div><div class="name">${noticeEsc(p.note||c.n||'預計項目')}</div><div class="amount" style="color:${color}">${amount}</div><div class="meta">${noticeEsc(c.n||'其他')} · ${noticeEsc(acct?.n||'未設定付款帳戶')} · ${dayLabel(p.date)}<br>${cardDue?'確認後會今天立即扣除付款帳戶。':past?'確認後會立即記帳並更新帳戶餘額。':'到期日當天才能確認記帳。'}</div></div><div class="tx-action-buttons">${actions}<button style="background:var(--bg2);color:var(--ink)" onclick="closeTxAction()">取消</button></div>`;$('#txActionSheet').classList.add('open');syncMask();}
 function editManualPlanned(id){const p=manualPlannedTransactions.find(x=>x.id===id);if(!p)return;cur={type:p.type,cat:p.cat||expCats[0]?.id,acct:p.acct,to:p.to||'',ccy:p.occy||acctCcy(p.acct),note:p.note||'',expr:String(p.oamt!=null?p.oamt:p.amt),editId:null,manualPlanId:p.id,date:p.date,img:p.img||null,fee:p.fee||0,trip:p.trip||'',payer:p.payer||''};$('#sheetTitle').textContent='編輯預計紀錄';$('#delBtn').style.visibility='hidden';openSheet(true);if(p.type==='transfer')setTimeout(()=>{$('#tfFrom').value=p.acct;$('#tfTo').value=p.to;tfCustomToAmt=false;syncEntryAccountIcons();if($('#tfFee'))$('#tfFee').value=p.fee||'';updateTfTotal();if(p.toAmt!=null&&$('#tfToAmt')){$('#tfToAmt').value=p.toAmt;tfCustomToAmt=true;}},0);}
 function deleteManualPlanned(id){const p=manualPlannedTransactions.find(x=>x.id===id);if(!p)return;txActionId=null;$('#txActionBody').innerHTML=`<div class="tx-action-summary"><div class="kind" style="color:var(--expense)">刪除確認</div><div class="name">確定要刪除這筆預計紀錄？</div><div class="meta">${noticeEsc(p.note||'未命名預計紀錄')} · $${fmtN(p.amt)}<br>刪除後不會影響帳戶餘額。</div></div><div class="tx-action-buttons"><button class="delete" style="background:var(--expense);color:#fff;border:none" onclick="performManualPlannedDelete('${id}')">確認刪除</button><button style="background:var(--bg2);color:var(--ink)" onclick="closeTxAction()">取消</button></div>`;$('#txActionSheet').classList.add('open');syncMask();}
 function performManualPlannedDelete(id){manualPlannedTransactions=manualPlannedTransactions.filter(x=>x.id!==id);persistManualPlans();closeTxAction();refreshPlannedTransactions();renderOverview();renderRecords();renderStats();renderBudget();toast('已刪除預計紀錄');}
 function editRecurringOccurrence(id){const p=plannedTransactions.find(x=>x.id===id);if(!p)return;cur={type:p.type,cat:p.cat||expCats[0]?.id,acct:p.acct,to:p.to||'',ccy:p.occy||acctCcy(p.acct),note:p.note||'',expr:String(p.oamt!=null?p.oamt:p.amt),editId:null,manualPlanId:null,recurringOverrideKey:p.id,recurringSourceId:p.sourceId,date:p.date,img:p.img||null,fee:p.fee||0,trip:'',payer:''};$('#sheetTitle').textContent='調整本期金額';$('#delBtn').style.visibility='hidden';openSheet(true);}
-function confirmPlannedTransaction(id){const p=plannedTransactions.find(x=>x.id===id);if(!p)return;const due=new Date(p.date);due.setHours(23,59,59,999);if(due>new Date()){toast('請在預計日期當天或之後確認記帳');return;}let source;
- if(p.source==='recurring'||p.source==='recurringOverride'){source=recurrings.find(r=>r.id===p.sourceId);if(!source||source.active===false)return toast('找不到這筆定期設定');const t={id:'t'+rnd(),type:source.type,amt:p.source==='recurringOverride'?p.amt:source.amt,acct:source.acct,note:(p.source==='recurringOverride'?p.note:source.note||'')+'（定期）',date:p.date};if(t.type==='transfer')t.to=source.to;else t.cat=source.cat;transactions.push(t);applyBalance(t,1);source.nextDate=advance(p.date,source.freq,source.day);if(p.source==='recurringOverride'){recurringOverrides=recurringOverrides.filter(x=>x.key!==p.id);persistRecurringOverrides();}persist();persistRecur();}
+function confirmPlannedTransaction(id){const p=plannedTransactions.find(x=>x.id===id);if(!p)return;const due=new Date(p.date);due.setHours(0,0,0,0);const early=due>planStart()&&isCreditCardDuePlan(p);if(early){txActionId=null;$('#txActionBody').innerHTML=`<div class="tx-action-summary"><div class="kind" style="color:var(--accent)">提前繳款確認</div><div class="name">${noticeEsc(p.note||'信用卡繳款')}</div><div class="amount" style="color:var(--expense)">-$${fmtN(p.amt)}</div><div class="meta">這是信用卡繳款日 ${due.getMonth()+1}/${due.getDate()} 的預計項目。確認後會今天立即扣除指定帳戶，並標記本期已繳。</div></div><div class="tx-action-buttons"><button onclick="performPlannedTransaction('${id}',true)">確認提前繳款</button><button class="delete" onclick="closeTxAction()">取消</button></div>`;$('#txActionSheet').classList.add('open');syncMask();return;}if(p.source==='loan'){const loan=debts.find(d=>d.id===p.sourceId);if(!loan)return toast('找不到這筆貸款設定');txActionId=null;$('#txActionBody').innerHTML=`<div class="tx-action-summary"><div class="kind" style="color:var(--expense)">還款確認</div><div class="name">${noticeEsc(p.note||loan.name||'貸款還款')}</div><div class="amount" style="color:var(--expense)">-$${fmtN(Math.min(p.amt,loan.amt))}</div><div class="meta">扣款帳戶：${noticeEsc(accounts.find(a=>a.id===loan.acct)?.n||'未設定帳戶')}<br>確認後會立即扣除帳戶餘額。</div></div><div class="tx-action-buttons"><button onclick="performPlannedTransaction('${id}')">確認還款</button><button class="delete" onclick="closeTxAction()">取消</button></div>`;$('#txActionSheet').classList.add('open');syncMask();return;}performPlannedTransaction(id);}
+function performPlannedTransaction(id,early=false){const p=plannedTransactions.find(x=>x.id===id);if(!p)return;if(transactions.some(t=>t.plannedId===p.id))return toast('這筆預計項目已經入帳');const due=new Date(p.date);due.setHours(0,0,0,0);if(due>planStart()&&!early){toast('請在預計日期當天或之後確認記帳');return;}let source;
+ if(p.source==='recurring'||p.source==='recurringOverride'){source=recurrings.find(r=>r.id===p.sourceId);if(!source||source.active===false)return toast('找不到這筆定期設定');const t={id:'t'+rnd(),plannedId:p.id,plannedRestore:{source:p.source,sourceId:p.sourceId,date:p.date,override:p.source==='recurringOverride'?{...p}:null},type:source.type,amt:p.source==='recurringOverride'?p.amt:source.amt,acct:source.acct,note:(p.source==='recurringOverride'?p.note:source.note||'')+'（定期）',date:early?new Date().toISOString():p.date};if(t.type==='transfer')t.to=source.to;else t.cat=source.cat;transactions.push(t);applyBalance(t,1);source.nextDate=advance(p.date,source.freq,source.day);if(p.source==='recurringOverride'){recurringOverrides=recurringOverrides.filter(x=>x.key!==p.id);persistRecurringOverrides();}persist();persistRecur();}
  else if(p.source==='installment'){source=installments.find(x=>x.id===p.sourceId);if(!source||source.active===false)return toast('找不到這筆分期設定');if(p.sequence!==(source.paid||0)+1)return toast('請依期數順序確認入帳');const t={id:'t'+rnd(),type:'expense',amt:p.amt,cat:source.cat,acct:source.acct,note:p.note,date:p.date,installmentId:source.id,installmentNo:p.sequence};transactions.push(t);applyBalance(t,1);source.paid=p.sequence;if(source.paid>=source.count)source.active=false;persist();persistInstallments();}
- else if(p.source==='loan'){source=debts.find(d=>d.id===p.sourceId);if(!source||source.settled)return toast('找不到這筆貸款設定');const amt=Math.min(p.amt,source.amt),t={id:'t'+rnd(),type:'expense',amt,cat:loanInfo(source).cat,acct:source.acct,note:p.note,date:p.date,debtPayment:source.id};transactions.push(t);applyBalance(t,1);source.amt-=amt;source.payments=source.payments||[];source.payments.push({id:t.id,amt,acct:t.acct,date:t.date,note:''});if(source.amt<=0){source.amt=0;source.settled=true;source.settledDate=t.date;}persist();persistDebts();}
- else if(p.source==='manual'){const {source,...t}=p;t.id='t'+rnd();delete t.sourceId;transactions.push(t);applyBalance(t,1);manualPlannedTransactions=manualPlannedTransactions.filter(x=>x.id!==p.id);persist();persistManualPlans();}
- refreshPlannedTransactions();renderOverview();renderRecords();renderStats();renderBudget();toast('已確認並完成記帳');}
+ else if(p.source==='loan'){source=debts.find(d=>d.id===p.sourceId);if(!source||source.settled)return toast('找不到這筆貸款設定');const amt=Math.min(p.amt,source.amt),t={id:'t'+rnd(),plannedId:p.id,type:'expense',amt,cat:loanInfo(source).cat,acct:source.acct,note:p.note,date:p.date,debtPayment:source.id};transactions.push(t);applyBalance(t,1);source.amt-=amt;source.payments=source.payments||[];source.payments.push({id:t.id,amt,acct:t.acct,date:t.date,note:''});if(source.amt<=0){source.amt=0;source.settled=true;source.settledDate=t.date;}persist();persistDebts();}
+ else if(p.source==='manual'){const {source,...t}=p;t.id='t'+rnd();t.plannedId=p.id;t.plannedRestore={source:'manual',plan:{...p}};t.date=early?new Date().toISOString():p.date;delete t.sourceId;transactions.push(t);applyBalance(t,1);manualPlannedTransactions=manualPlannedTransactions.filter(x=>x.id!==p.id);persist();persistManualPlans();}
+ closeTxAction();refreshPlannedTransactions();renderOverview();renderRecords();renderStats();renderBudget();toast(early?'已提前繳款並立即扣除帳戶金額':'已確認並完成記帳');}
 
 /* chart */
 function buildSeries(mode){const now=new Date();let buckets=[];
@@ -1590,17 +1734,17 @@ function daysUntilLabel(d){const today=new Date(),target=new Date(d);today.setHo
 function nextMonthlyDate(day){const now=new Date();now.setHours(0,0,0,0);const monthDate=(year,month)=>new Date(year,month,Math.min(Math.max(1,Number(day)||1),new Date(year,month+1,0).getDate()),12,0,0,0);let next=monthDate(now.getFullYear(),now.getMonth());if(next<now)next=monthDate(now.getFullYear(),now.getMonth()+1);return next;}
 function upcomingNotifications(){
  const today=new Date();today.setHours(0,0,0,0);const limit=new Date(today);limit.setDate(limit.getDate()+15);const rows=[];
- const add=row=>{const date=new Date(row.date);date.setHours(0,0,0,0);if(date>=today&&date<=limit)rows.push({...row,date});};
- recurrings.filter(r=>r.active!==false&&r.nextDate).forEach(r=>{const cat=CATMAP[r.cat]||{},isIncome=r.type==='income',isTransfer=r.type==='transfer',acct=accounts.find(a=>a.id===r.acct);add({id:'recur-'+r.id+'-'+new Date(r.nextDate).toISOString().slice(0,10),date:r.nextDate,type:isIncome?'income':isTransfer?'transfer':'expense',icon:isIncome?'💰':isTransfer?'↔️':(cat.ic||'🔄'),title:r.note||cat.n||(isIncome?'循環收入':'循環支出'),meta:(r.freq==='weekly'?'每週':'每月')+' · '+(acct?.n||'未設定帳戶'),amount:r.amt,ccy:acct?.ccy||'TWD'});});
+ const add=row=>{const date=new Date(row.date);date.setHours(0,0,0,0);if(date>today&&date<=limit)rows.push({...row,date});};
+ recurrings.filter(r=>r.active!==false&&r.nextDate).forEach(r=>{const cat=CATMAP[r.cat]||{},isIncome=r.type==='income',isTransfer=r.type==='transfer',acct=accounts.find(a=>a.id===r.acct),planned=plannedTransactions.find(p=>(p.source==='recurring'||p.source==='recurringOverride')&&p.sourceId===r.id&&dayKey(p.date)===dayKey(r.nextDate));add({id:'recur-'+r.id+'-'+new Date(r.nextDate).toISOString().slice(0,10),plannedId:planned?.id,date:r.nextDate,type:isIncome?'income':isTransfer?'transfer':'expense',icon:isIncome?'💰':isTransfer?'↔️':(cat.ic||'🔄'),title:r.note||cat.n||(isIncome?'循環收入':'循環支出'),meta:(r.freq==='weekly'?'每週':'每月')+' · '+(acct?.n||'未設定帳戶'),amount:planned?.amt??r.amt,ccy:acct?.ccy||'TWD'});});
  installments.filter(p=>p.active!==false&&!p.needsSetup&&(p.paid||0)<p.count).forEach(p=>{const paid=p.paid||0,acct=accounts.find(a=>a.id===p.acct),cat=CATMAP[p.cat]||{};add({id:'installment-'+p.id+'-'+(paid+1),date:installmentDate(p,paid),type:'expense',icon:'🧾',title:p.name||p.note||'分期付款',meta:'第 '+(paid+1)+'/'+p.count+' 期'+(acct?' · '+acct.n:''),amount:installmentAmount(p,paid),ccy:acct?.ccy||'TWD'});});
  debts.filter(d=>isLoan(d)&&!d.settled&&d.amt>0&&d.dueDay).forEach(d=>{const info=loanInfo(d),acct=accounts.find(a=>a.id===d.acct),date=nextMonthlyDate(d.dueDay);add({id:'loan-'+d.id+'-'+date.toISOString().slice(0,10),date,type:'expense',icon:info.ic,title:d.name||info.n,meta:'貸款繳款 · 每月 '+d.dueDay+' 日'+(acct?' · '+acct.n:''),amount:d.monthly||d.amt,ccy:d.ccy||acct?.ccy||'TWD'});});
- manualPlannedTransactions.forEach(p=>{const acct=accounts.find(a=>a.id===p.acct),cat=CATMAP[p.cat]||{},type=p.type||'expense';add({id:'manual-'+p.id,date:p.date,type,icon:type==='income'?'💰':type==='transfer'?'↔️':(cat.ic||'🗓️'),title:p.note||cat.n||(type==='income'?'預計收入':'預計支出'),meta:'待確認'+(acct?' · '+acct.n:''),amount:p.amt,ccy:acct?.ccy||'TWD'});});
+ manualPlannedTransactions.forEach(p=>{const acct=accounts.find(a=>a.id===p.acct),cat=CATMAP[p.cat]||{},type=p.type||'expense';add({id:'manual-'+p.id,plannedId:isCreditCardDuePlan(p)?p.id:null,date:p.date,type,icon:type==='income'?'💰':type==='transfer'?'↔️':(cat.ic||'🗓️'),title:p.note||cat.n||(type==='income'?'預計收入':'預計支出'),meta:'待確認'+(acct?' · '+acct.n:''),amount:p.amt,ccy:acct?.ccy||'TWD'});});
  accounts.filter(a=>a.group==='信用卡').forEach(a=>{const cycle=previousCardCycle(a),amount=cardStatementAmount(a,cycle);if(amount&&!cardPaymentFor(a,cycle))add({id:'card-'+a.id+'-'+cycle.key,date:cycle.dueDate,type:'expense',icon:'💳',title:a.n+' 信用卡帳單',meta:'上一期帳單 · 繳款截止日',amount,ccy:a.ccy||'TWD'});});
  return rows.sort((a,b)=>a.date-b.date||a.type.localeCompare(b.type));
 }
 function syncNativeUpcomingNotifications(){const bridge=window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.walletNotifications;if(!bridge)return;const now=new Date(),limit=new Date(now);limit.setDate(limit.getDate()+15);const events=upcomingReminderOn?upcomingNotifications().filter(row=>row.date>=new Date(now.getFullYear(),now.getMonth(),now.getDate())&&row.date<=limit).map(row=>({id:row.id,date:row.date.toISOString(),title:row.title,body:noticeDate(row.date)+' · '+row.meta+' · '+(row.type==='income'?'+':'-')+(ccyInfo(row.ccy||'TWD').s||'$')+fmtN(row.amount)})):[];bridge.postMessage({events,reminderTime:upcomingReminderTime});}
 function updateNoticeBadge(){const badge=$('#notifyBadge');if(!badge)return;const count=upcomingNotifications().length;badge.textContent=count>99?'99+':count;badge.style.display=count?'block':'none';}
-function renderNotifications(){const body=$('#noticeBody'),rows=upcomingNotifications();if(!body)return;const income=rows.filter(r=>r.type==='income').length,expense=rows.filter(r=>r.type==='expense').length;body.innerHTML=`<div class="notice-summary">未來 15 天共有 <b>${rows.length}</b> 筆預計收支${income?'，含 '+income+' 筆收入':''}${expense?'、'+expense+' 筆支出':''}。</div>`+(rows.length?rows.map(r=>{const sym=ccyInfo(r.ccy||'TWD').s,col=r.type==='income'?'var(--income)':r.type==='transfer'?'var(--accent)':'var(--expense)',sign=r.type==='income'?'+':r.type==='expense'?'-':'';return `<div class="notice-row"><div class="notice-icon" style="background:${col}18">${r.icon}</div><div class="notice-main"><div class="notice-title">${noticeEsc(r.title)}</div><div class="notice-meta">${noticeDate(r.date)} · ${noticeEsc(r.meta)}</div></div><div class="notice-amount" style="color:${col}">${sign}${sym}${fmtN(r.amount)}</div></div>`;}).join(''):'<div class="empty" style="padding:32px 0"><div class="e">🎉</div><p>未來 15 天沒有待處理的收支</p></div>');}
+function renderNotifications(){const body=$('#noticeBody'),rows=upcomingNotifications();if(!body)return;const income=rows.filter(r=>r.type==='income').length,expense=rows.filter(r=>r.type==='expense').length;body.innerHTML=`<div class="notice-summary">未來 15 天（不含今天）共有 <b>${rows.length}</b> 筆預計收支${income?'，含 '+income+' 筆收入':''}${expense?'、'+expense+' 筆支出':''}。</div>`+(rows.length?rows.map(r=>{const sym=ccyInfo(r.ccy||'TWD').s,col=r.type==='income'?'var(--income)':r.type==='transfer'?'var(--accent)':'var(--expense)',sign=r.type==='income'?'+':r.type==='expense'?'-':'',planned=r.plannedId&&plannedTransactions.find(p=>p.id===r.plannedId),early=planned&&!plannedPosted(planned)&&isCreditCardDuePlan(planned),open=planned?` onclick="openPlannedAction('${r.plannedId}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openPlannedAction('${r.plannedId}');}"`:'';return `<div class="notice-row"${open}><div class="notice-icon" style="background:${col}18">${r.icon}</div><div class="notice-main"><div class="notice-title">${noticeEsc(r.title)}</div><div class="notice-meta">${noticeDate(r.date)} · ${noticeEsc(r.meta)}</div>${early?`<button class="notice-action" onclick="event.stopPropagation();confirmPlannedTransaction('${r.plannedId}')">提前繳款</button>`:''}</div><div class="notice-amount" style="color:${col}">${sign}${sym}${fmtN(r.amount)}</div></div>`;}).join(''):'<div class="empty" style="padding:32px 0"><div class="e">🎉</div><p>未來 15 天（不含今天）沒有待處理的收支</p></div>');}
 function openNotifications(){renderNotifications();$('#noticeSheet').classList.add('open');syncMask();}
 function closeNotifications(){$('#noticeSheet').classList.remove('open');syncMask();}
 function openInstallmentFromEntry(){const cards=accounts.filter(a=>a.group==='信用卡'),box=$('#entryInstallmentForm');if(!box)return;closeCalculator();$('#sheet').classList.add('installment-entry');document.querySelectorAll('#sheet .type-seg button').forEach(b=>b.classList.remove('on'));$('#entryInstallmentBtn').classList.add('on');$('#catGrid').style.display='none';$('#catBudgetHint').innerHTML='';$('#transferPick').style.display='none';box.style.display='block';if(!cards.length){box.innerHTML=`<div class="empty" style="padding:28px 0"><div class="e">💳</div><p>分期付款需使用信用卡帳戶</p><button class="save-btn" onclick="openAcct()">新增信用卡帳戶</button></div>`;return;}const date=$('#txDate').value||dateInputValue(),amount=Math.abs(evalExpr(cur.expr))||'',cardOpts=cards.map(a=>`<option value="${a.id}" ${a.id===cur.acct?'selected':''}>${accountIconText(a)} ${a.n}</option>`).join('');box.innerHTML=`<div class="loan-summary"><div class="ls-top"><span class="ls-label">信用卡分期</span><span class="ls-value">🧾</span></div><div style="font-size:11.5px;color:var(--ink3);margin-top:5px">每期會納入所選信用卡的帳單；繳款設定可在信用卡帳單頁統一管理。</div></div><div class="field"><label>名稱／備註</label><input id="eipName" value="${String($('#noteInput').value||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" placeholder="例如：iPhone 17 分期"></div><div class="installment-grid"><div class="field"><label>總金額</label><input id="eipTotal" inputmode="numeric" value="${amount}" placeholder="0"></div><div class="field"><label>期數</label><select id="eipCount">${Array.from({length:36},(_,i)=>`<option value="${i+2}">${i+2} 期</option>`).join('')}</select></div></div><div class="installment-grid"><div class="field"><label>首期入帳日</label><input id="eipStartDate" type="date" value="${date}"></div><div class="field"><label>支出分類</label><select id="eipCat">${expCats.map(c=>`<option value="${c.id}" ${c.id===cur.cat?'selected':''}>${c.n}</option>`).join('')}</select></div></div><div class="field"><label>刷卡帳戶</label><select id="eipAcct">${cardOpts}</select></div><button class="save-btn entry-installment-save" onclick="saveEntryInstallment()">建立信用卡分期</button><button class="set-row" style="margin-top:10px;justify-content:center" onclick="setType('expense')">‹ 返回一般記帳</button>`;$('#sheet .entry-scroll').scrollTop=0;}
@@ -1628,12 +1772,15 @@ function saveTx(){const amt=Math.abs(evalExpr(cur.expr));if(!amt){toast('請輸�
  persist();if(editingPlanId)persistManualPlans();if(recView==='cal'&&!$('#scr-records').classList.contains('hidden')){const savedDate=new Date(t.date);calRef=new Date(savedDate.getFullYear(),savedDate.getMonth(),1);calSelected=dayKey(savedDate);}closeSheet();refreshAfterTransactionSave();toast(editingPlanId?'已確認並入帳':was?'已更新':'已記錄 $'+fmtN(amt));cur.editId=null;cur.manualPlanId=null;cur.date=null;}
 let txActionId=null;
 function txActionSummary(t){const acc=accounts.find(a=>a.id===t.acct),to=accounts.find(a=>a.id===t.to),income=t.type==='income',transfer=t.type==='transfer',cat=CATMAP[t.cat],name=transfer?(t.note||'轉帳'):(t.note||cat?.n||'未命名紀錄'),amount=transfer?'↔ '+fmtN(t.amt):(income?'+':'-')+'$'+fmtN(t.amt),color=transfer?'#f5c542':income?'var(--income)':'var(--expense)',meta=transfer?`${acc?.n||'未設定'} → ${to?.n||'未設定'}${t.fee?' · 手續費 $'+fmtN(t.fee):''}`:`${acc?.n||'未設定帳戶'} · ${dayLabel(t.date)}`;return `<div class="tx-action-summary"><div class="kind">${transfer?'轉帳':income?'收入':'支出'}紀錄</div><div class="name">${noticeEsc(name)}</div><div class="amount" style="color:${color}">${amount}</div><div class="meta">${noticeEsc(meta)}</div></div>`;}
-function editTx(id){const t=transactions.find(x=>x.id===id);if(!t)return;txActionId=id;$('#txActionBody').innerHTML=txActionSummary(t)+`<div class="tx-action-buttons"><button onclick="openTxEditor('${id}')">修改紀錄</button>${t.installmentId||t.installmentPaymentId||t.debtPayment?`<button class="delete" onclick="openTxEditor('${id}')">${t.debtPayment?'管理貸款還款':'管理分期付款'}</button>`:`<button class="delete" onclick="confirmTxDelete('${id}')">刪除紀錄</button>`}</div>`;$('#txActionSheet').classList.add('open');syncMask();}
-function closeTxAction(){$('#txActionSheet').classList.remove('open');syncMask();txActionId=null;}
+function clearTxActionHeader(){const el=$('#txActionHeaderActions');if(!el)return;el.className='tx-action-head-actions';el.innerHTML='';}
+function showTxActionHeader(id){const el=$('#txActionHeaderActions');if(!el)return;el.className='tx-action-head-actions has-actions';el.innerHTML=`<button class="tx-action-icon" onclick="openTxEditor('${id}')" aria-label="修改紀錄" title="修改紀錄"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="16" rx="1.8"></rect><path d="m13.6 5.4 3.8 3.8-5.8 5.8-4.1.3.3-4.1 5.8-5.8Z"></path><path d="m12.2 14.8 2.9-2.9"></path></svg></button><button class="tx-action-icon delete" onclick="confirmTxDelete('${id}')" aria-label="刪除紀錄" title="刪除紀錄"><svg viewBox="0 0 24 24"><path d="M5 7h14M10 4h4M8 7l.8 13h6.4L16 7M10 10v7M14 10v7"></path></svg></button>`;}
+function editTx(id){const t=transactions.find(x=>x.id===id);if(!t)return;txActionId=id;showTxActionHeader(id);const special=t.installmentId||t.installmentPaymentId||t.debtPayment;$('#txActionBody').innerHTML=txActionSummary(t)+`<div class="tx-action-buttons"><button style="background:var(--bg2);color:var(--ink)" onclick="closeTxAction()">取消</button></div>`;$('#txActionSheet').classList.add('open');syncMask();}
+function closeTxAction(){clearTxActionHeader();$('#txActionSheet').classList.remove('open');syncMask();txActionId=null;}
 function openTxEditor(id){closeTxAction();const t=transactions.find(x=>x.id===id);if(!t)return;if(t.installmentId||t.installmentPaymentId){openInstallments();toast('分期交易請在「管理分期付款」中編輯或重新設定');return;}if(t.debtPayment){openDebtMgr();openLoanPayment(t.debtPayment);toast('貸款還款請從債務管理新增一筆調整');return;}cur={type:t.type,cat:t.cat||expCats[0]?.id,acct:t.acct,to:t.to||'',ccy:t.occy||acctCcy(t.acct),note:t.note||'',expr:String(t.oamt!=null?t.oamt:t.amt),editId:id,date:t.date,img:t.img||null,fee:t.fee||0,trip:t.trip||'',payer:t.payer||''};
  $('#sheetTitle').textContent='編輯紀錄';$('#delBtn').style.visibility='hidden';openSheet(true);if(t.type==='transfer')setTimeout(()=>{$('#tfFrom').value=t.acct;$('#tfTo').value=t.to;tfCustomToAmt=false;syncEntryAccountIcons();if($('#tfFee'))$('#tfFee').value=t.fee||'';updateTfTotal();if(t.toAmt!=null&&$('#tfToAmt')){$('#tfToAmt').value=t.toAmt;tfCustomToAmt=true;}},0);}
-function confirmTxDelete(id){const t=transactions.find(x=>x.id===id);if(!t)return;txActionId=id;$('#txActionBody').innerHTML=`<div class="tx-action-summary"><div class="kind" style="color:var(--expense)">刪除確認</div><div class="name">確定要刪除這筆紀錄？</div><div class="meta">${noticeEsc(t.note||'未命名紀錄')} · $${fmtN(t.amt)}<br>刪除後會同步回復帳戶餘額。</div></div><div class="tx-action-buttons"><button class="delete" style="background:var(--expense);color:#fff;border:none" onclick="performTxDelete('${id}')">確認刪除</button><button style="background:var(--bg2);color:var(--ink)" onclick="editTx('${id}')">取消</button></div>`;}
-function performTxDelete(id){const t=transactions.find(x=>x.id===id);if(!t)return;applyBalance(t,-1);transactions=transactions.filter(x=>x.id!==id);persist();closeTxAction();renderOverview();renderRecords();renderStats();renderBudget();toast('已刪除紀錄');}
+function confirmTxDelete(id){const t=transactions.find(x=>x.id===id);if(!t)return;clearTxActionHeader();txActionId=id;$('#txActionBody').innerHTML=`<div class="tx-action-summary"><div class="kind" style="color:var(--expense)">刪除確認</div><div class="name">確定要刪除這筆紀錄？</div><div class="meta">${noticeEsc(t.note||'未命名紀錄')} · $${fmtN(t.amt)}<br>刪除後會同步回復帳戶餘額。</div></div><div class="tx-action-buttons"><button class="delete" style="background:var(--expense);color:#fff;border:none" onclick="performTxDelete('${id}')">確認刪除</button><button style="background:var(--bg2);color:var(--ink)" onclick="editTx('${id}')">取消</button></div>`;}
+function restoreLinkedSourceForDeletedTransaction(t){if(t.debtPayment){const d=debts.find(x=>x.id===t.debtPayment);if(d){d.amt+=t.amt;d.settled=false;delete d.settledDate;d.payments=(d.payments||[]).filter(p=>p.id!==t.id);persistDebts();}}if(t.installmentId){const p=installments.find(x=>x.id===t.installmentId);if(p){p.paid=Math.max(0,(p.paid||0)-1);p.active=true;persistInstallments();}}const restore=t.plannedRestore;if(!restore)return;if(restore.source==='recurring'||restore.source==='recurringOverride'){const r=recurrings.find(x=>x.id===restore.sourceId);if(r){r.nextDate=restore.date;persistRecur();}if(restore.source==='recurringOverride'&&restore.override&&!recurringOverrides.some(x=>x.key===restore.override.key)){recurringOverrides.push(restore.override);persistRecurringOverrides();}}else if(restore.source==='manual'&&restore.plan&&!manualPlannedTransactions.some(x=>x.id===restore.plan.id)){manualPlannedTransactions.push(restore.plan);persistManualPlans();}}
+function performTxDelete(id){const t=transactions.find(x=>x.id===id);if(!t)return;restoreLinkedSourceForDeletedTransaction(t);applyBalance(t,-1);transactions=transactions.filter(x=>x.id!==id);persist();closeTxAction();refreshPlannedTransactions();renderOverview();renderRecords();renderStats();renderBudget();toast('已刪除紀錄並還原帳戶金額');}
 function renderQuickAmts(){const el=$('#quickAmts');if(!el)return;const pool=transactions.filter(t=>t.type===cur.type&&t.amt>0);const freq={};pool.forEach(t=>freq[t.amt]=(freq[t.amt]||0)+1);const amts=Object.keys(freq).map(Number).sort((a,b)=>freq[b]-freq[a]||b-a).slice(0,6);el.innerHTML=amts.map(a=>`<button class="qa" onclick="setAmt(${a})">${fmtN(a)}</button>`).join('');el.style.display=amts.length?'flex':'none';}
 function setAmt(a){setEntryAmount(a);}
 function renderTxThumb(){const im=$('#txThumb');if(cur.img){im.src=cur.img;im.style.display='block';}else{im.removeAttribute('src');im.style.display='none';}}
