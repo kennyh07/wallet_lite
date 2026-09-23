@@ -56,12 +56,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input,select{font-family:inherit;}
 ::-webkit-scrollbar{width:0;height:0;}
 #app{max-width:480px;margin:0 auto;height:100%;position:relative;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
-/* Web only: mobile browsers can resolve 100% against a shorter layout viewport,
-   leaving an unused strip below the fixed navigation. Keep the page matched to
-   the visible dynamic viewport; the iOS bundle has its own copied resource. */
-html,body{min-height:100vh;min-height:100dvh;}
-body{height:100vh;height:100dvh;}
-#app{height:100vh;height:100dvh;min-height:100dvh;}
+/* Web only: size the app to the visible browser viewport. */
+:root{--web-viewport-height:100dvh;}
+html{min-height:100vh;min-height:100dvh;}
+body{inset:0 0 auto;height:var(--web-viewport-height);}
+#app{height:var(--web-viewport-height);min-height:0;}
 
 .topbar{padding:max(16px,env(safe-area-inset-top)) 18px 6px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .topbar .title{position:absolute;left:50%;top:calc(max(16px,env(safe-area-inset-top)) + 6px);transform:translateX(-50%);pointer-events:none;}
@@ -809,8 +808,9 @@ body{
 .notice-action{margin-top:7px;padding:5px 11px;border-radius:10px;background:transparent;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 52%,var(--line));font-size:11px;font-weight:750;}
 .notice-amount{text-align:right;font-family:var(--num);font-size:14px;font-weight:800;white-space:nowrap;}
 /* Web-only mobile viewport fixes. The iOS bundle keeps its own copy. */
-.topbar{backdrop-filter:none;-webkit-backdrop-filter:none;}
-.tabbar{bottom:calc(-1 * var(--safe));padding-bottom:calc(8px + var(--safe));}
+.topbar{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;}
+.topbar>*{filter:none!important;}
+.tabbar{position:absolute;bottom:0;padding-bottom:calc(8px + var(--safe));}
 </style>
 </head>
 <body>
@@ -2129,10 +2129,12 @@ $('#recCal').addEventListener('touchstart',e=>{if(!e.target.closest('.cal-fixed'
 $('#recCal').addEventListener('touchend',e=>{if(!calSwipeStart)return;const t=e.changedTouches[0],dx=t.clientX-calSwipeStart.x,dy=t.clientY-calSwipeStart.y;calSwipeStart=null;if(Math.abs(dx)<48||Math.abs(dx)<=Math.abs(dy))return;calShift(dx<0?1:-1);},{passive:true});
 document.addEventListener('pointerdown',e=>{const target=e.target;if(target&&target.id==='eipTotal'){target.readOnly=true;target.inputMode='none';openCalculator('installmentTotal');return;}if(target&&target.closest&&!target.closest('.acct-menu, .acct-trigger, #acctMenuBackdrop'))closeAllAccountMenus();if(calculatorTarget==='installmentTotal'&&target&&target.closest&&target.closest('#sheet .entry-scroll'))return;if(target&&target.closest&&!target.closest('#sheet .amt-line, #sheet .keys'))closeCalculator();});
 
+function syncWebViewportHeight(){const h=window.visualViewport?.height||window.innerHeight;if(h>0)document.documentElement.style.setProperty('--web-viewport-height',Math.round(h)+'px');}
+syncWebViewportHeight();window.visualViewport?.addEventListener('resize',syncWebViewportHeight);
 initTheme();$('#eyeBtn').innerHTML=hideAmt?ICON_EYEOFF:ICON_EYE;repairTransferFeeBalances();repairCalendarMonthSelection();repairFutureTransactionBalances();postDueRecurrings();postDueInstallments();postDueCardBills();if(!Store.get('accountIllustrationV1')){applyAccountIllustrations(false);Store.set('accountIllustrationV1',true);}renderOverview();recView='cal';Store.set('recView','cal');go('records');syncNativeUpcomingNotifications();fetchRates(false);gdInitOnLoad();
 try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('portrait').catch(()=>{});}catch(e){}
-window.addEventListener('orientationchange',()=>setTimeout(()=>{window.scrollTo(0,0);document.body.scrollTop=0;},350));
-window.addEventListener('resize',()=>{window.scrollTo(0,0);});
+window.addEventListener('orientationchange',()=>setTimeout(()=>{syncWebViewportHeight();window.scrollTo(0,0);document.body.scrollTop=0;},350));
+window.addEventListener('resize',()=>{syncWebViewportHeight();window.scrollTo(0,0);});
 document.addEventListener('focusout',()=>setTimeout(()=>{window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;},80));
 </script>
 </body>
