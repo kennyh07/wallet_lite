@@ -14,6 +14,13 @@
     if(iOS&&!nativeApp){
       document.documentElement.classList.add('ios-safari-web');
       document.documentElement.classList.add(standalone?'ios-home-screen':'ios-safari-tab');
+      // WebKit's standalone viewport-fit=cover path can misreport the usable
+      // height and place bottom-anchored content above the screen edge. Keep
+      // cover for Safari tabs, but use the default safe-area viewport at Home.
+      if(standalone){
+        const viewport=document.querySelector('meta[name="viewport"]');
+        if(viewport)viewport.content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+      }
     }
   }catch(e){}
 })();
@@ -24,7 +31,7 @@
 <title>小錢包 · Wallet</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="小錢包">
 <meta name="theme-color" content="#101725">
 <!-- App icon: replace the legacy embedded artwork for browsers and mobile home screens. -->
@@ -831,6 +838,30 @@ body{
 .ios-safari-tab .topbar{flex-shrink:0;z-index:1;background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;}
 .ios-safari-tab .topbar>*{filter:none!important;}
 .ios-safari-tab .topbar .icon-btn{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+/* Home Screen WebKit can soften foreground text when the status area and
+   several translucent layers are composited together. Keep the glass tint,
+   but render the header without a live backdrop or inherited filters. */
+html.ios-home-screen .topbar{
+  flex-shrink:0;
+  z-index:30;
+  isolation:auto;
+  transform:none!important;
+  -webkit-transform:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+}
+html.ios-home-screen .topbar *,
+html.ios-home-screen .topbar *::before,
+html.ios-home-screen .topbar *::after{
+  filter:none!important;
+  -webkit-filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.ios-home-screen .topbar .icon-btn,
+html.ios-home-screen .topbar .notice-badge{box-shadow:none!important;}
 .tabbar{position:absolute;bottom:0;padding-bottom:calc(8px + var(--safe));}
 /* iPhone Safari tab mode has a WebKit compositing defect: several simultaneous
    backdrop filters can re-rasterize unrelated text (most visibly the header).
@@ -2181,7 +2212,7 @@ function gdInitOnLoad(){if(!Store.get('gdConnected',false)||!gClientId())return;
 let toastT;function toast(m){const el=$('#toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2200);}
 $('#eyeBtn').onclick=()=>{hideAmt=!hideAmt;Store.set('hideAmt',hideAmt);$('#eyeBtn').innerHTML=hideAmt?ICON_EYEOFF:ICON_EYE;renderOverview();};
 function themeName(t){return t==='dark'?'深色':t==='green'?'墨綠':'淺色';}
-function syncThemeChrome(t){const theme=document.querySelector('meta[name="theme-color"]'),status=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(theme)theme.content=t==='dark'?'#101725':t==='green'?'#071d18':'#f4f2ee';if(status)status.content=t==='light'?'default':'black-translucent';}
+function syncThemeChrome(t){const theme=document.querySelector('meta[name="theme-color"]'),status=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(theme)theme.content=t==='dark'?'#101725':t==='green'?'#071d18':'#f4f2ee';if(status){const homeScreen=document.documentElement.classList.contains('ios-home-screen');status.content=t==='light'?'default':homeScreen?'black':'black-translucent';}}
 function initTheme(){const s=['light','dark','green'].includes(Store.get('theme','light'))?Store.get('theme','light'):'light';document.documentElement.setAttribute('data-theme',s);syncThemeChrome(s);}
 function toggleTheme(){const themes=['light','dark','green'],current=document.documentElement.getAttribute('data-theme')||'light',t=themes[(themes.indexOf(current)+1)%themes.length];document.documentElement.setAttribute('data-theme',t);syncThemeChrome(t);Store.set('theme',t);$('#setThemeVal').textContent='淺色 → 深色 → 墨綠';}
 function cycleIconStyle(){iconStyle=iconStyle==='emoji'?'daily':iconStyle==='daily'?'illustrated':'emoji';Store.set('iconStyle',iconStyle);$('#iconStyleVal').textContent=iconStyleName();renderOverview();renderRecords();renderStats();renderBudget();if($('#catSheet').classList.contains('open'))renderCatGridView();if($('#sheet').classList.contains('open'))renderCatGrid();if($('#recurSheet').classList.contains('open'))fillRecurCat();if($('#installmentSheet').classList.contains('open'))renderInstallmentSelectIcons();if($('#setSheet').classList.contains('open'))renderRecurList();toast('已套用 '+iconStyleName()+' 圖示');}
@@ -2200,15 +2231,14 @@ document.addEventListener('pointerdown',e=>{const target=e.target;if(target&&tar
 function syncWebViewportHeight(){
   const root=document.documentElement;
   if(root.classList.contains('ios-home-screen')){
-    const screenHeight=Number(window.screen&&window.screen.height)||0;
-    const visibleHeight=Number(window.visualViewport&&window.visualViewport.height)||Number(window.innerHeight)||0;
-    // In standalone mode iOS 26 may report a viewport shorter than the display
-    // by the status-bar inset. Use the screen's CSS-pixel height to keep the
-    // flex layout and bottom navigation attached to the actual screen edge.
-    // When the software keyboard opens, temporarily follow its reduced viewport.
-    const keyboardOpen=screenHeight>0&&visibleHeight>0&&screenHeight-visibleHeight>120;
-    const height=keyboardOpen?visibleHeight:screenHeight||Number(window.innerHeight)||1;
-    root.style.setProperty('--web-viewport-height',Math.max(1,height)+'px');
+    const layoutHeight=Number(window.innerHeight)||0;
+    const visibleHeight=Number(window.visualViewport&&window.visualViewport.height)||layoutHeight;
+    // In installed mode, WebKit's 100vh includes the safe-area viewport. Do
+    // not substitute screen.height: it can exceed the area Safari lets the
+    // document paint into, leaving a visible strip below the navigation.
+    // Follow visualViewport only while the software keyboard is open.
+    const keyboardOpen=layoutHeight>0&&visibleHeight>0&&layoutHeight-visibleHeight>120;
+    root.style.setProperty('--web-viewport-height',keyboardOpen?Math.max(1,visibleHeight)+'px':'100vh');
     return;
   }
   // In Safari tabs, dynamic viewport units follow the collapsing browser bars.
