@@ -4,13 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <script>
-/* Keep the Safari layout workaround out of the native iOS app. */
+/* Keep mobile web viewport workarounds out of the native iOS app. */
 (function(){
   try{
     const ua=navigator.userAgent||'';
     const iOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
     const nativeApp=!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.walletNotifications);
-    if(iOS&&!nativeApp)document.documentElement.classList.add('ios-safari-web');
+    const standalone=navigator.standalone===true||!!(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);
+    if(iOS&&!nativeApp){
+      document.documentElement.classList.add('ios-safari-web');
+      if(standalone)document.documentElement.classList.add('ios-home-screen');
+    }
   }catch(e){}
 })();
 </script>
@@ -67,8 +71,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input,select{font-family:inherit;}
 ::-webkit-scrollbar{width:0;height:0;}
 #app{max-width:480px;margin:0 auto;height:100%;position:relative;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
-/* Web only: CSS dynamic viewport units follow Safari's collapsing toolbars more
-   reliably than visualViewport.height, which can remain at its smaller value. */
+/* Web-only viewport sizing. Safari tabs use dynamic viewport units; iOS Home
+   Screen apps need a separate full-screen height because WebKit can report a
+   layout viewport shorter than the physical display. */
 :root{--web-viewport-height:100vh;}
 @supports (height:100dvh){:root{--web-viewport-height:100dvh;}}
 body,#app{height:var(--web-viewport-height);min-height:0;}
@@ -2193,18 +2198,30 @@ $('#recCal').addEventListener('touchend',e=>{if(!calSwipeStart)return;const t=e.
 document.addEventListener('pointerdown',e=>{const target=e.target;if(target&&target.id==='eipTotal'){target.readOnly=true;target.inputMode='none';openCalculator('installmentTotal');return;}if(target&&target.closest&&!target.closest('.acct-menu, .acct-trigger, #acctMenuBackdrop'))closeAllAccountMenus();if(calculatorTarget==='installmentTotal'&&target&&target.closest&&target.closest('#sheet .entry-scroll'))return;if(target&&target.closest&&!target.closest('#sheet .amt-line, #sheet .keys'))closeCalculator();});
 
 function syncWebViewportHeight(){
-  // Safari may keep visualViewport.height at the toolbar-expanded value after
-  // its controls collapse. Let 100dvh track that transition; innerHeight is a
-  // fallback only for browsers without dynamic viewport units.
+  const root=document.documentElement;
+  if(root.classList.contains('ios-home-screen')){
+    const screenHeight=Number(window.screen&&window.screen.height)||0;
+    const visibleHeight=Number(window.visualViewport&&window.visualViewport.height)||Number(window.innerHeight)||0;
+    // In standalone mode iOS 26 may report a viewport shorter than the display
+    // by the status-bar inset. Use the screen's CSS-pixel height to keep the
+    // flex layout and bottom navigation attached to the actual screen edge.
+    // When the software keyboard opens, temporarily follow its reduced viewport.
+    const keyboardOpen=screenHeight>0&&visibleHeight>0&&screenHeight-visibleHeight>120;
+    const height=keyboardOpen?visibleHeight:screenHeight||Number(window.innerHeight)||1;
+    root.style.setProperty('--web-viewport-height',Math.max(1,height)+'px');
+    return;
+  }
+  // In Safari tabs, dynamic viewport units follow the collapsing browser bars.
   const value=window.CSS&&CSS.supports('height: 100dvh')?'100dvh':Math.max(1,window.innerHeight)+'px';
-  document.documentElement.style.setProperty('--web-viewport-height',value);
+  root.style.setProperty('--web-viewport-height',value);
 }
 syncWebViewportHeight();
 initTheme();$('#eyeBtn').innerHTML=hideAmt?ICON_EYEOFF:ICON_EYE;repairTransferFeeBalances();repairCalendarMonthSelection();repairFutureTransactionBalances();postDueRecurrings();postDueInstallments();postDueCardBills();if(!Store.get('accountIllustrationV1')){applyAccountIllustrations(false);Store.set('accountIllustrationV1',true);}renderOverview();recView='cal';Store.set('recView','cal');go('records');syncNativeUpcomingNotifications();fetchRates(false);gdInitOnLoad();
 try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('portrait').catch(()=>{});}catch(e){}
 window.addEventListener('orientationchange',()=>setTimeout(()=>{syncWebViewportHeight();window.scrollTo(0,0);document.body.scrollTop=0;},350));
 window.addEventListener('resize',()=>{syncWebViewportHeight();window.scrollTo(0,0);});
-document.addEventListener('focusout',()=>setTimeout(()=>{window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;},80));
+if(window.visualViewport)window.visualViewport.addEventListener('resize',syncWebViewportHeight);
+document.addEventListener('focusout',()=>setTimeout(()=>{syncWebViewportHeight();window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;},80));
 </script>
 </body>
 </html>
