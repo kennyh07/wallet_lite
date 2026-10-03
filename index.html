@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>
+/* Keep iPhone Safari fixes out of the installed iOS app and Home Screen mode. */
+(function(){
+  try{
+    const ua=navigator.userAgent||'';
+    const iOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    const nativeApp=!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.walletNotifications);
+    const standalone=navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
+    if(iOS&&!nativeApp&&!standalone)document.documentElement.classList.add('ios-safari-web');
+  }catch(e){}
+})();
+</script>
 <meta name="screen-orientation" content="portrait">
 <meta name="x5-orientation" content="portrait">
 <meta name="browsermode" content="application">
@@ -48,7 +60,7 @@
   --shadow:0 6px 24px rgba(0,0,0,.35); --shadow-lg:0 14px 44px rgba(0,0,0,.55);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;}
+html,body{height:100%;min-height:100%;overflow:hidden;}
 body{position:fixed;inset:0;width:100%;overflow:hidden;}
 body{font-family:var(--sans);background:var(--bg);color:var(--ink);overflow:hidden;transition:background .35s,color .35s;}
 
@@ -56,11 +68,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input,select{font-family:inherit;}
 ::-webkit-scrollbar{width:0;height:0;}
 #app{max-width:480px;margin:0 auto;height:100%;position:relative;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
-/* Web only: size the app to the visible browser viewport. */
-:root{--web-viewport-height:100dvh;}
-html{min-height:100vh;min-height:100dvh;}
-body{inset:0 0 auto;height:var(--web-viewport-height);}
-#app{height:var(--web-viewport-height);min-height:0;}
+/* Web only: CSS dynamic viewport units follow Safari's collapsing toolbars more
+   reliably than visualViewport.height, which can remain at its smaller value. */
+:root{--web-viewport-height:100vh;}
+@supports (height:100dvh){:root{--web-viewport-height:100dvh;}}
+body,#app{height:var(--web-viewport-height);min-height:0;}
+html.ios-safari-web body{inset:0;height:auto!important;min-height:0!important;}
+html.ios-safari-web #app{height:100%!important;min-height:0!important;max-height:none!important;}
 
 .topbar{padding:max(16px,env(safe-area-inset-top)) 18px 6px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .topbar .title{position:absolute;left:0;right:0;top:calc(max(16px,env(safe-area-inset-top)) + 6px);text-align:center;transform:none;pointer-events:none;}
@@ -179,11 +193,11 @@ body{inset:0 0 auto;height:var(--web-viewport-height);}
 .leg .v{font-family:var(--num);font-size:14px;font-weight:700;}
 .leg .pc{font-size:11px;color:var(--ink3);font-family:var(--num);min-width:38px;text-align:right;}
 
-.sheet-mask{position:fixed;inset:0;background:rgba(10,12,20,.5);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:40;}
-.sheet-mask.open{opacity:1;pointer-events:auto;}
-.sheet{position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);width:100%;max-width:480px;background:var(--bg);border-radius:28px 28px 0 0;z-index:50;transition:transform .36s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;max-height:94%;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.sheet-mask{position:fixed;inset:0;background:rgba(10,12,20,.5);backdrop-filter:blur(3px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility 0s linear .3s;z-index:40;}
+.sheet-mask.open{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s;}
+.sheet{position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);width:100%;max-width:480px;background:var(--bg);border-radius:28px 28px 0 0;z-index:50;visibility:hidden;transition:transform .36s cubic-bezier(.32,.72,0,1),visibility 0s linear .36s;display:flex;flex-direction:column;max-height:94%;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .sheet.open{box-shadow:0 -10px 40px rgba(0,0,0,.3);}
-.sheet.open{transform:translate(-50%,0);}
+.sheet.open{transform:translate(-50%,0);visibility:visible;transition-delay:0s;}
 #sheet{height:94%;max-height:840px;overflow:hidden;}
 #sheet .entry-head{padding:14px 20px 10px;min-height:68px;}
 .entry-head-act{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--bg2);border:1px solid var(--line);font-size:27px;line-height:1;color:var(--ink);box-shadow:var(--shadow);}
@@ -809,33 +823,44 @@ body{
 .notice-amount{text-align:right;font-family:var(--num);font-size:14px;font-weight:800;white-space:nowrap;}
 /* Web-only mobile viewport fixes. The iOS bundle keeps its own copy. */
 /* Offscreen transforms still paint shadows and backdrop layers in Safari.
-   Closed dialogs must leave the render tree, including the transparent mask. */
-.sheet:not(.open),.sheet-mask:not(.open){display:none;}
+   Hide closed dialogs after the slide-out and the mask after its fade-out. */
 .topbar{flex-shrink:0;z-index:1;background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;}
 .topbar>*{filter:none!important;}
 .topbar .icon-btn{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
 .tabbar{position:absolute;bottom:0;padding-bottom:calc(8px + var(--safe));background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none;}
-/* iOS Safari can rasterize the header through adjacent glass compositing layers.
-   Give the web header its own crisp layer; this selector is web-only. */
-@media (hover:none) and (pointer:coarse){
-  #app{isolation:auto;}
-  .topbar{
-    z-index:30;
-    isolation:isolate;
-    transform:translateZ(0);
-    -webkit-transform:translateZ(0);
-    backface-visibility:hidden;
-    -webkit-backface-visibility:hidden;
-  }
-  .topbar,.topbar *, .topbar *::before, .topbar *::after{
-    filter:none!important;
-    -webkit-filter:none!important;
-    backdrop-filter:none!important;
-    -webkit-backdrop-filter:none!important;
-  }
-  .topbar .icon-btn::before,.topbar .icon-btn::after{content:none!important;display:none!important;}
-  .topbar .icon-btn,.topbar .notice-badge{box-shadow:none!important;}
+/* iPhone Safari tab mode has a WebKit compositing defect: several simultaneous
+   backdrop filters can re-rasterize unrelated text (most visibly the header).
+   Preserve the translucent colours and highlights, but use them without live
+   backdrop sampling in this one environment. Native WKWebView and Home Screen
+   mode keep the full glass treatment. */
+html.ios-safari-web #app{isolation:auto;}
+html.ios-safari-web #app *,
+html.ios-safari-web .sheet,
+html.ios-safari-web .sheet-mask{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
+html.ios-safari-web .topbar{
+  z-index:30;
+  isolation:auto;
+  transform:none!important;
+  -webkit-transform:none!important;
+  backface-visibility:visible;
+  -webkit-backface-visibility:visible;
+  contain:layout paint;
+  background:var(--bg)!important;
+}
+html.ios-safari-web .topbar,
+html.ios-safari-web .topbar *,
+html.ios-safari-web .topbar *::before,
+html.ios-safari-web .topbar *::after{
+  filter:none!important;
+  -webkit-filter:none!important;
+}
+html.ios-safari-web .topbar .icon-btn::before,
+html.ios-safari-web .topbar .icon-btn::after{content:none!important;display:none!important;}
+html.ios-safari-web .topbar .icon-btn,
+html.ios-safari-web .topbar .notice-badge{box-shadow:none!important;}
 </style>
 </head>
 <body>
@@ -2155,12 +2180,13 @@ $('#recCal').addEventListener('touchend',e=>{if(!calSwipeStart)return;const t=e.
 document.addEventListener('pointerdown',e=>{const target=e.target;if(target&&target.id==='eipTotal'){target.readOnly=true;target.inputMode='none';openCalculator('installmentTotal');return;}if(target&&target.closest&&!target.closest('.acct-menu, .acct-trigger, #acctMenuBackdrop'))closeAllAccountMenus();if(calculatorTarget==='installmentTotal'&&target&&target.closest&&target.closest('#sheet .entry-scroll'))return;if(target&&target.closest&&!target.closest('#sheet .amt-line, #sheet .keys'))closeCalculator();});
 
 function syncWebViewportHeight(){
-  // visualViewport already describes the visible area. Safe-area padding belongs
-  // inside the tab bar; adding it to this height pushes navigation offscreen.
-  const h=window.visualViewport?.height||window.innerHeight;
-  if(h>0)document.documentElement.style.setProperty('--web-viewport-height',h+'px');
+  // Safari may keep visualViewport.height at the toolbar-expanded value after
+  // its controls collapse. Let 100dvh track that transition; innerHeight is a
+  // fallback only for browsers without dynamic viewport units.
+  const value=window.CSS&&CSS.supports('height: 100dvh')?'100dvh':Math.max(1,window.innerHeight)+'px';
+  document.documentElement.style.setProperty('--web-viewport-height',value);
 }
-syncWebViewportHeight();window.visualViewport?.addEventListener('resize',syncWebViewportHeight);
+syncWebViewportHeight();
 initTheme();$('#eyeBtn').innerHTML=hideAmt?ICON_EYEOFF:ICON_EYE;repairTransferFeeBalances();repairCalendarMonthSelection();repairFutureTransactionBalances();postDueRecurrings();postDueInstallments();postDueCardBills();if(!Store.get('accountIllustrationV1')){applyAccountIllustrations(false);Store.set('accountIllustrationV1',true);}renderOverview();recView='cal';Store.set('recView','cal');go('records');syncNativeUpcomingNotifications();fetchRates(false);gdInitOnLoad();
 try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('portrait').catch(()=>{});}catch(e){}
 window.addEventListener('orientationchange',()=>setTimeout(()=>{syncWebViewportHeight();window.scrollTo(0,0);document.body.scrollTop=0;},350));
