@@ -13,7 +13,7 @@
     const standalone=navigator.standalone===true||!!(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);
     if(iOS&&!nativeApp){
       document.documentElement.classList.add('ios-safari-web');
-      if(standalone)document.documentElement.classList.add('ios-home-screen');
+      document.documentElement.classList.add(standalone?'ios-home-screen':'ios-safari-tab');
     }
   }catch(e){}
 })();
@@ -828,19 +828,19 @@ body{
 /* Web-only mobile viewport fixes. The iOS bundle keeps its own copy. */
 /* Offscreen transforms still paint shadows and backdrop layers in Safari.
    Hide closed dialogs after the slide-out and the mask after its fade-out. */
-.topbar{flex-shrink:0;z-index:1;background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;}
-.topbar>*{filter:none!important;}
-.topbar .icon-btn{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
-.tabbar{position:absolute;bottom:0;padding-bottom:calc(8px + var(--safe));background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none;}
+.ios-safari-tab .topbar{flex-shrink:0;z-index:1;background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;}
+.ios-safari-tab .topbar>*{filter:none!important;}
+.ios-safari-tab .topbar .icon-btn{background:var(--bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+.tabbar{position:absolute;bottom:0;padding-bottom:calc(8px + var(--safe));}
 /* iPhone Safari tab mode has a WebKit compositing defect: several simultaneous
    backdrop filters can re-rasterize unrelated text (most visibly the header).
    Preserve the translucent colours and highlights, but use them without live
    backdrop sampling in this one environment. Native WKWebView and Home Screen
    mode keep the full glass treatment. */
-html.ios-safari-web #app{isolation:auto;}
-html.ios-safari-web #app *,
-html.ios-safari-web .sheet,
-html.ios-safari-web .sheet-mask{
+html.ios-safari-tab #app{isolation:auto;}
+html.ios-safari-tab #app *,
+html.ios-safari-tab .sheet,
+html.ios-safari-tab .sheet-mask{
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
 }
@@ -858,7 +858,7 @@ html.ios-safari-web .tabbar{
   padding:8px 14px calc(8px + var(--safe))!important;
   margin-top:0!important;
 }
-html.ios-safari-web .topbar{
+html.ios-safari-tab .topbar{
   z-index:30;
   isolation:auto;
   transform:none!important;
@@ -868,17 +868,17 @@ html.ios-safari-web .topbar{
   background:var(--bg)!important;
   background-image:none!important;
 }
-html.ios-safari-web .topbar,
-html.ios-safari-web .topbar *,
-html.ios-safari-web .topbar *::before,
-html.ios-safari-web .topbar *::after{
+html.ios-safari-tab .topbar,
+html.ios-safari-tab .topbar *,
+html.ios-safari-tab .topbar *::before,
+html.ios-safari-tab .topbar *::after{
   filter:none!important;
   -webkit-filter:none!important;
 }
-html.ios-safari-web .topbar .icon-btn::before,
-html.ios-safari-web .topbar .icon-btn::after{content:none!important;display:none!important;}
-html.ios-safari-web .topbar .icon-btn,
-html.ios-safari-web .topbar .notice-badge{box-shadow:none!important;}
+html.ios-safari-tab .topbar .icon-btn::before,
+html.ios-safari-tab .topbar .icon-btn::after{content:none!important;display:none!important;}
+html.ios-safari-tab .topbar .icon-btn,
+html.ios-safari-tab .topbar .notice-badge{box-shadow:none!important;}
 </style>
 </head>
 <body>
