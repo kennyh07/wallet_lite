@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#274366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="dl-dining" viewBox="0 0 24 24"><path d="M5 3v7m4-7v7M5 7h4m-2 3v11M16 3v18m0-18c3 1 4 4 4 7h-4"/></symbol>
+  <symbol id="dl-transport" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 10h16M8 18l-2 3m10-3 2 3M8 14h.01M16 14h.01"/></symbol>
+  <symbol id="dl-entertainment" viewBox="0 0 24 24"><path d="M4 6h16v14H4zM4 10h16M8 3v6m8-6v6"/><path d="m10 13 5 2.5-5 2.5z"/></symbol>
+  <symbol id="dl-shopping" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z M8 9V6a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="dl-medical" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="dl-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9ZM9 21v-6h6v6"/></symbol>
+  <symbol id="dl-sports" viewBox="0 0 24 24"><path d="M4 9v6m3-8v10m10-10v10m3-8v6M7 12h10"/></symbol>
+  <symbol id="dl-travel" viewBox="0 0 24 24"><path d="M6 4h12v16H6zM9 4V2h6v2M9 8h6m-6 4h6m-6 4h4"/></symbol>
+  <symbol id="dl-education" viewBox="0 0 24 24"><path d="m2 8 10-5 10 5-10 5L2 8Z"/><path d="M6 10v5c3 3 9 3 12 0v-5M22 8v6"/></symbol>
+  <symbol id="dl-other" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+  <symbol id="dl-mode-expense" viewBox="0 0 24 24"><path d="M4 7h16v14H4zM8 7V5a4 4 0 0 1 8 0v2"/><path d="M12 11v6m-3-3h6"/></symbol>
+  <symbol id="dl-mode-income" viewBox="0 0 24 24"><path d="M4 7h16v14H4zM8 7V5a4 4 0 0 1 8 0v2"/><path d="M12 17v-6m-3 3 3-3 3 3"/></symbol>
+  <symbol id="dl-mode-transfer" viewBox="0 0 24 24"><path d="M4 8h15l-3-3m4 11H5l3 3"/></symbol>
+</svg>
