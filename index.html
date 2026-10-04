@@ -267,8 +267,11 @@ html.ios-safari-web #app{height:100%!important;min-height:0!important;max-height
 .expense-major.on{background:var(--major);color:#fff;box-shadow:0 5px 14px color-mix(in srgb,var(--major) 28%,transparent);}
 .expense-subhead{display:flex;align-items:center;justify-content:space-between;padding:0 3px 3px;font-size:11px;color:var(--ink3);font-weight:650;}
 .expense-subhead b{color:var(--ink2);font-size:12px;}
-.expense-sub-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:104px;overflow-y:auto;overscroll-behavior:contain;}
-.expense-sub-grid .cat{padding-top:7px;}
+.expense-sub-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:28px;gap:3px 4px;max-height:92px;overflow-y:auto;overscroll-behavior:contain;}
+.expense-sub-grid .cat{min-width:0;display:flex;flex-direction:row;justify-content:flex-start;gap:3px;padding:3px 4px;border-radius:8px;overflow:hidden;}
+.expense-sub-grid .cat .ic{width:18px;height:18px;min-width:18px;border-radius:6px;font-size:11px;}
+.expense-sub-grid .cat .ic .daily-icon,.expense-sub-grid .cat .ic .daily-life-illustration{width:15px;height:15px;}
+.expense-sub-grid .cat .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;line-height:1.1;}
 .daily-icon{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.18em;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round;}
 .tx .daily-icon,.bud .daily-icon,.recur-row .daily-icon{width:22px;height:22px;vertical-align:0;}
 .cat .daily-icon{width:25px;height:25px;vertical-align:0;}
@@ -982,6 +985,39 @@ html.ios-safari-tab .topbar .notice-badge{box-shadow:none!important;}
 html.ios-safari-web .topbar{z-index:31;isolation:isolate;overflow:visible!important;}
 html.ios-safari-web .topbar #notifyBtn{position:relative;z-index:32;isolation:isolate;overflow:visible!important;}
 html.ios-safari-web .topbar #notifyBadge{z-index:33;}
+
+.type-seg button[data-t="expense"],.type-seg button[data-t="income"],.type-seg button[data-t="transfer"],.recur-typeseg button[data-t="expense"],.recur-typeseg button[data-t="income"],.recur-typeseg button[data-t="transfer"]{display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;}
+.mode-icon{width:16px;height:16px;flex:none;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.expense-major .mi{display:grid;place-items:center;font-size:15px;line-height:1;}
+.expense-major .mi .daily-icon{width:16px;height:16px;vertical-align:0;}
+.expense-major-add{min-width:34px;justify-content:center;font-size:18px;}
+.expense-subhead{gap:8px;}
+.expense-subhead button{padding:3px 7px;border:1px solid var(--line);border-radius:8px;color:var(--accent);font-size:10px;font-weight:700;white-space:nowrap;}
+.expense-sub-grid .expense-add-sub .ic{border:1.5px dashed var(--line);background:transparent!important;color:var(--ink3)!important;font-size:22px;}
+.expense-mgr-actions{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;margin-bottom:14px;}
+.expense-mgr-actions .set-row{justify-content:center;padding:11px 7px;font-size:12px;font-weight:750;}
+.expense-mgr-label{margin:8px 2px;font-size:12px;font-weight:750;color:var(--ink3);}
+.expense-mgr-groups{display:grid;gap:7px;}
+.expense-mgr-parent{display:flex;align-items:center;gap:5px;padding:5px;border:1px solid var(--line);border-radius:13px;background:var(--card);}
+.expense-mgr-parent.on{border-color:var(--accent);background:var(--card2);}
+.expense-mgr-parent-pick{display:flex;align-items:center;gap:9px;flex:1;min-width:0;text-align:left;padding:3px;}
+.expense-mgr-group-icon{width:35px;height:35px;flex:none;display:grid;place-items:center;border-radius:11px;color:var(--major);background:color-mix(in srgb,var(--major) 13%,transparent);}
+.expense-mgr-group-icon .daily-icon{width:21px;height:21px;vertical-align:0;}
+.expense-mgr-parent-name{font-size:13px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.expense-mgr-parent small{margin-left:auto;color:var(--ink3);font-size:11px;white-space:nowrap;}
+.expense-mgr-action{width:34px;height:34px;border-radius:10px;background:var(--bg2);color:var(--ink2);font-size:17px;font-weight:700;}
+.expense-mgr-action.delete{color:var(--expense);}
+.expense-mgr-action:disabled{opacity:.3;}
+.expense-mgr-subhead{display:flex;align-items:center;justify-content:space-between;margin:17px 2px 9px;font-size:13px;}
+.expense-mgr-subhead button{padding:6px 9px;border-radius:9px;background:var(--bg2);color:var(--accent);font-size:11px;font-weight:750;}
+.expense-mgr-children{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:0;max-height:none;}
+.expense-mgr-children .cat{padding:7px 2px;}
+.expense-mgr-children .cat .ic{width:42px;height:42px;}
+.expense-group-icon-picker{grid-template-columns:repeat(5,1fr);}
+.expense-group-icon-opt{width:42px;height:42px;border:1px solid var(--line);border-radius:12px;color:var(--ink2);background:var(--card);}
+.expense-group-icon-opt.on{border-color:var(--accent);color:var(--accent);background:var(--card2);}
+.expense-group-icon-opt .daily-icon{width:22px;height:22px;vertical-align:0;}
+
 </style>
 </head>
 <body>
@@ -1078,7 +1114,7 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
   <div class="sheet-head entry-head"><button class="entry-head-act" onclick="closeSheet()" aria-label="取消">×</button><strong id="sheetTitle">新增記錄</strong><div class="entry-head-actions"><button class="entry-head-act confirm" onclick="saveTx()" aria-label="儲存">✓</button></div><button id="delBtn" style="display:none" onclick="deleteCurrent()">刪除</button></div>
   <div class="entry-scroll">
   <div class="entry-fixed">
-  <div class="type-seg"><button class="on" data-t="expense" onclick="setType('expense')">支出</button><button data-t="income" onclick="setType('income')">收入</button><button data-t="transfer" onclick="setType('transfer')">轉帳</button><button type="button" id="entryInstallmentBtn" onclick="openInstallmentFromEntry()">分期</button></div>
+  <div class="type-seg"><button class="on" data-t="expense" onclick="setType('expense')"><svg class="mode-icon" aria-hidden="true"><use href="#dl-mode-expense"></use></svg><span>支出</span></button><button class="" data-t="income" onclick="setType('income')"><svg class="mode-icon" aria-hidden="true"><use href="#dl-mode-income"></use></svg><span>收入</span></button><button class="" data-t="transfer" onclick="setType('transfer')"><svg class="mode-icon" aria-hidden="true"><use href="#dl-mode-transfer"></use></svg><span>轉帳</span></button><button type="button" id="entryInstallmentBtn" onclick="openInstallmentFromEntry()">分期</button></div>
   <div class="nlbar"><input id="nlInput" placeholder="一句話記帳：午餐 120 信用卡" onkeydown="if(event.key==='Enter')nlParse()"><button class="nlgo" onclick="nlParse()">解析</button></div>
   </div>
   <div class="cat-grid" id="catGrid"></div>
@@ -1181,7 +1217,7 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
 <div class="sheet" id="recurSheet">
   <div class="sheet-head"><button class="x" onclick="closeRecur()">取消</button><strong id="recurTitle">新增循環交易</strong><button class="x" id="recurDel" style="color:var(--expense);visibility:hidden" onclick="deleteRecur()">刪除</button></div>
   <div class="aform">
-    <div class="recur-typeseg"><button class="on" data-t="expense" onclick="setRecurType('expense')">支出</button><button data-t="income" onclick="setRecurType('income')">收入</button><button data-t="transfer" onclick="setRecurType('transfer')">轉帳</button></div>
+    <div class="recur-typeseg"><button class="on" data-t="expense" onclick="setRecurType('expense')"><svg class="mode-icon" aria-hidden="true"><use href="#dl-mode-expense"></use></svg><span>支出</span></button><button class="" data-t="income" onclick="setRecurType('income')"><svg class="mode-icon" aria-hidden="true"><use href="#dl-mode-income"></use></svg><span>收入</span></button><button class="" data-t="transfer" onclick="setRecurType('transfer')"><svg class="mode-icon" aria-hidden="true"><use href="#dl-mode-transfer"></use></svg><span>轉帳</span></button></div>
     <div class="field"><label>金額</label><input id="rfAmt" inputmode="numeric" placeholder="0"></div>
     <div class="field" id="rfCatWrap"><label>分類</label><select id="rfCat"></select></div>
     <div class="field" id="rfAcctWrap"><label id="rfAcctLbl">帳戶</label><select id="rfAcct"></select></div>
@@ -1245,6 +1281,16 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
  <symbol id="dl-money" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 10h.01M17 14h.01"/></symbol>
  <symbol id="dl-chart" viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16V5"/></symbol>
  <symbol id="dl-other" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+ <symbol id="dl-dining" viewBox="0 0 24 24"><path d="M5 3v7m4-7v7M5 7h4m-2 3v11M16 3v18m0-18c3 1 4 4 4 7h-4"/></symbol>
+ <symbol id="dl-transport" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 10h16M8 18l-2 3m10-3 2 3M8 14h.01M16 14h.01"/></symbol>
+ <symbol id="dl-entertainment" viewBox="0 0 24 24"><path d="M4 6h16v14H4zM4 10h16M8 3v6m8-6v6"/><path d="m10 13 5 2.5-5 2.5z"/></symbol>
+ <symbol id="dl-shopping" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z M8 9V6a4 4 0 0 1 8 0v3"/></symbol>
+ <symbol id="dl-medical" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/></symbol>
+ <symbol id="dl-sports" viewBox="0 0 24 24"><path d="M4 9v6m3-8v10m10-10v10m3-8v6M7 12h10"/></symbol>
+ <symbol id="dl-education" viewBox="0 0 24 24"><path d="m2 8 10-5 10 5-10 5L2 8Z"/><path d="M6 10v5c3 3 9 3 12 0v-5M22 8v6"/></symbol>
+ <symbol id="dl-mode-expense" viewBox="0 0 24 24"><path d="M4 7h16v14H4zM8 7V5a4 4 0 0 1 8 0v2"/><path d="M12 11v6m-3-3h6"/></symbol>
+ <symbol id="dl-mode-income" viewBox="0 0 24 24"><path d="M4 7h16v14H4zM8 7V5a4 4 0 0 1 8 0v2"/><path d="M12 17v-6m-3 3 3-3 3 3"/></symbol>
+ <symbol id="dl-mode-transfer" viewBox="0 0 24 24"><path d="M4 8h15l-3-3m4 11H5l3 3"/></symbol>
 </svg>
 
 <script>
@@ -1375,21 +1421,38 @@ let statType='expense',statRef=new Date();
 let recView=Store.get('recView','list'),calRef=new Date(),calSelected=null;
 let calMotion='';
 let cur={type:'expense',cat:expCats[0]?.id,acct:accounts[0]?.id,note:'',expr:'0',editId:null,date:null};
-const EXPENSE_MAJOR_GROUPS=[
- {id:'food',n:'食',detail:'餐飲、飲料與零食',ic:'🍜',c:'#ff8a5c',cats:['food','coffee']},
- {id:'clothing',n:'衣',detail:'衣著、購物與個人用品',ic:'👕',c:'#ff6b9d',cats:['shop','beauty']},
- {id:'home',n:'住',detail:'居住、水電與居家設備',ic:'🏠',c:'#69db7c',cats:['home','util','electronics']},
- {id:'transport',n:'行',detail:'交通與旅遊',ic:'🚌',c:'#4dabf7',cats:['trans','travel']},
- {id:'other',n:'其他',detail:'醫療、教育、娛樂與日常支出',ic:'📦',c:'#868e96',cats:['other','fee']}
-];
-let expenseMajor='food';
-function expenseMajorFor(catId){return EXPENSE_MAJOR_GROUPS.find(g=>g.cats.includes(catId))?.id||'other';}
-function expenseCatsFor(group){const known=new Set(EXPENSE_MAJOR_GROUPS.filter(g=>g.id!=='other').flatMap(g=>g.cats));return group.id==='other'?expCats.filter(c=>!known.has(c.id)):expCats.filter(c=>group.cats.includes(c.id));}
-function pickExpenseMajor(id){const group=EXPENSE_MAJOR_GROUPS.find(g=>g.id===id);if(!group)return;expenseMajor=id;const next=expenseCatsFor(group)[0];if(next)cur.cat=next.id;renderCatGrid();}
+const EXPENSE_GROUP_DEFAULTS=[{"id":"dining","n":"飲食","ic":"🍽️","c":"#ff8a5c","dk":"dining","ia":"daily/food"},{"id":"transport","n":"交通","ic":"🚌","c":"#4dabf7","dk":"transport","ia":"mobility/transport"},{"id":"entertainment","n":"娛樂","ic":"🎬","c":"#9775fa","dk":"entertainment","ia":"daily/entertainment"},{"id":"shopping","n":"購物","ic":"🛍️","c":"#ff6b9d","dk":"shopping","ia":"daily/groceries"},{"id":"medical","n":"醫療","ic":"🩺","c":"#ff8787","dk":"medical","ia":"daily/healthcare"},{"id":"home","n":"居家","ic":"🏠","c":"#69db7c","dk":"home","ia":"daily/home"},{"id":"sports","n":"運動","ic":"🏋️","c":"#20c997","dk":"sports","ia":"daily/fitness"},{"id":"travel","n":"旅遊","ic":"✈️","c":"#74c0fc","dk":"travel","ia":"mobility/travel"},{"id":"education","n":"教育","ic":"📚","c":"#f783ac","dk":"education","ia":"daily/education"},{"id":"other","n":"其他","ic":"📦","c":"#868e96","dk":"other","ia":"money/receipt"}];
+const EXPENSE_SUBCATEGORY_DEFAULTS=[{"id":"food","n":"其他飲食","groupId":"dining","ic":"🍽️"},{"id":"coffee","n":"零食","groupId":"dining","ic":"☕"},{"id":"dining_breakfast","n":"早餐","groupId":"dining","ic":"🍳"},{"id":"dining_lunch","n":"午餐","groupId":"dining","ic":"🍱"},{"id":"dining_dinner","n":"晚餐","groupId":"dining","ic":"🍲"},{"id":"dining_drinks","n":"飲料","groupId":"dining","ic":"🧋"},{"id":"dining_takeout","n":"外食","groupId":"dining","ic":"🥡"},{"id":"dining_restaurant","n":"餐廳","groupId":"dining","ic":"🍽️"},{"id":"dining_ingredients","n":"食材","groupId":"dining","ic":"🥬"},{"id":"dining_convenience","n":"便利商店","groupId":"dining","ic":"🏪"},{"id":"transport_public","n":"大眾運輸","groupId":"transport","ic":"🚇"},{"id":"transport_taxi","n":"叫車","groupId":"transport","ic":"🚕"},{"id":"transport_fuel","n":"油料","groupId":"transport","ic":"⛽"},{"id":"transport_parking","n":"停車","groupId":"transport","ic":"🅿️"},{"id":"transport_repair","n":"維修","groupId":"transport","ic":"🔧"},{"id":"transport_easycard","n":"悠遊卡","groupId":"transport","ic":"💳"},{"id":"transport_tax","n":"相關車稅","groupId":"transport","ic":"🧾"},{"id":"trans","n":"其他交通","groupId":"transport","ic":"🚌"},{"id":"fun_movie","n":"電影","groupId":"entertainment","ic":"🎬"},{"id":"fun_performance","n":"表演","groupId":"entertainment","ic":"🎤"},{"id":"fun_ticket","n":"門票","groupId":"entertainment","ic":"🎟️"},{"id":"fun_game","n":"遊戲","groupId":"entertainment","ic":"🎮"},{"id":"fun_leisure","n":"休閒活動","groupId":"entertainment","ic":"🎡"},{"id":"fun_hobby","n":"嗜好","groupId":"entertainment","ic":"🎨"},{"id":"fun_streaming","n":"影音娛樂訂閱","groupId":"entertainment","ic":"📺"},{"id":"fun","n":"其他娛樂","groupId":"entertainment","ic":"🎭"},{"id":"shopping_clothes","n":"衣物","groupId":"shopping","ic":"👕"},{"id":"shopping_bags","n":"鞋包","groupId":"shopping","ic":"👟"},{"id":"shopping_daily","n":"日用品","groupId":"shopping","ic":"🧻"},{"id":"shopping_3c","n":"3C用品","groupId":"shopping","ic":"💻"},{"id":"beauty","n":"美容","groupId":"shopping","ic":"💄"},{"id":"shopping_care","n":"個人照護","groupId":"shopping","ic":"🧴"},{"id":"shop","n":"一般購物","groupId":"shopping","ic":"🛍️"},{"id":"med","n":"看診","groupId":"medical","ic":"🩺"},{"id":"medical_dental","n":"牙科","groupId":"medical","ic":"🦷"},{"id":"medical_medicine","n":"藥品","groupId":"medical","ic":"💊"},{"id":"medical_checkup","n":"健檢","groupId":"medical","ic":"🩻"},{"id":"medical_rehab","n":"復健","groupId":"medical","ic":"🩼"},{"id":"medical_supplies","n":"醫療用品","groupId":"medical","ic":"🩹"},{"id":"medical_insurance","n":"健康保險","groupId":"medical","ic":"🛡️"},{"id":"home_rent","n":"房租","groupId":"home","ic":"🏠"},{"id":"home","n":"居住","groupId":"home","ic":"🏡"},{"id":"util","n":"水電瓦斯","groupId":"home","ic":"💡"},{"id":"phone","n":"電話","groupId":"home","ic":"☎️"},{"id":"home_internet","n":"網路","groupId":"home","ic":"🌐"},{"id":"home_goods","n":"家用品","groupId":"home","ic":"🪑"},{"id":"electronics","n":"家電設備","groupId":"home","ic":"🖥️"},{"id":"home_repair","n":"修繕","groupId":"home","ic":"🛠️"},{"id":"home_tax","n":"房屋稅","groupId":"home","ic":"🧾"},{"id":"sports_gym","n":"健身房","groupId":"sports","ic":"🏋️"},{"id":"sports_class","n":"課程","groupId":"sports","ic":"🤸"},{"id":"sports_gear","n":"運動裝備","groupId":"sports","ic":"🏀"},{"id":"sports_entry","n":"報名費","groupId":"sports","ic":"🏁"},{"id":"sport","n":"其他運動","groupId":"sports","ic":"⚽"},{"id":"travel_tickets","n":"交通票券","groupId":"travel","ic":"🎫"},{"id":"travel_stay","n":"住宿","groupId":"travel","ic":"🛏️"},{"id":"travel_sights","n":"景點行程","groupId":"travel","ic":"🗺️"},{"id":"travel_food","n":"旅途餐飲","groupId":"travel","ic":"🍜"},{"id":"travel_gear","n":"旅遊用品","groupId":"travel","ic":"🧳"},{"id":"travel_insurance","n":"旅遊保險","groupId":"travel","ic":"🛡️"},{"id":"travel","n":"旅遊其他","groupId":"travel","ic":"✈️"},{"id":"edu","n":"學費","groupId":"education","ic":"🎓"},{"id":"education_courses","n":"課程","groupId":"education","ic":"🧑‍🏫"},{"id":"education_books","n":"書籍教材","groupId":"education","ic":"📚"},{"id":"education_exam","n":"考試證照","groupId":"education","ic":"📝"},{"id":"education_tools","n":"學習工具","groupId":"education","ic":"✏️"},{"id":"education_software","n":"軟體","groupId":"education","ic":"💿"},{"id":"gift","n":"禮物","groupId":"other","ic":"🎁"},{"id":"other_red_envelope","n":"紅包","groupId":"other","ic":"🧧"},{"id":"pet","n":"寵物日常","groupId":"other","ic":"🐾"},{"id":"fee","n":"手續費","groupId":"other","ic":"🧾"},{"id":"other_donation","n":"捐款","groupId":"other","ic":"🤲"},{"id":"creditCard","n":"信用卡","groupId":"other","ic":"💳"},{"id":"other","n":"其他未分類","groupId":"other","ic":"📦"}];
+const LEGACY_EXPENSE_CATEGORY_MAP={"food":["dining","其他飲食"],"coffee":["dining","零食"],"shop":["shopping","一般購物"],"trans":["transport","其他交通"],"home":["home","居住"],"fun":["entertainment","其他娛樂"],"med":["medical","看診"],"edu":["education","學費"],"util":["home","水電瓦斯"],"phone":["home","電話"],"electronics":["home","家電設備"],"travel":["travel","旅遊其他"],"gift":["other","禮物"],"pet":["other","寵物日常"],"creditCard":["other","信用卡"],"beauty":["shopping","美容"],"sport":["sports","其他運動"],"other":["other","其他未分類"],"fee":["other","手續費"]};
+let expenseGroups=Store.get('expenseGroups',null)||EXPENSE_GROUP_DEFAULTS.map(g=>({...g}));
+let expenseGroupId='dining',expenseMgrGroupId='dining';
+let expenseGroupFormId=null,expenseGroupFormName='',expenseGroupFormIcon='dining',expenseGroupFormColor='#ff8a5c';
+function expenseGroupFor(catId){return expCats.find(c=>c.id===catId)?.groupId||'';}
+function expenseCatsFor(group){const id=typeof group==='string'?group:group?.id;return expCats.filter(c=>c.groupId===id);}
+function expenseGroupIcon(g){return `<svg class="daily-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#dl-${g.dk||'other'}"></use></svg>`;}
+function pickExpenseGroup(id){const group=expenseGroups.find(g=>g.id===id);if(!group)return;expenseGroupId=id;const cats=expenseCatsFor(id);if(!cats.some(c=>c.id===cur.cat))cur.cat=cats[0]?.id||'';renderCatGrid();}
+function normalizeExpenseTaxonomy(forceLegacy=false){
+ const valid=new Set((expenseGroups||[]).map(g=>g.id));
+ if(forceLegacy){for(const g of EXPENSE_GROUP_DEFAULTS)if(!valid.has(g.id)){expenseGroups.push({...g});valid.add(g.id);}}
+ const groupById=Object.fromEntries(expenseGroups.map(g=>[g.id,g]));
+ if(forceLegacy){
+  expCats.forEach(c=>{const m=LEGACY_EXPENSE_CATEGORY_MAP[c.id];if(m){c.groupId=m[0];c.n=m[1];}else if(!valid.has(c.groupId))c.groupId='other';if(groupById[c.groupId]){c.dk=c.dk||groupById[c.groupId].dk;c.ia=c.ia||groupById[c.groupId].ia;}});
+  for(const def of EXPENSE_SUBCATEGORY_DEFAULTS)if(!expCats.some(c=>c.id===def.id)){const g=groupById[def.groupId]||groupById.other;expCats.push({...def,c:g.c,dk:g.dk,ia:g.ia});}
+  Store.set('expenseTaxonomyVersion',1);
+ }else{
+  expenseGroups=expenseGroups.filter(g=>g&&g.id&&g.n);for(const c of expCats)if(!valid.has(c.groupId))c.groupId='other';
+ }
+ if(!expenseGroups.some(g=>g.id==='dining'))expenseGroups=EXPENSE_GROUP_DEFAULTS.map(g=>({...g}));
+ expenseGroupId=expenseGroupId&&expenseGroups.some(g=>g.id===expenseGroupId)?expenseGroupId:(expenseGroups[0]?.id||'other');
+ expenseMgrGroupId=expenseGroups.some(g=>g.id===expenseMgrGroupId)?expenseMgrGroupId:expenseGroupId;
+ Store.set('expenseGroups',expenseGroups);Store.set('expCats',expCats);
+}
+normalizeExpenseTaxonomy(!Store.get('expenseTaxonomyVersion',0));
 let tfCustomToAmt=false;
 let calculatorTarget='amount',calculatorReplace=false;
 let editAcctId=null,afIcon=ICONS[0],afColor=COLORS[0],afImg=null;
 let catMgrType='expense',catFormId=null,cfName='',cfIcon='🍕',cfDaily='food',cfIllustration='daily/food',cfColor=COLORS[0];
+let cfGroupId='dining';
 let recurType='expense',recurEditId=null;
 
 const $=s=>document.querySelector(s);
@@ -1406,7 +1469,7 @@ function queueDataRefresh(){
 }
 const persist=()=>{Store.set('accounts',accounts);Store.set('transactions',transactions);Store.set('budgets',budgets);Store.set('collapsed',collapsed);bump();queueDataRefresh();if(typeof syncNativeUpcomingNotifications==='function')syncNativeUpcomingNotifications();};
 const persistGroups=()=>{Store.set('groupOrder',groupOrder);persist();};
-const persistCats=()=>{Store.set('expCats',expCats);Store.set('incCats',incCats);bump();queueDataRefresh();};
+const persistCats=()=>{Store.set('expCats',expCats);Store.set('incCats',incCats);Store.set('expenseGroups',expenseGroups);Store.set('expenseTaxonomyVersion',1);bump();if(typeof queueDataRefresh==='function')queueDataRefresh();};
 const persistRecur=()=>{Store.set('recurrings',recurrings);if(typeof refreshPlannedTransactions==='function')refreshPlannedTransactions();bump();queueDataRefresh();if(typeof syncNativeUpcomingNotifications==='function')syncNativeUpcomingNotifications();};
 const persistInstallments=()=>{Store.set('installments',installments);if(typeof refreshPlannedTransactions==='function')refreshPlannedTransactions();bump();queueDataRefresh();if(typeof syncNativeUpcomingNotifications==='function')syncNativeUpcomingNotifications();};
 const persistGoals=()=>{Store.set('goals',goals);bump();queueDataRefresh();};
@@ -1733,15 +1796,17 @@ function renderStats(){fillStatTripSel();const trip=trips.find(t=>t.id===statTri
 
 /* transaction sheet */
 function renderCatGrid(){const grid=$('#catGrid');if(cur.type==='expense'){
- expenseMajor=expenseMajorFor(cur.cat);const group=EXPENSE_MAJOR_GROUPS.find(g=>g.id===expenseMajor)||EXPENSE_MAJOR_GROUPS[0],cats=expenseCatsFor(group);
- const majors=EXPENSE_MAJOR_GROUPS.map(g=>`<button class="expense-major ${g.id===group.id?'on':''}" style="--major:${g.c}" aria-pressed="${g.id===group.id}" title="${g.detail}" onclick="pickExpenseMajor('${g.id}')"><span class="mi">${g.ic}</span><span>${g.n}</span></button>`).join('');
- const subs=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${catIcon(c,'large')}</div><div class="nm">${c.n}</div></button>`).join('');
- grid.classList.add('expense-hierarchy');grid.innerHTML=`<div class="expense-major-tabs" aria-label="支出大項">${majors}</div><div class="expense-subhead"><span>細分項目</span><b>${group.detail}</b></div><div class="expense-sub-grid">${subs}<button class="cat" onclick="openCatMgr('expense')"><div class="ic" style="border:2px dashed var(--line);color:var(--ink3)">＋</div><div class="nm">編輯</div></button></div>`;renderCatBudgetHint();return;
+ const group=expenseGroups.find(g=>g.id===expenseGroupFor(cur.cat))||expenseGroups.find(g=>g.id===expenseGroupId)||expenseGroups[0];if(!group){grid.innerHTML='';renderCatBudgetHint();return;}expenseGroupId=group.id;const cats=expenseCatsFor(group.id);
+ const majors=expenseGroups.map(g=>`<button class="expense-major ${g.id===group.id?'on':''}" style="--major:${g.c}" aria-pressed="${g.id===group.id}" title="${noticeEsc(g.n)}" onclick="pickExpenseGroup('${g.id}')"><span class="mi">${expenseGroupIcon(g)}</span><span>${noticeEsc(g.n)}</span></button>`).join('')+`<button class="expense-major expense-major-add" title="新增／管理大類與細項" aria-label="新增或管理支出分類" onclick="openCatMgr('expense')"><span class="mi">＋</span></button>`;
+ const subs=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${catIcon(c,'large')}</div><div class="nm">${noticeEsc(c.n)}</div></button>`).join('');
+ const addSub=`<button class="cat expense-add-sub" onclick="openCatMgr('expense','${group.id}')"><div class="ic">＋</div><div class="nm">新增細項</div></button>`;
+ grid.classList.add('expense-hierarchy');grid.innerHTML=`<div class="expense-major-tabs" aria-label="支出大類">${majors}</div><div class="expense-subhead"><span>細分項目</span><b>${noticeEsc(group.n)}</b></div><div class="expense-sub-grid">${subs}${addSub}</div>`;renderCatBudgetHint();return;
  }
  grid.classList.remove('expense-hierarchy');const cats=cur.type==='income'?incCats:expCats;
  let h=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${catIcon(c,'large')}</div><div class="nm">${c.n}</div></button>`).join('');
  h+=`<button class="cat" onclick="openCatMgr('${cur.type}')"><div class="ic" style="border:2px dashed var(--line);color:var(--ink3)">＋</div><div class="nm">編輯</div></button>`;
  grid.innerHTML=h;renderCatBudgetHint();}
+function pickCat(id){cur.cat=id;renderCatGrid();}
 function pickCat(id){cur.cat=id;renderCatGrid();}
 const NL_ALIAS={food:['早餐','午餐','晚餐','宵夜','便當','手搖','飲料','聚餐','麥當勞','超商','吃飯','美食'],coffee:['咖啡','星巴克','拿鐵','美式','卡布奇諾'],trans:['捷運','公車','高鐵','台鐵','計程車','uber','加油','油錢','停車','車票','交通','ubike','機票'],shop:['購物','衣服','蝦皮','momo','網購','買鞋','百貨','服飾'],fun:['電影','遊戲','娛樂','唱歌','ktv','演唱會','展覽','追劇'],home:['房租','日用品','家用','傢俱','寢具'],util:['電費','水費','瓦斯','瓦斯費'],phone:['電話費','手機費','通訊','電信'],med:['看診','看醫生','醫療','健保','藥局','診所'],edu:['書','課程','學費','補習'],travel:['旅遊','住宿','飯店','旅館'],salary:['薪水','薪資','月薪','工資','底薪'],bonus:['獎金','分紅','年終'],invest:['股票','股利','配息','投資','基金'],redenv:['紅包'],parttime:['兼職','打工','接案','家教','鐘點','外快','稿費','佣金']};
 function nlNum(s){const m=String(s).match(/[0-9][0-9,]*(\.[0-9]+)?/);return m?parseFloat(m[0].replace(/,/g,'')):null;}
@@ -2119,29 +2184,41 @@ function addGroupFromInput(){if(addGroup($('#newGrpName').value)){renderGrpSheet
 function deleteGroup(g){if(accounts.some(a=>a.group===g)){toast('此分組仍有帳戶，無法刪除');return;}groupOrder=groupOrder.filter(x=>x!==g);persistGroups();renderGrpSheet();renderOverview();toast('分組已刪除');}
 
 /* category manager */
-function openCatMgr(type){catMgrType=type;renderCatGridView();$('#catSheet').classList.add('open');syncMask();}
+function openCatMgr(type,groupId){catMgrType=type;if(type==='expense'&&groupId)expenseMgrGroupId=groupId;renderCatGridView();$('#catSheet').classList.add('open');syncMask();}
 function closeCat(){$('#catSheet').classList.remove('open');syncMask();}
-function renderCatGridView(){catFormId='__list__';const cats=catMgrType==='income'?incCats:expCats;
+function renderCatGridView(){catFormId='__list__';
  $('#catTitle').textContent=catMgrType==='income'?'收入分類':'支出分類';
+ if(catMgrType==='expense'){
+  const group=expenseGroups.find(g=>g.id===expenseMgrGroupId)||expenseGroups[0];if(!group){$('#catBody').innerHTML='<button class="save-btn" onclick="openExpenseGroupForm(null)">＋ 新增大類</button>';return;}
+  const groups=expenseGroups.map(g=>`<div class="expense-mgr-parent ${g.id===group.id?'on':''}"><button class="expense-mgr-parent-pick" onclick="selectExpenseMgrGroup('${g.id}')"><span class="expense-mgr-group-icon" style="--major:${g.c}">${expenseGroupIcon(g)}</span><span class="expense-mgr-parent-name">${noticeEsc(g.n)}</span><small>${expenseCatsFor(g.id).length} 項</small></button><button class="expense-mgr-action" aria-label="編輯${noticeEsc(g.n)}大類" onclick="openExpenseGroupForm('${g.id}')">✎</button><button class="expense-mgr-action delete" aria-label="刪除${noticeEsc(g.n)}大類" onclick="deleteExpenseGroup('${g.id}')" ${expenseCatsFor(g.id).length?'disabled':''}>×</button></div>`).join('');
+  const kids=expenseCatsFor(group.id).map(c=>`<button class="cat expense-mgr-child" onclick="openCatForm('${c.id}','${group.id}')"><div class="ic" style="background:${c.c}22;color:${c.c}">${catIcon(c,'large')}</div><div class="nm">${noticeEsc(c.n)}</div></button>`).join('');
+  $('#catBody').innerHTML=`<div class="expense-mgr-actions"><button class="set-row" onclick="openExpenseGroupForm(null)">＋ 新增大類</button><button class="set-row add" onclick="openCatForm(null,'${group.id}')">＋ 新增「${noticeEsc(group.n)}」細項</button></div><div class="expense-mgr-label">第一層・大類</div><div class="expense-mgr-groups">${groups}</div><div class="expense-mgr-subhead"><b>${noticeEsc(group.n)}・第二層細項</b><button onclick="openCatForm(null,'${group.id}')">＋新增</button></div><div class="cat-grid expense-mgr-children">${kids||'<div class="set-empty">這個大類還沒有細項</div>'}</div><p class="hint">點大類切換細項；✎ 可改大類名稱與圖示，× 只能刪除沒有細項的大類。點細項可編輯、搬移或刪除。</p>`;return;
+ }
+ const cats=incCats;
  const grid=cats.map(c=>`<button class="cat" onclick="openCatForm('${c.id}')"><div class="ic" style="background:${c.c}22;color:${c.c}">${catIcon(c,'large')}</div><div class="nm">${c.n}</div></button>`).join('')+`<button class="cat" onclick="openCatForm(null)"><div class="ic" style="border:2px dashed var(--line);color:var(--ink3)">＋</div><div class="nm">新增</div></button>`;
  $('#catBody').innerHTML=`<div class="cat-grid" style="max-height:none;padding:0">${grid}</div><p class="hint">點任一分類可改名稱、圖示、顏色，或刪除沒被使用的分類。</p>`;}
-function openCatForm(id){catFormId=id;const list=catMgrType==='income'?incCats:expCats;if(id){const c=list.find(x=>x.id===id);cfName=c.n;cfIcon=c.ic;cfDaily=c.dk||DAILY_ICON_BY_CAT[c.id]||'other';cfIllustration=c.ia||ILLUSTRATION_BY_CAT[c.id]||ILLUSTRATION_BY_CAT.other;cfColor=c.c;}else{const isIncome=catMgrType==='income',base=incCats[0]||{ic:INC_CAT_ICONS[0],id:'salary',c:'#2bb673'};cfName='';cfIcon=isIncome?base.ic:CAT_ICONS[0];cfDaily=isIncome?(base.dk||DAILY_ICON_BY_CAT[base.id]||'money'):'food';cfIllustration=isIncome?(base.ia||ILLUSTRATION_BY_CAT[base.id]||'money/bank'):'daily/food';cfColor=isIncome?(base.c||'#2bb673'):COLORS[0];}renderCatFormView();}
+function selectExpenseMgrGroup(id){expenseMgrGroupId=id;expenseGroupId=id;renderCatGridView();}
+function openExpenseGroupForm(id){expenseGroupFormId=id||null;const g=expenseGroups.find(x=>x.id===id);expenseGroupFormName=g?.n||'';expenseGroupFormIcon=g?.dk||'dining';expenseGroupFormColor=g?.c||'#ff8a5c';renderExpenseGroupForm();}
+function renderExpenseGroupForm(){const options=EXPENSE_GROUP_DEFAULTS.map(g=>`<button type="button" class="expense-group-icon-opt ${g.dk===expenseGroupFormIcon?'on':''}" title="${g.n}" aria-label="${g.n}圖示" onclick="expenseGroupFormIcon='${g.dk}';renderExpenseGroupForm()"><svg class="daily-icon" viewBox="0 0 24 24"><use href="#dl-${g.dk}"></use></svg></button>`).join('');$('#catBody').innerHTML=`<div class="field"><label>大類名稱</label><input id="expenseGroupName" value="${noticeEsc(expenseGroupFormName)}" placeholder="例如：家庭"></div><div class="field"><label>簡潔圖示</label><div class="picker expense-group-icon-picker">${options}</div></div><div class="field"><label>顏色</label><div class="picker">${COLORS.map(c=>`<button class="swatch ${c===expenseGroupFormColor?'on':''}" style="background:${c}" onclick="expenseGroupFormColor='${c}';renderExpenseGroupForm()"></button>`).join('')}</div></div><button class="save-btn" onclick="saveExpenseGroup()">儲存大類</button>${expenseGroupFormId?`<button class="set-row" style="margin-top:10px;justify-content:center" onclick="renderCatGridView()">‹ 返回大類與細項</button>`:''}`;}
+function saveExpenseGroup(){const name=($('#expenseGroupName')?.value||'').trim();if(!name){toast('請輸入大類名稱');return;}if(expenseGroups.some(g=>g.n===name&&g.id!==expenseGroupFormId)){toast('大類名稱已存在');return;}if(expenseGroupFormId){const g=expenseGroups.find(x=>x.id===expenseGroupFormId);if(!g)return;g.n=name;g.dk=expenseGroupFormIcon;g.c=expenseGroupFormColor;}else{const g={id:'group_'+rnd(),n:name,ic:'📦',c:expenseGroupFormColor,dk:expenseGroupFormIcon,ia:EXPENSE_GROUP_DEFAULTS.find(x=>x.dk===expenseGroupFormIcon)?.ia||'money/receipt'};expenseGroups.push(g);expenseMgrGroupId=g.id;expenseGroupId=g.id;cur.cat='';}Store.set('expenseGroups',expenseGroups);bump();renderCatGridView();renderCatGrid();toast(expenseGroupFormId?'大類已更新':'已新增大類');}
+function deleteExpenseGroup(id){const g=expenseGroups.find(x=>x.id===id);if(!g)return;if(expenseCatsFor(id).length){toast('請先移動或刪除這個大類的細項');return;}expenseGroups=expenseGroups.filter(x=>x.id!==id);if(expenseMgrGroupId===id)expenseMgrGroupId=expenseGroups[0]?.id||'';if(expenseGroupId===id)expenseGroupId=expenseGroups[0]?.id||'';Store.set('expenseGroups',expenseGroups);bump();renderCatGridView();renderCatGrid();toast('大類已刪除');}
+function openCatForm(id,groupId){catFormId=id;cfGroupId=groupId||expenseGroupId||expenseGroups[0]?.id||'other';const list=catMgrType==='income'?incCats:expCats;if(id){const c=list.find(x=>x.id===id);cfName=c.n;cfIcon=c.ic;cfDaily=c.dk||DAILY_ICON_BY_CAT[c.id]||'other';cfIllustration=c.ia||ILLUSTRATION_BY_CAT[c.id]||ILLUSTRATION_BY_CAT.other;cfColor=c.c;cfGroupId=c.groupId||cfGroupId;}else{const isIncome=catMgrType==='income',base=incCats[0]||{ic:INC_CAT_ICONS[0],id:'salary',c:'#2bb673'};cfName='';cfIcon=isIncome?base.ic:CAT_ICONS[0];cfDaily=isIncome?(base.dk||DAILY_ICON_BY_CAT[base.id]||'money'):(expenseGroups.find(g=>g.id===cfGroupId)?.dk||'other');cfIllustration=isIncome?(base.ia||ILLUSTRATION_BY_CAT[base.id]||'money/bank'):(expenseGroups.find(g=>g.id===cfGroupId)?.ia||'money/receipt');cfColor=isIncome?(base.c||'#2bb673'):(expenseGroups.find(g=>g.id===cfGroupId)?.c||COLORS[0]);}renderCatFormView();}
 function renderCatFormView(){$('#catBody').innerHTML=`<div class="field af-toprow"><div class="av af-prev" id="cfPrev"></div><div style="font-size:13px;color:var(--ink2)">預覽</div></div>
- <div class="field"><label>名稱</label><input id="cfName" value="${String(cfName).replace(/"/g,'&quot;')}" oninput="cfName=this.value;renderCfPrev()"></div>
+ ${catMgrType==='expense'?`<div class="field"><label>所屬大類</label><select id="cfGroup" onchange="cfGroupId=this.value">${expenseGroups.map(g=>`<option value="${g.id}" ${g.id===cfGroupId?'selected':''}>${noticeEsc(g.n)}</option>`).join('')}</select></div>`:''}
+ <div class="field"><label>細項名稱</label><input id="cfName" value="${noticeEsc(cfName)}" oninput="cfName=this.value;renderCfPrev()"></div>
  <div class="field"><label>圖示（${iconStyleName()}）</label><div class="picker" id="cfIcons" style="max-height:148px;overflow-y:auto"></div></div>
  <div class="field"><label>顏色</label><div class="picker" id="cfColors"></div></div>
- <button class="save-btn" onclick="saveCat()">儲存分類</button>
- ${catFormId&&catFormId!=='__list__'?'<button class="del-btn" onclick="deleteCat()">刪除分類</button>':''}
- <button class="set-row" style="margin-top:10px;justify-content:center" onclick="renderCatGridView()">‹ 返回分類列表</button>`;
+ <button class="save-btn" onclick="saveCat()">儲存細項</button>
+ ${catFormId&&catFormId!=='__list__'?'<button class="del-btn" onclick="deleteCat()">刪除細項</button>':''}
+ <button class="set-row" style="margin-top:10px;justify-content:center" onclick="renderCatGridView()">‹ 返回分類管理</button>`;
  renderCfPickers();renderCfPrev();}
 function renderCfPickers(){const el=$('#cfIcons'),isIncome=catMgrType==='income',options=isIncome?incCats.map(c=>({k:c.dk||DAILY_ICON_BY_CAT[c.id]||'money',a:c.ia||ILLUSTRATION_BY_CAT[c.id]||'money/bank',n:c.n,ic:c.ic})):CATEGORY_STYLE_OPTIONS;if(iconStyle==='emoji')el.innerHTML=(isIncome?options.map(o=>o.ic):CAT_ICONS).map(i=>`<button class="opt ${i===cfIcon?'on':''}" onclick="cfIcon='${i}';renderCfPickers();renderCfPrev()">${i}</button>`).join('');else if(iconStyle==='daily')el.innerHTML=options.map(o=>`<button class="opt ${o.k===cfDaily?'on':''}" title="${o.n}" onclick="cfDaily='${o.k}';renderCfPickers();renderCfPrev()"><svg class="daily-icon" viewBox="0 0 24 24"><use href="#dl-${o.k}"></use></svg></button>`).join('');else el.innerHTML=options.map(o=>`<button class="opt ${o.a===cfIllustration?'on':''}" title="${o.n}" onclick="cfIllustration='${o.a}';renderCfPickers();renderCfPrev()"><img class="daily-life-illustration" src="assets/daily-life-icons/${o.a}.png" alt="${o.n}"></button>`).join('');$('#cfColors').innerHTML=COLORS.map(c=>`<button class="swatch ${c===cfColor?'on':''}" style="background:${c}" onclick="cfColor='${c}';renderCfPickers();renderCfPrev()"></button>`).join('');}
 function renderCfPrev(){const p=$('#cfPrev');if(p){p.style.background=cfColor+'22';p.style.color=cfColor;p.innerHTML=catIcon({id:'custom',n:cfName||'新分類',ic:cfIcon,dk:cfDaily,ia:cfIllustration},'large');}}
-function saveCat(){const name=(cfName||'').trim();if(!name){toast('請輸入分類名稱');return;}const list=catMgrType==='income'?incCats:expCats;
- if(catFormId&&catFormId!=='__list__'){const c=list.find(x=>x.id===catFormId);c.n=name;c.ic=cfIcon;c.dk=cfDaily;c.ia=cfIllustration;c.c=cfColor;toast('分類已更新');}else{list.push({id:'c'+rnd(),n:name,ic:cfIcon,dk:cfDaily,ia:cfIllustration,c:cfColor});toast('已新增分類');}
+function saveCat(){const name=(cfName||'').trim();if(!name){toast('請輸入細項名稱');return;}const list=catMgrType==='income'?incCats:expCats;
+ if(catFormId&&catFormId!=='__list__'){const c=list.find(x=>x.id===catFormId);c.n=name;c.ic=cfIcon;c.dk=cfDaily;c.ia=cfIllustration;c.c=cfColor;if(catMgrType==='expense')c.groupId=$('#cfGroup')?.value||cfGroupId;toast('細項已更新');}else{const c={id:'c'+rnd(),n:name,ic:cfIcon,dk:cfDaily,ia:cfIllustration,c:cfColor};if(catMgrType==='expense')c.groupId=$('#cfGroup')?.value||cfGroupId;list.push(c);cur.cat=c.id;toast('已新增細項');}
  persistCats();rebuildCatMap();renderCatGridView();renderCatGrid();renderBudget();}
 function deleteCat(){if(!catFormId||catFormId==='__list__')return;if(transactions.some(t=>t.cat===catFormId)||recurrings.some(r=>r.cat===catFormId)){toast('此分類已被使用，無法刪除');return;}
- if(catMgrType==='income')incCats=incCats.filter(c=>c.id!==catFormId);else expCats=expCats.filter(c=>c.id!==catFormId);delete budgets[catFormId];persistCats();persist();rebuildCatMap();renderCatGridView();renderCatGrid();toast('分類已刪除');}
-
+ if(catMgrType==='income')incCats=incCats.filter(c=>c.id!==catFormId);else expCats=expCats.filter(c=>c.id!==catFormId);delete budgets[catFormId];if(cur.cat===catFormId)cur.cat=expCats[0]?.id||'';persistCats();persist();rebuildCatMap();renderCatGridView();renderCatGrid();toast('細項已刪除');}
 /* settings */
 function iconStyleName(){return iconStyle==='emoji'?'Emoji':iconStyle==='daily'?'Daily Line':'Daily Life 插畫';}
 function openSet(){renderRecurList();renderFxRow();renderGdRow();renderRemindSet();renderLifeShareSet();const ac=$('#aliasCount');if(ac)ac.textContent=aliases.length?(aliases.length+' 條 ›'):'›';const tc=$('#tripCount');if(tc)tc.textContent=trips.length?(trips.length+' 趟 ›'):'›';const ic=$('#installmentCount');if(ic){const active=installments.filter(x=>x.active!==false).length;ic.textContent=active?active+' 筆進行中 ›':'›';}$('#setThemeVal').textContent='淺色 → 深色 → 墨綠';$('#iconStyleVal').textContent=iconStyleName();$('#setSheet').classList.add('open');syncMask();}
@@ -2247,18 +2324,18 @@ function csvCell(v){v=v==null?'':String(v);return /[",\r\n]/.test(v)?'"'+v.repla
 function exportCSV(){const head=['日期','類型','分類','帳戶','轉入帳戶','金額','備註'];const tl={expense:'支出',income:'收入',transfer:'轉帳'};
  const rows=[...transactions].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(t=>{const d=new Date(t.date);const date=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());const cat=t.type==='transfer'?'':(CATMAP[t.cat]?CATMAP[t.cat].n:'');const acc=accounts.find(a=>a.id===t.acct),to=accounts.find(a=>a.id===t.to);return [date,tl[t.type]||'',cat,acc?acc.n:'',to?to.n:'',t.amt,t.note||''];});
  const csv='\uFEFF'+[head,...rows].map(r=>r.map(csvCell).join(',')).join('\r\n');download('wallet_明細_'+ymd()+'.csv',csv,'text/csv;charset=utf-8');toast('已匯出 '+rows.length+' 筆明細 CSV');}
-function snapshot(){return {app:'小錢包',version:6,savedAt:dataStamp,exportedAt:new Date().toISOString(),accounts,transactions,budgets,groupOrder,collapsed,expCats,incCats,recurrings,installments,goals,debts,aliases,trips,fxRates,fxDate};}
+function snapshot(){return {app:'小錢包',version:7,expenseTaxonomyVersion:1,savedAt:dataStamp,exportedAt:new Date().toISOString(),accounts,transactions,budgets,groupOrder,collapsed,expenseGroups,expCats,incCats,recurrings,installments,goals,debts,aliases,trips,fxRates,fxDate};}
 function applySnapshot(d){if(!d||!d.accounts||!d.transactions)throw 0;
- accounts=d.accounts;transactions=d.transactions;budgets=d.budgets||{};groupOrder=d.groupOrder||[...DEFGROUPS];collapsed=d.collapsed||[];expCats=d.expCats||DEF_EXP.map(c=>({...c}));incCats=d.incCats||DEF_INC.map(c=>({...c}));recurrings=d.recurrings||[];installments=d.installments||[];goals=d.goals||[];debts=d.debts||[];aliases=d.aliases||[];trips=d.trips||[];if(d.fxRates)fxRates=d.fxRates;if(d.fxDate)fxDate=d.fxDate;
+ accounts=d.accounts;transactions=d.transactions;budgets=d.budgets||{};groupOrder=d.groupOrder||[...DEFGROUPS];collapsed=d.collapsed||[];expCats=d.expCats||DEF_EXP.map(c=>({...c}));incCats=d.incCats||DEF_INC.map(c=>({...c}));expenseGroups=Array.isArray(d.expenseGroups)?d.expenseGroups.map(g=>({...g})):EXPENSE_GROUP_DEFAULTS.map(g=>({...g}));normalizeExpenseTaxonomy(!d.expenseTaxonomyVersion);recurrings=d.recurrings||[];installments=d.installments||[];goals=d.goals||[];debts=d.debts||[];aliases=d.aliases||[];trips=d.trips||[];if(d.fxRates)fxRates=d.fxRates;if(d.fxDate)fxDate=d.fxDate;
  accounts.forEach(a=>{if(!a.ccy)a.ccy='TWD';if(!groupOrder.includes(a.group))groupOrder.push(a.group);});rebuildCatMap();
- Store.set('accounts',accounts);Store.set('transactions',transactions);Store.set('budgets',budgets);Store.set('collapsed',collapsed);Store.set('groupOrder',groupOrder);Store.set('expCats',expCats);Store.set('incCats',incCats);Store.set('recurrings',recurrings);Store.set('installments',installments);Store.set('goals',goals);Store.set('debts',debts);Store.set('aliases',aliases);Store.set('trips',trips);Store.set('fxRates',fxRates);Store.set('fxDate',fxDate);
+ Store.set('accounts',accounts);Store.set('transactions',transactions);Store.set('budgets',budgets);Store.set('collapsed',collapsed);Store.set('groupOrder',groupOrder);Store.set('expenseGroups',expenseGroups);Store.set('expenseTaxonomyVersion',1);Store.set('expCats',expCats);Store.set('incCats',incCats);Store.set('recurrings',recurrings);Store.set('installments',installments);Store.set('goals',goals);Store.set('debts',debts);Store.set('aliases',aliases);Store.set('trips',trips);Store.set('fxRates',fxRates);Store.set('fxDate',fxDate);
  dataStamp=d.savedAt||Date.now();Store.set('dataStamp',dataStamp);}
 function exportBackup(){download('wallet_備份_'+ymd()+'.json',JSON.stringify(snapshot(),null,2),'application/json');toast('已匯出完整備份');}
 function importBackup(file){const r=new FileReader();r.onload=async()=>{const txt=r.result;let obj=null;
  try{obj=JSON.parse(txt);}catch(e){toast('檔案格式錯誤，無法還原');return;}
  if(obj&&obj.wmoze){const pw=prompt('請輸入此備份的密碼：');if(pw==null)return;try{obj=JSON.parse(await decryptText(txt,pw));}catch(e){toast('密碼錯誤或檔案毀損');return;}}
  try{applySnapshot(obj);closeAll();renderOverview();toast('已從備份還原');}catch(e){toast('檔案格式錯誤，無法還原');}};r.readAsText(file);}
-function resetData(){if(!confirm('確定清除所有資料並還原為範例？此動作無法復原。'))return;try{['accounts','transactions','budgets','collapsed','groupOrder','expCats','incCats','recurrings','installments','goals','debts','aliases','trips','lastTrip','goals_seeded','seed_v3','dataStamp'].forEach(k=>localStorage.removeItem(k));}catch(e){}location.reload();}
+function resetData(){if(!confirm('確定清除所有資料並還原為範例？此動作無法復原。'))return;try{['accounts','transactions','budgets','collapsed','groupOrder','expenseGroups','expenseTaxonomyVersion','expCats','incCats','recurrings','installments','goals','debts','aliases','trips','lastTrip','goals_seeded','seed_v3','dataStamp'].forEach(k=>localStorage.removeItem(k));}catch(e){}location.reload();}
 
 /* Google Drive sync */
 const GD={token:null,exp:0};let gdTimer=null;
