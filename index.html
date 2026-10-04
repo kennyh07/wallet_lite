@@ -260,6 +260,15 @@ html.ios-safari-web #app{height:100%!important;min-height:0!important;max-height
 .cat .nm{font-size:11px;color:var(--ink2);font-weight:500;}
 .cat.on .ic{transform:scale(1.06);box-shadow:0 6px 16px rgba(0,0,0,.22);}
 .cat.on .nm{color:var(--ink);font-weight:700;}
+#sheet .cat-grid.expense-hierarchy{display:block!important;height:164px;min-height:164px;padding:0 16px;overflow:hidden!important;}
+.expense-major-tabs{display:flex;gap:7px;overflow-x:auto;overscroll-behavior:contain;padding:2px 0 8px;}
+.expense-major{flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:7px 10px;border-radius:12px;background:var(--bg2);color:var(--ink2);font-size:12px;font-weight:750;white-space:nowrap;transition:.16s;}
+.expense-major .mi{font-size:15px;line-height:1;}
+.expense-major.on{background:var(--major);color:#fff;box-shadow:0 5px 14px color-mix(in srgb,var(--major) 28%,transparent);}
+.expense-subhead{display:flex;align-items:center;justify-content:space-between;padding:0 3px 3px;font-size:11px;color:var(--ink3);font-weight:650;}
+.expense-subhead b{color:var(--ink2);font-size:12px;}
+.expense-sub-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:104px;overflow-y:auto;overscroll-behavior:contain;}
+.expense-sub-grid .cat{padding-top:7px;}
 .daily-icon{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.18em;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round;}
 .tx .daily-icon,.bud .daily-icon,.recur-row .daily-icon{width:22px;height:22px;vertical-align:0;}
 .cat .daily-icon{width:25px;height:25px;vertical-align:0;}
@@ -968,6 +977,11 @@ html.ios-safari-tab .topbar .icon-btn::before,
 html.ios-safari-tab .topbar .icon-btn::after{content:none!important;display:none!important;}
 html.ios-safari-tab .topbar .icon-btn,
 html.ios-safari-tab .topbar .notice-badge{box-shadow:none!important;}
+/* Keep the upcoming icon and its count above the header glass and nearby
+   controls on iPhone Safari, including Home Screen display mode. */
+html.ios-safari-web .topbar{z-index:31;isolation:isolate;overflow:visible!important;}
+html.ios-safari-web .topbar #notifyBtn{position:relative;z-index:32;isolation:isolate;overflow:visible!important;}
+html.ios-safari-web .topbar #notifyBadge{z-index:33;}
 </style>
 </head>
 <body>
@@ -1361,6 +1375,17 @@ let statType='expense',statRef=new Date();
 let recView=Store.get('recView','list'),calRef=new Date(),calSelected=null;
 let calMotion='';
 let cur={type:'expense',cat:expCats[0]?.id,acct:accounts[0]?.id,note:'',expr:'0',editId:null,date:null};
+const EXPENSE_MAJOR_GROUPS=[
+ {id:'food',n:'食',detail:'餐飲、飲料與零食',ic:'🍜',c:'#ff8a5c',cats:['food','coffee']},
+ {id:'clothing',n:'衣',detail:'衣著、購物與個人用品',ic:'👕',c:'#ff6b9d',cats:['shop','beauty']},
+ {id:'home',n:'住',detail:'居住、水電與居家設備',ic:'🏠',c:'#69db7c',cats:['home','util','electronics']},
+ {id:'transport',n:'行',detail:'交通與旅遊',ic:'🚌',c:'#4dabf7',cats:['trans','travel']},
+ {id:'other',n:'其他',detail:'醫療、教育、娛樂與日常支出',ic:'📦',c:'#868e96',cats:['other','fee']}
+];
+let expenseMajor='food';
+function expenseMajorFor(catId){return EXPENSE_MAJOR_GROUPS.find(g=>g.cats.includes(catId))?.id||'other';}
+function expenseCatsFor(group){const known=new Set(EXPENSE_MAJOR_GROUPS.filter(g=>g.id!=='other').flatMap(g=>g.cats));return group.id==='other'?expCats.filter(c=>!known.has(c.id)):expCats.filter(c=>group.cats.includes(c.id));}
+function pickExpenseMajor(id){const group=EXPENSE_MAJOR_GROUPS.find(g=>g.id===id);if(!group)return;expenseMajor=id;const next=expenseCatsFor(group)[0];if(next)cur.cat=next.id;renderCatGrid();}
 let tfCustomToAmt=false;
 let calculatorTarget='amount',calculatorReplace=false;
 let editAcctId=null,afIcon=ICONS[0],afColor=COLORS[0],afImg=null;
@@ -1707,10 +1732,16 @@ function renderStats(){fillStatTripSel();const trip=trips.find(t=>t.id===statTri
  wrap.innerHTML=`<div class="donut"><svg viewBox="0 0 200 200" width="200" height="200">${segs}</svg><div class="center"><div class="t">${isTrip?'旅程':'本月'}${statType==='expense'?'支出':'收入'}</div><div class="v" style="color:${statType==='expense'?'var(--expense)':'var(--income)'}">$${fmtN(total)}</div></div></div>`;list.innerHTML=`<div class="legend">${arr.map(a=>`<div class="leg"><span class="dot" style="background:${a.c}"></span><span class="ic" style="color:${a.c}">${catIcon(a,'large')}</span><span class="nm">${a.n}</span><span class="v">$${fmtN(a.v)}</span><span class="pc">${Math.round(a.v/total*100)}%</span></div>`).join('')}</div>`;}
 
 /* transaction sheet */
-function renderCatGrid(){const cats=cur.type==='income'?incCats:expCats;
+function renderCatGrid(){const grid=$('#catGrid');if(cur.type==='expense'){
+ expenseMajor=expenseMajorFor(cur.cat);const group=EXPENSE_MAJOR_GROUPS.find(g=>g.id===expenseMajor)||EXPENSE_MAJOR_GROUPS[0],cats=expenseCatsFor(group);
+ const majors=EXPENSE_MAJOR_GROUPS.map(g=>`<button class="expense-major ${g.id===group.id?'on':''}" style="--major:${g.c}" aria-pressed="${g.id===group.id}" title="${g.detail}" onclick="pickExpenseMajor('${g.id}')"><span class="mi">${g.ic}</span><span>${g.n}</span></button>`).join('');
+ const subs=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${catIcon(c,'large')}</div><div class="nm">${c.n}</div></button>`).join('');
+ grid.classList.add('expense-hierarchy');grid.innerHTML=`<div class="expense-major-tabs" aria-label="支出大項">${majors}</div><div class="expense-subhead"><span>細分項目</span><b>${group.detail}</b></div><div class="expense-sub-grid">${subs}<button class="cat" onclick="openCatMgr('expense')"><div class="ic" style="border:2px dashed var(--line);color:var(--ink3)">＋</div><div class="nm">編輯</div></button></div>`;renderCatBudgetHint();return;
+ }
+ grid.classList.remove('expense-hierarchy');const cats=cur.type==='income'?incCats:expCats;
  let h=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${catIcon(c,'large')}</div><div class="nm">${c.n}</div></button>`).join('');
  h+=`<button class="cat" onclick="openCatMgr('${cur.type}')"><div class="ic" style="border:2px dashed var(--line);color:var(--ink3)">＋</div><div class="nm">編輯</div></button>`;
- $('#catGrid').innerHTML=h;renderCatBudgetHint();}
+ grid.innerHTML=h;renderCatBudgetHint();}
 function pickCat(id){cur.cat=id;renderCatGrid();}
 const NL_ALIAS={food:['早餐','午餐','晚餐','宵夜','便當','手搖','飲料','聚餐','麥當勞','超商','吃飯','美食'],coffee:['咖啡','星巴克','拿鐵','美式','卡布奇諾'],trans:['捷運','公車','高鐵','台鐵','計程車','uber','加油','油錢','停車','車票','交通','ubike','機票'],shop:['購物','衣服','蝦皮','momo','網購','買鞋','百貨','服飾'],fun:['電影','遊戲','娛樂','唱歌','ktv','演唱會','展覽','追劇'],home:['房租','日用品','家用','傢俱','寢具'],util:['電費','水費','瓦斯','瓦斯費'],phone:['電話費','手機費','通訊','電信'],med:['看診','看醫生','醫療','健保','藥局','診所'],edu:['書','課程','學費','補習'],travel:['旅遊','住宿','飯店','旅館'],salary:['薪水','薪資','月薪','工資','底薪'],bonus:['獎金','分紅','年終'],invest:['股票','股利','配息','投資','基金'],redenv:['紅包'],parttime:['兼職','打工','接案','家教','鐘點','外快','稿費','佣金']};
 function nlNum(s){const m=String(s).match(/[0-9][0-9,]*(\.[0-9]+)?/);return m?parseFloat(m[0].replace(/,/g,'')):null;}
@@ -1857,7 +1888,7 @@ function closeEntryAccountMenu(){const menu=$('#acctMenu');if(menu)menu.classLis
 function chooseEntryAccount(id){$('#acctSel').value=id;$('#acctSel').dispatchEvent(new Event('change'));closeEntryAccountMenu();}
 function fillAccountSelects(){const ordered=orderedAccounts(),opts=ordered.map(a=>`<option value="${a.id}">${accountIconText(a)} ${a.n}</option>`).join('');$('#acctSel').innerHTML=opts;$('#tfFrom').innerHTML=opts;$('#tfTo').innerHTML=opts;if(cur.acct)$('#acctSel').value=cur.acct;if(cur.type==='transfer'){if(cur.acct)$('#tfFrom').value=cur.acct;if(cur.to&&accounts.some(a=>a.id===cur.to))$('#tfTo').value=cur.to;else if(ordered[1])$('#tfTo').value=ordered[1].id;}else if(ordered[1])$('#tfTo').value=ordered[1].id;syncEntryAccountIcons();}
 function setType(t,keepCat=false){cur.type=t;$('#sheet').classList.remove('installment-entry');$('#sheet').classList.toggle('transfer-entry',t==='transfer');const installmentBox=$('#entryInstallmentForm');if(installmentBox)installmentBox.style.display='none';document.querySelectorAll('#sheet .type-seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
- $('#catGrid').style.display=t==='transfer'?'none':'grid';$('#transferPick').style.display=t==='transfer'?'grid':'none';$('#acctPick').style.display=t==='transfer'?'none':'flex';$('#tfFeeRow').style.display=t==='transfer'?'none':'flex';
+ $('#catGrid').style.display=t==='transfer'?'none':'';$('#transferPick').style.display=t==='transfer'?'grid':'none';$('#acctPick').style.display=t==='transfer'?'none':'flex';$('#tfFeeRow').style.display=t==='transfer'?'none':'flex';
  $('#curSign').textContent=t==='income'?'+$':'-$';$('#curSign').style.color=t==='income'?'var(--income)':t==='transfer'?'#5b86e5':'var(--ink3)';const saveColor=t==='income'?'var(--income)':t==='transfer'?'#5b86e5':'var(--accent)';$('#saveKey').style.background=saveColor;
  if(t!=='transfer'){const cats=t==='income'?incCats:expCats;if(!keepCat||!cats.some(c=>c.id===cur.cat))cur.cat=cats[0]?.id;renderCatGrid();}else renderCatBudgetHint();renderQuickAmts();updateCurSign();updateTfTotal();fillTripSel();}
 function entryCcy(){if(cur.type==='transfer')return acctCcy(($('#tfFrom')&&$('#tfFrom').value)||cur.acct);return cur.ccy||acctCcy(cur.acct);}
