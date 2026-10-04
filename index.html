@@ -1044,6 +1044,10 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
 .expense-sub-grid .cat .ic{width:31px;height:31px;min-width:31px;border-radius:9px;font-size:22px;}
 .expense-sub-grid .cat .ic .daily-icon{width:27px;height:27px;}
 .expense-sub-grid .cat .ic .daily-life-illustration{width:29px;height:29px;}
+.expense-sub-grid .cat .ic .expense-subcategory-art{width:29px;height:29px;display:block;overflow:visible;filter:drop-shadow(0 1px 1px rgba(17,35,61,.12));}
+.expense-subcategory-art .art-tile{fill:#fff8ed;stroke:none;}
+.expense-subcategory-art .art-glint{fill:#f5bd56;stroke:none;}
+.expense-subcategory-art use{fill:none;stroke:var(--subcategory-accent);stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;}
 .expense-sub-grid .cat .nm{max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;line-height:1.15;font-weight:750;}
 .expense-sub-empty{grid-column:1/-1;align-self:center;padding:12px 4px;text-align:center;color:var(--ink3);font-size:13px;}
 </style>
@@ -1319,6 +1323,75 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
  <symbol id="dl-mode-expense" viewBox="0 0 24 24"><path d="M4 7h16v14H4zM8 7V5a4 4 0 0 1 8 0v2"/><path d="M12 11v6m-3-3h6"/></symbol>
  <symbol id="dl-mode-income" viewBox="0 0 24 24"><path d="M4 7h16v14H4zM8 7V5a4 4 0 0 1 8 0v2"/><path d="M12 17v-6m-3 3 3-3 3 3"/></symbol>
  <symbol id="dl-mode-transfer" viewBox="0 0 24 24"><path d="M4 8h15l-3-3m4 11H5l3 3"/></symbol>
+ <!-- Purpose-drawn pictograms for expense subcategories. The same glyphs power the line and illustrated styles. -->
+ <symbol id="sub-plate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="4"/><path d="M3 5v6m2-6v6M3 8h2m-1 3v8m17-14v14m0-14c2 1 2 3 2 5h-2"/></symbol>
+ <symbol id="sub-cookie" viewBox="0 0 24 24"><path d="M20 13a8 8 0 1 1-9-9 4 4 0 0 0 5 5 4 4 0 0 0 4 4Z"/><circle cx="9" cy="10" r=".8"/><circle cx="14" cy="15" r=".8"/><circle cx="8" cy="16" r=".8"/></symbol>
+ <symbol id="sub-breakfast" viewBox="0 0 24 24"><path d="M5 14h14a7 7 0 0 1-14 0Zm-2 7h18M8 8a4 4 0 0 1 8 0M12 3v2m-7 1 2 1m12-1-2 1"/></symbol>
+ <symbol id="sub-bento" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 11h18M9 11v9m6-9v9M8 3v3m8-3v3"/></symbol>
+ <symbol id="sub-bowl" viewBox="0 0 24 24"><path d="M4 12h16a8 8 0 0 1-16 0Zm-1 0h18M8 8c-1-1 1-2 0-3m4 3c-1-1 1-2 0-3m4 3c-1-1 1-2 0-3"/></symbol>
+ <symbol id="sub-drink" viewBox="0 0 24 24"><path d="M7 7h10l-1 14H8L7 7Zm2-4h6m-5 7h4m1-3 4-3m-4 3 2 4"/></symbol>
+ <symbol id="sub-takeout" viewBox="0 0 24 24"><path d="M5 9h14l-1 12H6L5 9Zm3 0 1-6h6l1 6M9 14h6"/></symbol>
+ <symbol id="sub-cloche" viewBox="0 0 24 24"><path d="M3 18h18M5 18a7 7 0 0 1 14 0M12 11V8m0 0a2 2 0 1 0-2-2"/><circle cx="12" cy="5" r="1"/></symbol>
+ <symbol id="sub-leaf" viewBox="0 0 24 24"><path d="M20 4C10 4 4 7 4 14a6 6 0 0 0 6 6c7 0 10-7 10-16ZM4 20l10-10m-5 5-1-5m4 2 5 1"/></symbol>
+ <symbol id="sub-store" viewBox="0 0 24 24"><path d="M4 10v11h16V10M3 10l2-7h14l2 7a3 3 0 0 1-5 2 3 3 0 0 1-5 0 3 3 0 0 1-5 0 3 3 0 0 1-3-2Zm5 11v-6h5v6m3-5h2"/></symbol>
+ <symbol id="sub-train" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="17" rx="4"/><path d="M5 10h14M8 19l-2 3m10-3 2 3M9 14h.01M15 14h.01M9 5h6"/></symbol>
+ <symbol id="sub-taxi" viewBox="0 0 24 24"><path d="M3 13h18l-2-6H5l-2 6Zm1 0v6h16v-6M7 19v2m10-2v2M8 7l2-4h4l2 4M7 15h.01M17 15h.01"/></symbol>
+ <symbol id="sub-fuel" viewBox="0 0 24 24"><path d="M5 21V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v17M4 21h13M7 5h7v6H7Zm9 1h2l3 3v8a2 2 0 0 1-4 0v-5"/></symbol>
+ <symbol id="sub-parking" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M10 18V6h4a4 4 0 0 1 0 8h-4"/></symbol>
+ <symbol id="sub-wrench" viewBox="0 0 24 24"><path d="M14 6a6 6 0 0 0-8 8l-4 4 4 4 4-4a6 6 0 0 0 8-8l-4 4-4-4 4-4Z"/></symbol>
+ <symbol id="sub-card" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 9h20m-16 5h5m-5 3h3"/></symbol>
+ <symbol id="sub-receipt" viewBox="0 0 24 24"><path d="M5 3 7 5l2-2 3 2 3-2 2 2 2-2v18l-3-2-3 2-3-2-3 2-2-2-2 2V3Z"/><path d="M8 9h8m-8 4h8m-8 4h5"/></symbol>
+ <symbol id="sub-bus" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="16" rx="4"/><path d="M4 10h16M8 19l-2 3m10-3 2 3M8 14h.01M16 14h.01M8 6h8"/></symbol>
+ <symbol id="sub-film" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 10h18M7 5v5m5-5v5m5-5v5m-10 5v5m5-5v5m5-5v5"/></symbol>
+ <symbol id="sub-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0m-7 7v4m-4 0h8"/></symbol>
+ <symbol id="sub-ticket" viewBox="0 0 24 24"><path d="M3 7a3 3 0 0 0 0 6v4h18v-4a3 3 0 0 1 0-6V3H3v4Zm9-4v3m0 3v3m0 3v2"/></symbol>
+ <symbol id="sub-game" viewBox="0 0 24 24"><path d="M7 8h10a5 5 0 0 1 4.8 6.5l-1 3a2.5 2.5 0 0 1-4.1 1l-2.1-2h-5.2l-2.1 2a2.5 2.5 0 0 1-4.1-1l-1-3A5 5 0 0 1 7 8Z M8 11v5m-2.5-2.5h5m7-1h.01M18 15h.01"/></symbol>
+ <symbol id="sub-wheel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 3v7m8-3-6 4m5 8-6-5m-8 5 6-5M4 7l6 4"/></symbol>
+ <symbol id="sub-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 1.5-3.3 2 2 0 0 1 1.5-3.3H18a4 4 0 0 0 4-4c0-4.1-4.5-7.4-10-7.4Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="15" cy="7.5" r="1"/></symbol>
+ <symbol id="sub-screen" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="15" rx="2"/><path d="M8 22h8m-4-4v4m-3-12 3-2 3 2v4H9v-4Z"/></symbol>
+ <symbol id="sub-theater" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 9h.01M16 9h.01M8 15c2 2 6 2 8 0"/><path d="m3 2 3 2m15-2-3 2"/></symbol>
+ <symbol id="sub-shirt" viewBox="0 0 24 24"><path d="m8 4 4 2 4-2 6 4-3 4-2-1v10H7V11l-2 1-3-4 6-4Z"/></symbol>
+ <symbol id="sub-shoe" viewBox="0 0 24 24"><path d="M3 15c4 0 6-2 7-7l4 2c1 4 3 5 7 6v4H3v-5Zm8-4 2 2m-5-1 2 2"/></symbol>
+ <symbol id="sub-tissue" viewBox="0 0 24 24"><path d="M4 8h16l-1 13H5L4 8Zm-1 0 2-4h14l2 4M8 4v4m8-4v4m-5 5h2"/></symbol>
+ <symbol id="sub-laptop" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="12" rx="1.5"/><path d="M2 18h20l-2 3H4l-2-3Zm7-12h6"/></symbol>
+ <symbol id="sub-lipstick" viewBox="0 0 24 24"><path d="M8 21h9v-9H8v9Zm2-9V7h5l2 5m-7-5 3-5 3 5m-9 14V9h3"/></symbol>
+ <symbol id="sub-bottle" viewBox="0 0 24 24"><path d="M9 3h6v4l2 2v12H7V9l2-2V3Zm0 4h6m-8 7h10"/></symbol>
+ <symbol id="sub-bag" viewBox="0 0 24 24"><path d="M4 8h16l-1 13H5L4 8Zm4 0V6a4 4 0 0 1 8 0v2m-5 4 2 2-2 2"/></symbol>
+ <symbol id="sub-stethoscope" viewBox="0 0 24 24"><path d="M6 3v6a4 4 0 0 0 8 0V3M4 3h4m4 0h4m-2 6v4a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="9" r="2"/></symbol>
+ <symbol id="sub-tooth" viewBox="0 0 24 24"><path d="M7 4c2-2 4 0 5 0s3-2 5 0c3 2 2 7 1 10l-2 6c-.5 2-2 2-3 0l-1-4-1 4c-1 2-2.5 2-3 0l-2-6C5 11 4 6 7 4Z"/></symbol>
+ <symbol id="sub-pill" viewBox="0 0 24 24"><path d="M7 20a5 5 0 0 1-3-8l7-8a5 5 0 0 1 8 6l-7 8a5 5 0 0 1-5 2Z M8 9l7 6"/></symbol>
+ <symbol id="sub-checkup" viewBox="0 0 24 24"><path d="M4 4h16v17H4zM8 2v4m8-4v4M4 8h16m-8 3v6m-3-3h6"/></symbol>
+ <symbol id="sub-rehab" viewBox="0 0 24 24"><path d="M7 3v7l5 4-3 7m8-18v7l-5 4m-5-4 9 0m-9 0-3 7m8-3 4 4"/></symbol>
+ <symbol id="sub-bandage" viewBox="0 0 24 24"><path d="m4 9 5-5 11 11-5 5L4 9Z"/><path d="m8 8 8 8m-6-6h.01m2 2h.01m2 2h.01"/></symbol>
+ <symbol id="sub-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m8 12 3 3 5-6"/></symbol>
+ <symbol id="sub-building" viewBox="0 0 24 24"><path d="M3 21V5l9-3 9 3v16M2 21h20M7 8h2m6 0h2M7 12h2m6 0h2m-8 9v-5h4v5"/></symbol>
+ <symbol id="sub-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10H3V11Zm6 10v-6h6v6"/></symbol>
+ <symbol id="sub-bulb" viewBox="0 0 24 24"><path d="M9 18h6m-5 3h4m-4-6a7 7 0 1 1 4 0l-.5 3h-3L10 15Z"/></symbol>
+ <symbol id="sub-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4m-3 13h2"/></symbol>
+ <symbol id="sub-wifi" viewBox="0 0 24 24"><path d="M2 8a16 16 0 0 1 20 0M5 12a11 11 0 0 1 14 0m-11 4a6 6 0 0 1 8 0m-5 4h2"/></symbol>
+ <symbol id="sub-chair" viewBox="0 0 24 24"><path d="M6 11V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v6m-13 0h14v6H5v-6Zm2 6v4m10-4v4"/></symbol>
+ <symbol id="sub-appliance" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 7h14M8 4h.01M11 4h.01m-2 7h6v7H9z"/></symbol>
+ <symbol id="sub-hammer" viewBox="0 0 24 24"><path d="m14 6 4-4 4 4-4 4m-4-4L7 13m3 3 7-7m-8 4-5 5a2 2 0 0 0 3 3l5-5"/></symbol>
+ <symbol id="sub-house-tax" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3V10Zm6 11v-6h6v6m-3-14v4m-2-2h4"/></symbol>
+ <symbol id="sub-dumbbell" viewBox="0 0 24 24"><path d="m6 8 10 10m-2-13 5 5m-14 4 5 5M4 11l7-7m2 16 7-7m-16-5 4 4m8 8 4-4"/></symbol>
+ <symbol id="sub-yoga" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><path d="m12 7-4 4-4 1m8-5 4 4 4 1m-8-5-1 7-5 6m6-6 5 6"/></symbol>
+ <symbol id="sub-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 3 3 5-3 4-5-1-3-4m16 4-5 1-3 4 2 5m-10-1 3-5-1-4"/></symbol>
+ <symbol id="sub-medal" viewBox="0 0 24 24"><circle cx="12" cy="14" r="6"/><path d="m8 3 2 6m6-6-2 6m-2 2 1.2 2.4 2.8.4-2 2 .5 2.8-2.5-1.3-2.5 1.3.5-2.8-2-2 2.8-.4L12 11Z"/></symbol>
+ <symbol id="sub-bed" viewBox="0 0 24 24"><path d="M3 18V5m18 13V9a3 3 0 0 0-3-3H9v8m-6-4h18M3 21v-3m18 3v-3M9 8h3"/></symbol>
+ <symbol id="sub-map" viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15"/><path d="M12 7a3 3 0 0 1 6 0c0 3-3 5-3 5s-3-2-3-5Z"/></symbol>
+ <symbol id="sub-suitcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3m-8 0v14m8-14v14M3 12h18"/></symbol>
+ <symbol id="sub-plane" viewBox="0 0 24 24"><path d="m3 13 8-2 3-8 2 1-1 7 6 3-1 2-7-1-4 4-2-1 2-5-6-2Z"/></symbol>
+ <symbol id="sub-cap" viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5L2 9Zm4 2v5c3 3 9 3 12 0v-5m4-2v7"/></symbol>
+ <symbol id="sub-teacher" viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M5 21v-2a7 7 0 0 1 14 0v2M3 4h3m-1.5-1.5v3m13 1h4m-2-2v4"/></symbol>
+ <symbol id="sub-book" viewBox="0 0 24 24"><path d="M4 4a3 3 0 0 1 3-2h5v19H7a3 3 0 0 0-3 2V4Zm16 0a3 3 0 0 0-3-2h-5v19h5a3 3 0 0 1 3 2V4Z"/></symbol>
+ <symbol id="sub-certificate" viewBox="0 0 24 24"><path d="M4 3h16v14H4zM8 7h8m-8 4h5m1 6-2 5-2-2-3 1 2-6m4 2 3 5 1-3 3 1-2-6"/></symbol>
+ <symbol id="sub-pencil" viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L21 7l-4-4L4 16Zm10-10 4 4m-9 8-4-4"/></symbol>
+ <symbol id="sub-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/></symbol>
+ <symbol id="sub-gift" viewBox="0 0 24 24"><path d="M3 10h18v11H3zM2 6h20v4H2zm10 0v15m0-15H8a2 2 0 1 1 2-2c1 0 2 2 2 2Zm0 0h4a2 2 0 1 0-2-2c-1 0-2 2-2 2Z"/></symbol>
+ <symbol id="sub-envelope" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 6 9 7 9-7m-9 7v7"/></symbol>
+ <symbol id="sub-paw" viewBox="0 0 24 24"><path d="M12 20c-3 0-5-1.4-5-3.3 0-1.5 1.3-2.3 2.6-3.2.7-.5 1.1-1.5 2.4-1.5s1.7 1 2.4 1.5c1.3.9 2.6 1.7 2.6 3.2 0 1.9-2 3.3-5 3.3Z"/><ellipse cx="5" cy="9" rx="2" ry="3"/><ellipse cx="10" cy="5" rx="2" ry="3"/><ellipse cx="16" cy="5" rx="2" ry="3"/><ellipse cx="20" cy="9" rx="2" ry="3"/></symbol>
+ <symbol id="sub-heart" viewBox="0 0 24 24"><path d="M20 5a5 5 0 0 0-7 0l-1 1-1-1a5 5 0 0 0-7 7l8 9 8-9a5 5 0 0 0 0-7Z"/><path d="M4 12h4l2-3 3 6 2-3h5"/></symbol>
+ <symbol id="sub-box" viewBox="0 0 24 24"><path d="m3 7 9-5 9 5v10l-9 5-9-5V7Zm0 0 9 5 9-5m-9 5v10m-4-17 9 5"/></symbol>
 </svg>
 
 <script>
@@ -1451,6 +1524,14 @@ let calMotion='';
 let cur={type:'expense',cat:expCats[0]?.id,acct:accounts[0]?.id,note:'',expr:'0',editId:null,date:null};
 const EXPENSE_GROUP_DEFAULTS=[{"id":"dining","n":"飲食","ic":"🍽️","c":"#ff8a5c","dk":"dining","ia":"daily/food"},{"id":"transport","n":"交通","ic":"🚌","c":"#4dabf7","dk":"transport","ia":"mobility/transport"},{"id":"entertainment","n":"娛樂","ic":"🎬","c":"#9775fa","dk":"entertainment","ia":"daily/entertainment"},{"id":"shopping","n":"購物","ic":"🛍️","c":"#ff6b9d","dk":"shopping","ia":"daily/groceries"},{"id":"medical","n":"醫療","ic":"🩺","c":"#ff8787","dk":"medical","ia":"daily/healthcare"},{"id":"home","n":"居家","ic":"🏠","c":"#69db7c","dk":"home","ia":"daily/home"},{"id":"sports","n":"運動","ic":"🏋️","c":"#20c997","dk":"sports","ia":"daily/fitness"},{"id":"travel","n":"旅遊","ic":"✈️","c":"#74c0fc","dk":"travel","ia":"mobility/travel"},{"id":"education","n":"教育","ic":"📚","c":"#f783ac","dk":"education","ia":"daily/education"},{"id":"other","n":"其他","ic":"📦","c":"#868e96","dk":"other","ia":"money/receipt"}];
 const EXPENSE_SUBCATEGORY_DEFAULTS=[{"id":"food","n":"其他飲食","groupId":"dining","ic":"🍽️"},{"id":"coffee","n":"零食","groupId":"dining","ic":"☕"},{"id":"dining_breakfast","n":"早餐","groupId":"dining","ic":"🍳"},{"id":"dining_lunch","n":"午餐","groupId":"dining","ic":"🍱"},{"id":"dining_dinner","n":"晚餐","groupId":"dining","ic":"🍲"},{"id":"dining_drinks","n":"飲料","groupId":"dining","ic":"🧋"},{"id":"dining_takeout","n":"外食","groupId":"dining","ic":"🥡"},{"id":"dining_restaurant","n":"餐廳","groupId":"dining","ic":"🍽️"},{"id":"dining_ingredients","n":"食材","groupId":"dining","ic":"🥬"},{"id":"dining_convenience","n":"便利商店","groupId":"dining","ic":"🏪"},{"id":"transport_public","n":"大眾運輸","groupId":"transport","ic":"🚇"},{"id":"transport_taxi","n":"叫車","groupId":"transport","ic":"🚕"},{"id":"transport_fuel","n":"油料","groupId":"transport","ic":"⛽"},{"id":"transport_parking","n":"停車","groupId":"transport","ic":"🅿️"},{"id":"transport_repair","n":"維修","groupId":"transport","ic":"🔧"},{"id":"transport_easycard","n":"悠遊卡","groupId":"transport","ic":"💳"},{"id":"transport_tax","n":"相關車稅","groupId":"transport","ic":"🧾"},{"id":"trans","n":"其他交通","groupId":"transport","ic":"🚌"},{"id":"fun_movie","n":"電影","groupId":"entertainment","ic":"🎬"},{"id":"fun_performance","n":"表演","groupId":"entertainment","ic":"🎤"},{"id":"fun_ticket","n":"門票","groupId":"entertainment","ic":"🎟️"},{"id":"fun_game","n":"遊戲","groupId":"entertainment","ic":"🎮"},{"id":"fun_leisure","n":"休閒活動","groupId":"entertainment","ic":"🎡"},{"id":"fun_hobby","n":"嗜好","groupId":"entertainment","ic":"🎨"},{"id":"fun_streaming","n":"影音娛樂訂閱","groupId":"entertainment","ic":"📺"},{"id":"fun","n":"其他娛樂","groupId":"entertainment","ic":"🎭"},{"id":"shopping_clothes","n":"衣物","groupId":"shopping","ic":"👕"},{"id":"shopping_bags","n":"鞋包","groupId":"shopping","ic":"👟"},{"id":"shopping_daily","n":"日用品","groupId":"shopping","ic":"🧻"},{"id":"shopping_3c","n":"3C用品","groupId":"shopping","ic":"💻"},{"id":"beauty","n":"美容","groupId":"shopping","ic":"💄"},{"id":"shopping_care","n":"個人照護","groupId":"shopping","ic":"🧴"},{"id":"shop","n":"一般購物","groupId":"shopping","ic":"🛍️"},{"id":"med","n":"看診","groupId":"medical","ic":"🩺"},{"id":"medical_dental","n":"牙科","groupId":"medical","ic":"🦷"},{"id":"medical_medicine","n":"藥品","groupId":"medical","ic":"💊"},{"id":"medical_checkup","n":"健檢","groupId":"medical","ic":"🩻"},{"id":"medical_rehab","n":"復健","groupId":"medical","ic":"🩼"},{"id":"medical_supplies","n":"醫療用品","groupId":"medical","ic":"🩹"},{"id":"medical_insurance","n":"健康保險","groupId":"medical","ic":"🛡️"},{"id":"home_rent","n":"房租","groupId":"home","ic":"🏠"},{"id":"home","n":"居住","groupId":"home","ic":"🏡"},{"id":"util","n":"水電瓦斯","groupId":"home","ic":"💡"},{"id":"phone","n":"電話","groupId":"home","ic":"☎️"},{"id":"home_internet","n":"網路","groupId":"home","ic":"🌐"},{"id":"home_goods","n":"家用品","groupId":"home","ic":"🪑"},{"id":"electronics","n":"家電設備","groupId":"home","ic":"🖥️"},{"id":"home_repair","n":"修繕","groupId":"home","ic":"🛠️"},{"id":"home_tax","n":"房屋稅","groupId":"home","ic":"🧾"},{"id":"sports_gym","n":"健身房","groupId":"sports","ic":"🏋️"},{"id":"sports_class","n":"課程","groupId":"sports","ic":"🤸"},{"id":"sports_gear","n":"運動裝備","groupId":"sports","ic":"🏀"},{"id":"sports_entry","n":"報名費","groupId":"sports","ic":"🏁"},{"id":"sport","n":"其他運動","groupId":"sports","ic":"⚽"},{"id":"travel_tickets","n":"交通票券","groupId":"travel","ic":"🎫"},{"id":"travel_stay","n":"住宿","groupId":"travel","ic":"🛏️"},{"id":"travel_sights","n":"景點行程","groupId":"travel","ic":"🗺️"},{"id":"travel_food","n":"旅途餐飲","groupId":"travel","ic":"🍜"},{"id":"travel_gear","n":"旅遊用品","groupId":"travel","ic":"🧳"},{"id":"travel_insurance","n":"旅遊保險","groupId":"travel","ic":"🛡️"},{"id":"travel","n":"旅遊其他","groupId":"travel","ic":"✈️"},{"id":"edu","n":"學費","groupId":"education","ic":"🎓"},{"id":"education_courses","n":"課程","groupId":"education","ic":"🧑‍🏫"},{"id":"education_books","n":"書籍教材","groupId":"education","ic":"📚"},{"id":"education_exam","n":"考試證照","groupId":"education","ic":"📝"},{"id":"education_tools","n":"學習工具","groupId":"education","ic":"✏️"},{"id":"education_software","n":"軟體","groupId":"education","ic":"💿"},{"id":"gift","n":"禮物","groupId":"other","ic":"🎁"},{"id":"other_red_envelope","n":"紅包","groupId":"other","ic":"🧧"},{"id":"pet","n":"寵物日常","groupId":"other","ic":"🐾"},{"id":"fee","n":"手續費","groupId":"other","ic":"🧾"},{"id":"other_donation","n":"捐款","groupId":"other","ic":"🤲"},{"id":"creditCard","n":"信用卡","groupId":"other","ic":"💳"},{"id":"other","n":"其他未分類","groupId":"other","ic":"📦"}];
+const EXPENSE_SUBCATEGORY_GLYPH_BY_ID={food:'plate',coffee:'cookie',dining_breakfast:'breakfast',dining_lunch:'bento',dining_dinner:'bowl',dining_drinks:'drink',dining_takeout:'takeout',dining_restaurant:'cloche',dining_ingredients:'leaf',dining_convenience:'store',transport_public:'train',transport_taxi:'taxi',transport_fuel:'fuel',transport_parking:'parking',transport_repair:'wrench',transport_easycard:'card',transport_tax:'receipt',trans:'bus',fun_movie:'film',fun_performance:'mic',fun_ticket:'ticket',fun_game:'game',fun_leisure:'wheel',fun_hobby:'palette',fun_streaming:'screen',fun:'theater',shopping_clothes:'shirt',shopping_bags:'shoe',shopping_daily:'tissue',shopping_3c:'laptop',beauty:'lipstick',shopping_care:'bottle',shop:'bag',med:'stethoscope',medical_dental:'tooth',medical_medicine:'pill',medical_checkup:'checkup',medical_rehab:'rehab',medical_supplies:'bandage',medical_insurance:'shield',home_rent:'building',home:'home',util:'bulb',phone:'phone',home_internet:'wifi',home_goods:'chair',electronics:'appliance',home_repair:'hammer',home_tax:'house-tax',sports_gym:'dumbbell',sports_class:'yoga',sports_gear:'ball',sports_entry:'medal',sport:'ball',travel_tickets:'ticket',travel_stay:'bed',travel_sights:'map',travel_food:'bowl',travel_gear:'suitcase',travel_insurance:'shield',travel:'plane',edu:'cap',education_courses:'teacher',education_books:'book',education_exam:'certificate',education_tools:'pencil',education_software:'code',gift:'gift',other_red_envelope:'envelope',pet:'paw',fee:'receipt',other_donation:'heart',creditCard:'card',other:'box'};
+function expenseSubcategoryIcon(c){
+ if(iconStyle==='emoji')return c.ic;
+ const glyph=EXPENSE_SUBCATEGORY_GLYPH_BY_ID[c.id];if(!glyph)return catIcon(c,'large');
+ const label=noticeEsc(c.n),color=/^#[0-9a-f]{6}$/i.test(c.c||'')?c.c:'#668377';
+ if(iconStyle==='daily')return `<svg class="daily-icon expense-subcategory-line" viewBox="0 0 24 24" role="img" aria-label="${label}"><use href="#sub-${glyph}"></use></svg>`;
+ return `<svg class="expense-subcategory-art" viewBox="0 0 24 24" role="img" aria-label="${label}" style="--subcategory-accent:${color}"><rect class="art-tile" x="1" y="1" width="22" height="22" rx="7"/><circle class="art-glint" cx="18.5" cy="5.5" r="1.35"/><use href="#sub-${glyph}"></use></svg>`;
+}
 const LEGACY_EXPENSE_CATEGORY_MAP={"food":["dining","其他飲食"],"coffee":["dining","零食"],"shop":["shopping","一般購物"],"trans":["transport","其他交通"],"home":["home","居住"],"fun":["entertainment","其他娛樂"],"med":["medical","看診"],"edu":["education","學費"],"util":["home","水電瓦斯"],"phone":["home","電話"],"electronics":["home","家電設備"],"travel":["travel","旅遊其他"],"gift":["other","禮物"],"pet":["other","寵物日常"],"creditCard":["other","信用卡"],"beauty":["shopping","美容"],"sport":["sports","其他運動"],"other":["other","其他未分類"],"fee":["other","手續費"]};
 let expenseGroups=Store.get('expenseGroups',null)||EXPENSE_GROUP_DEFAULTS.map(g=>({...g}));
 let expenseGroupId='dining',expenseMgrGroupId='dining';
@@ -1829,7 +1910,7 @@ function renderCatGrid(){const grid=$('#catGrid');if(cur.type==='expense'){
  const selectedGroupId=expenseGroupFor(cur.cat);
  grid.classList.add('expense-hierarchy');
  if(expensePickerLevel==='subcategories'){
-  const subs=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" aria-pressed="${c.id===cur.cat}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${catIcon(c,'large')}</div><div class="nm">${noticeEsc(c.n)}</div></button>`).join('');
+  const subs=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" aria-pressed="${c.id===cur.cat}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${expenseSubcategoryIcon(c)}</div><div class="nm">${noticeEsc(c.n)}</div></button>`).join('');
   const content=subs||'<div class="expense-sub-empty">這個大類還沒有細項</div>';
   grid.innerHTML=`<div class="expense-picker-head expense-picker-head-sub"><button class="expense-picker-back" onclick="expensePickerLevel='groups';renderCatGrid()">‹ 大類</button><strong>${expenseGroupIcon(group)}<span>${noticeEsc(group.n)}・細項</span></strong><button class="expense-picker-action" onclick="openCatMgr('expense','${group.id}')">＋細項</button></div><div class="expense-sub-grid">${content}</div>`;
  }else{
