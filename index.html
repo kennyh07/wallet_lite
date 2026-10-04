@@ -1019,6 +1019,28 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
 .expense-group-icon-opt .daily-icon{width:22px;height:22px;vertical-align:0;}
 
 </style>
+<style id="expense-picker-two-step">
+#sheet .cat-grid.expense-hierarchy{display:block!important;height:188px!important;min-height:188px!important;padding:4px 16px 8px!important;overflow:hidden!important;}
+.expense-picker-head{min-height:26px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;margin:0 0 5px;color:var(--ink2);font-size:14px;font-weight:750;}
+.expense-picker-action{min-height:28px;padding:4px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg2);color:var(--accent);font-size:12px;font-weight:750;white-space:nowrap;}
+.expense-picker-head-sub{grid-template-columns:auto minmax(0,1fr) auto;}
+.expense-picker-back{min-height:30px;padding:4px 9px;border:1px solid var(--line);border-radius:9px;background:var(--bg2);color:var(--ink2);font-size:12px;font-weight:700;white-space:nowrap;}
+.expense-picker-head-sub strong{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;color:var(--ink);font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.expense-picker-head-sub strong .daily-icon{width:22px;height:22px;flex:none;}
+.expense-major-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:64px;gap:5px;max-height:139px;overflow-y:auto;overscroll-behavior:contain;}
+.expense-major-grid .expense-major{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;min-width:0;height:64px;padding:4px 2px;border-radius:12px;background:var(--bg2);color:var(--ink2);font-size:14px;font-weight:750;white-space:nowrap;}
+.expense-major-grid .expense-major .mi{display:grid;place-items:center;font-size:25px;line-height:1;}
+.expense-major-grid .expense-major .mi .daily-icon{width:26px;height:26px;vertical-align:0;}
+.expense-major-grid .expense-major>span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:14px;line-height:1.15;}
+.expense-major-grid .expense-major.on{background:var(--major);color:#fff;box-shadow:0 4px 12px color-mix(in srgb,var(--major) 28%,transparent);}
+.expense-sub-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:45px;gap:3px;max-height:139px;overflow-y:auto;overscroll-behavior:contain;}
+.expense-sub-grid .cat{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-width:0;min-height:45px;padding:0 1px;border-radius:10px;overflow:hidden;}
+.expense-sub-grid .cat .ic{width:25px;height:25px;min-width:25px;border-radius:8px;font-size:18px;}
+.expense-sub-grid .cat .ic .daily-icon{width:22px;height:22px;}
+.expense-sub-grid .cat .ic .daily-life-illustration{width:23px;height:23px;}
+.expense-sub-grid .cat .nm{max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px;line-height:1.15;}
+.expense-sub-empty{grid-column:1/-1;align-self:center;padding:12px 4px;text-align:center;color:var(--ink3);font-size:13px;}
+</style>
 </head>
 <body>
 
@@ -1426,11 +1448,12 @@ const EXPENSE_SUBCATEGORY_DEFAULTS=[{"id":"food","n":"其他飲食","groupId":"d
 const LEGACY_EXPENSE_CATEGORY_MAP={"food":["dining","其他飲食"],"coffee":["dining","零食"],"shop":["shopping","一般購物"],"trans":["transport","其他交通"],"home":["home","居住"],"fun":["entertainment","其他娛樂"],"med":["medical","看診"],"edu":["education","學費"],"util":["home","水電瓦斯"],"phone":["home","電話"],"electronics":["home","家電設備"],"travel":["travel","旅遊其他"],"gift":["other","禮物"],"pet":["other","寵物日常"],"creditCard":["other","信用卡"],"beauty":["shopping","美容"],"sport":["sports","其他運動"],"other":["other","其他未分類"],"fee":["other","手續費"]};
 let expenseGroups=Store.get('expenseGroups',null)||EXPENSE_GROUP_DEFAULTS.map(g=>({...g}));
 let expenseGroupId='dining',expenseMgrGroupId='dining';
+let expensePickerLevel='groups';
 let expenseGroupFormId=null,expenseGroupFormName='',expenseGroupFormIcon='dining',expenseGroupFormColor='#ff8a5c';
 function expenseGroupFor(catId){return expCats.find(c=>c.id===catId)?.groupId||'';}
 function expenseCatsFor(group){const id=typeof group==='string'?group:group?.id;return expCats.filter(c=>c.groupId===id);}
 function expenseGroupIcon(g){return `<svg class="daily-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#dl-${g.dk||'other'}"></use></svg>`;}
-function pickExpenseGroup(id){const group=expenseGroups.find(g=>g.id===id);if(!group)return;expenseGroupId=id;const cats=expenseCatsFor(id);if(!cats.some(c=>c.id===cur.cat))cur.cat=cats[0]?.id||'';renderCatGrid();}
+function pickExpenseGroup(id){const group=expenseGroups.find(g=>g.id===id);if(!group)return;if(expenseGroupFor(cur.cat)!==id)cur.cat='';expenseGroupId=id;expensePickerLevel='subcategories';renderCatGrid();}
 function normalizeExpenseTaxonomy(forceLegacy=false){
  const valid=new Set((expenseGroups||[]).map(g=>g.id));
  if(forceLegacy){for(const g of EXPENSE_GROUP_DEFAULTS)if(!valid.has(g.id)){expenseGroups.push({...g});valid.add(g.id);}}
@@ -1797,10 +1820,17 @@ function renderStats(){fillStatTripSel();const trip=trips.find(t=>t.id===statTri
 /* transaction sheet */
 function renderCatGrid(){const grid=$('#catGrid');if(cur.type==='expense'){
  const group=expenseGroups.find(g=>g.id===expenseGroupFor(cur.cat))||expenseGroups.find(g=>g.id===expenseGroupId)||expenseGroups[0];if(!group){grid.innerHTML='';renderCatBudgetHint();return;}expenseGroupId=group.id;const cats=expenseCatsFor(group.id);
- const majors=expenseGroups.map(g=>`<button class="expense-major ${g.id===group.id?'on':''}" style="--major:${g.c}" aria-pressed="${g.id===group.id}" title="${noticeEsc(g.n)}" onclick="pickExpenseGroup('${g.id}')"><span class="mi">${expenseGroupIcon(g)}</span><span>${noticeEsc(g.n)}</span></button>`).join('')+`<button class="expense-major expense-major-add" title="新增／管理大類與細項" aria-label="新增或管理支出分類" onclick="openCatMgr('expense')"><span class="mi">＋</span></button>`;
- const subs=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${catIcon(c,'large')}</div><div class="nm">${noticeEsc(c.n)}</div></button>`).join('');
- const addSub=`<button class="cat expense-add-sub" onclick="openCatMgr('expense','${group.id}')"><div class="ic">＋</div><div class="nm">新增細項</div></button>`;
- grid.classList.add('expense-hierarchy');grid.innerHTML=`<div class="expense-major-tabs" aria-label="支出大類">${majors}</div><div class="expense-subhead"><span>細分項目</span><b>${noticeEsc(group.n)}</b></div><div class="expense-sub-grid">${subs}${addSub}</div>`;renderCatBudgetHint();return;
+ const selectedGroupId=expenseGroupFor(cur.cat);
+ grid.classList.add('expense-hierarchy');
+ if(expensePickerLevel==='subcategories'){
+  const subs=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" aria-pressed="${c.id===cur.cat}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${catIcon(c,'large')}</div><div class="nm">${noticeEsc(c.n)}</div></button>`).join('');
+  const content=subs||'<div class="expense-sub-empty">這個大類還沒有細項</div>';
+  grid.innerHTML=`<div class="expense-picker-head expense-picker-head-sub"><button class="expense-picker-back" onclick="expensePickerLevel='groups';renderCatGrid()">‹ 大類</button><strong>${expenseGroupIcon(group)}<span>${noticeEsc(group.n)}・細項</span></strong><button class="expense-picker-action" onclick="openCatMgr('expense','${group.id}')">＋細項</button></div><div class="expense-sub-grid">${content}</div>`;
+ }else{
+  const majors=expenseGroups.map(g=>`<button class="expense-major ${g.id===selectedGroupId?'on':''}" style="--major:${g.c}" aria-pressed="${g.id===selectedGroupId}" title="${noticeEsc(g.n)}" onclick="pickExpenseGroup('${g.id}')"><span class="mi">${expenseGroupIcon(g)}</span><span>${noticeEsc(g.n)}</span></button>`).join('');
+  grid.innerHTML=`<div class="expense-picker-head"><span>選擇大類</span><button class="expense-picker-action" onclick="openCatMgr('expense')">管理／新增＋</button></div><div class="expense-major-grid" aria-label="支出大類">${majors}</div>`;
+ }
+ renderCatBudgetHint();return;
  }
  grid.classList.remove('expense-hierarchy');const cats=cur.type==='income'?incCats:expCats;
  let h=cats.map(c=>`<button class="cat ${c.id===cur.cat?'on':''}" onclick="pickCat('${c.id}')"><div class="ic" style="background:${c.c}${c.id===cur.cat?'':'22'};color:${c.id===cur.cat?'#fff':c.c}">${catIcon(c,'large')}</div><div class="nm">${c.n}</div></button>`).join('');
@@ -1925,7 +1955,7 @@ function nlParse(){let text=($('#nlInput').value||'').trim();if(!text){toast('�
  let acc=null;if(aAcct)acc=accounts.find(a=>a.id===aAcct);if(!acc)acc=findAccountByText(text);
  const acctId=acc?acc.id:(accounts[0]&&accounts[0].id);const aCcy=nlCcy(text);
  cur={type,cat:cat?cat.id:list[0]&&list[0].id,acct:acctId,ccy:aCcy||acctCcy(acctId),note:nlMemo(text,acc),expr:String(Math.abs(amt)),editId:null,date:null,img:null,fee:0,trip:(trips.some(t=>t.id===lastTrip)?lastTrip:''),payer:''};
- setType(type);cur.cat=cat?cat.id:cur.cat;renderCatGrid();fillAccountSelects();if(acc)$('#acctSel').value=acc.id;cur.acct=$('#acctSel').value;syncEntryAccountIcons();if(aCcy)cur.ccy=aCcy;$('#noteInput').value=cur.note;setEntryAmount(Math.abs(amt));updateCurSign();renderQuickAmts();
+ setType(type);cur.cat=cat?cat.id:cur.cat;if(type==='expense'&&cat)expensePickerLevel='subcategories';renderCatGrid();fillAccountSelects();if(acc)$('#acctSel').value=acc.id;cur.acct=$('#acctSel').value;syncEntryAccountIcons();if(aCcy)cur.ccy=aCcy;$('#noteInput').value=cur.note;setEntryAmount(Math.abs(amt));updateCurSign();renderQuickAmts();
  $('#nlInput').value='';toast('已解析「'+(cat?cat.n:'')+'」'+(aCcy&&aCcy!=='TWD'?'（'+aCcy+'）':'')+'，確認後按儲存');}
 function orderedAccounts(){const seen=new Set(),ordered=[];groupOrder.forEach(group=>accounts.filter(a=>a.group===group).forEach(a=>{if(!seen.has(a.id)){seen.add(a.id);ordered.push(a);}}));accounts.forEach(a=>{if(!seen.has(a.id)){seen.add(a.id);ordered.push(a);}});return ordered;}
 let sortingAccountDropdowns=false;
@@ -1952,10 +1982,10 @@ function toggleEntryAccountMenu(){const menu=$('#acctMenu');const willOpen=menu&
 function closeEntryAccountMenu(){const menu=$('#acctMenu');if(menu)menu.classList.remove('open');syncAccountMenuBackdrop();}
 function chooseEntryAccount(id){$('#acctSel').value=id;$('#acctSel').dispatchEvent(new Event('change'));closeEntryAccountMenu();}
 function fillAccountSelects(){const ordered=orderedAccounts(),opts=ordered.map(a=>`<option value="${a.id}">${accountIconText(a)} ${a.n}</option>`).join('');$('#acctSel').innerHTML=opts;$('#tfFrom').innerHTML=opts;$('#tfTo').innerHTML=opts;if(cur.acct)$('#acctSel').value=cur.acct;if(cur.type==='transfer'){if(cur.acct)$('#tfFrom').value=cur.acct;if(cur.to&&accounts.some(a=>a.id===cur.to))$('#tfTo').value=cur.to;else if(ordered[1])$('#tfTo').value=ordered[1].id;}else if(ordered[1])$('#tfTo').value=ordered[1].id;syncEntryAccountIcons();}
-function setType(t,keepCat=false){cur.type=t;$('#sheet').classList.remove('installment-entry');$('#sheet').classList.toggle('transfer-entry',t==='transfer');const installmentBox=$('#entryInstallmentForm');if(installmentBox)installmentBox.style.display='none';document.querySelectorAll('#sheet .type-seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+function setType(t,keepCat=false){if(t==='expense'&&cur.type!=='expense')expensePickerLevel='groups';cur.type=t;$('#sheet').classList.remove('installment-entry');$('#sheet').classList.toggle('transfer-entry',t==='transfer');const installmentBox=$('#entryInstallmentForm');if(installmentBox)installmentBox.style.display='none';document.querySelectorAll('#sheet .type-seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
  $('#catGrid').style.display=t==='transfer'?'none':'';$('#transferPick').style.display=t==='transfer'?'grid':'none';$('#acctPick').style.display=t==='transfer'?'none':'flex';$('#tfFeeRow').style.display=t==='transfer'?'none':'flex';
  $('#curSign').textContent=t==='income'?'+$':'-$';$('#curSign').style.color=t==='income'?'var(--income)':t==='transfer'?'#5b86e5':'var(--ink3)';const saveColor=t==='income'?'var(--income)':t==='transfer'?'#5b86e5':'var(--accent)';$('#saveKey').style.background=saveColor;
- if(t!=='transfer'){const cats=t==='income'?incCats:expCats;if(!keepCat||!cats.some(c=>c.id===cur.cat))cur.cat=cats[0]?.id;renderCatGrid();}else renderCatBudgetHint();renderQuickAmts();updateCurSign();updateTfTotal();fillTripSel();}
+ if(t!=='transfer'){const cats=t==='income'?incCats:expCats;if(!keepCat||!cats.some(c=>c.id===cur.cat))cur.cat=t==='expense'&&!cur.editId?'':(cats[0]?.id||'');renderCatGrid();}else renderCatBudgetHint();renderQuickAmts();updateCurSign();updateTfTotal();fillTripSel();}
 function entryCcy(){if(cur.type==='transfer')return acctCcy(($('#tfFrom')&&$('#tfFrom').value)||cur.acct);return cur.ccy||acctCcy(cur.acct);}
 function updateCurSign(){const t=cur.type;$('#curSign').textContent=(t==='income'?'+':t==='transfer'?'':'-');fillCurSel();}
 function fillCurSel(){const sel=$('#curSel');if(!sel)return;if(cur.type==='transfer'){sel.style.display='none';return;}sel.style.display='';if(!cur.ccy)cur.ccy=acctCcy(cur.acct);sel.innerHTML=CURRENCIES.map(c=>`<option value="${c.c}">${c.s} ${c.c}</option>`).join('');sel.value=cur.ccy;}
@@ -1963,7 +1993,8 @@ function onCurSel(){cur.ccy=$('#curSel').value;}
 function dateInputValue(iso){const d=iso?new Date(iso):new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
 function entryDateISO(){const v=$('#txDate')&&$('#txDate').value;if(!v)return cur.date||new Date().toISOString();const [y,m,d]=v.split('-').map(Number);return new Date(y,m-1,d,12,0,0,0).toISOString();}
 function openSheet(edit){if(!accounts.length){toast('請先新增一個帳戶');openAcct();return;}
- if(!edit){let selectedDate=null;if(recView==='cal'&&!$('#scr-records').classList.contains('hidden')&&calSelected){const [y,m,d]=calSelected.split('-').map(Number);selectedDate=new Date(y,m-1,d,12,0,0,0).toISOString();}cur={type:'expense',cat:expCats[0]?.id,acct:accounts[0]?.id,ccy:acctCcy(accounts[0]?.id),note:'',expr:'0',editId:null,date:selectedDate,img:null,fee:0,trip:(trips.some(t=>t.id===lastTrip)?lastTrip:''),payer:''};tfCustomToAmt=false;$('#sheetTitle').textContent='新增記錄';$('#delBtn').style.visibility='hidden';}
+ expensePickerLevel='groups';
+ if(!edit){let selectedDate=null;if(recView==='cal'&&!$('#scr-records').classList.contains('hidden')&&calSelected){const [y,m,d]=calSelected.split('-').map(Number);selectedDate=new Date(y,m-1,d,12,0,0,0).toISOString();}cur={type:'expense',cat:'',acct:accounts[0]?.id,ccy:acctCcy(accounts[0]?.id),note:'',expr:'0',editId:null,date:selectedDate,img:null,fee:0,trip:(trips.some(t=>t.id===lastTrip)?lastTrip:''),payer:''};tfCustomToAmt=false;$('#sheetTitle').textContent='新增記錄';$('#delBtn').style.visibility='hidden';}
  setType(cur.type,!!edit);fillAccountSelects();renderCatGrid();$('#noteInput').value=cur.note;$('#txDate').value=dateInputValue(cur.date);setEntryAmount(cur.expr);if($('#tfFee'))$('#tfFee').value=cur.fee||'';fillTripSel();renderTxThumb();renderQuickAmts();updateCurSign();updateTfTotal();if($('#nlInput'))$('#nlInput').value='';$('#sheet').classList.add('open');syncMask();}
 function closeSheet(){closeEntryAccountMenu();closeTfMenus();closeCalculator();$('#sheet').classList.remove('open');syncMask();}
 function refreshVisibleTransactionScreen(){
@@ -2017,7 +2048,7 @@ function confirmCalculatorInput(){closeCalculator();}
 function renderTransferFxFields(){const wrap=$('#transferPick');if(!wrap)return;let box=$('#tfFxFields');if(!box){box=document.createElement('div');box.id='tfFxFields';box.className='tf-fx';wrap.appendChild(box);}if(cur.type!=='transfer'){box.style.display='none';return;}const from=accounts.find(a=>a.id===$('#tfFrom').value),to=accounts.find(a=>a.id===$('#tfTo').value);if(!from||!to||(from.ccy||'TWD')===(to.ccy||'TWD')){box.style.display='none';tfCustomToAmt=false;return;}const fc=from.ccy||'TWD',tc=to.ccy||'TWD',rate=fx(fc)/fx(tc),estimated=Math.round((Math.abs(evalExpr(cur.expr))||0)*rate),sym=ccyInfo(tc).s;box.style.display='block';box.innerHTML=`<div class="fx-head"><span>轉入金額（${tc}）</span><span>1 ${fc} ≈ ${fmtN(rate)} ${tc}</span></div><input id="tfToAmt" inputmode="none" readonly value="${tfCustomToAmt&&$('#tfToAmt')?$('#tfToAmt').value:estimated}" placeholder="0" onfocus="openCalculator('toAmt')"><div class="fx-hint">可輸入銀行實際入帳金額 · 預估 ${sym}${fmtN(estimated)}</div>`;}
 function updateTfTotal(){const el=$('#tfTotal');if(!el)return;const feeInput=$('#tfFee'),feeInline=$('#tfFeeInline');if(feeInline)feeInline.value=feeInput?feeInput.value:'';if(cur.type!=='transfer'){el.textContent='';renderTransferFxFields();return;}const amt=Math.abs(evalExpr(cur.expr))||0;const fee=Math.max(0,Math.round(parseFloat(((feeInput&&feeInput.value)||'0').replace(/,/g,''))||0));const sym=ccyInfo(acctCcy($('#tfFrom').value)).s||'$';el.textContent=fee?('轉出後實際扣款 '+sym+fmtN(amt+fee)+'（轉帳 '+sym+fmtN(amt)+' ＋ 手續費 '+sym+fmtN(fee)+'）'):'';renderTransferFxFields();}
 function applyBalance(t,sign){if(t.type==='transfer'){const f=accounts.find(a=>a.id===t.acct),to=accounts.find(a=>a.id===t.to);if(f)f.bal-=sign*transferOutflow(t);if(to)to.bal+=sign*(t.toAmt!=null?t.toAmt:t.amt);}else{const a=accounts.find(x=>x.id===t.acct);if(a)a.bal+=sign*(t.type==='income'?t.amt:-t.amt);}}
-function saveTx(){const amt=Math.abs(evalExpr(cur.expr));if(!amt){toast('請輸入金額');return;}cur.note=$('#noteInput').value.trim();cur.acct=$('#acctSel').value;const txDate=entryDateISO(),editingPlanId=cur.manualPlanId||null,editingRecurringKey=cur.recurringOverrideKey||null;
+function saveTx(){const amt=Math.abs(evalExpr(cur.expr));if(!amt){toast('請輸入金額');return;}if(cur.type==='expense'&&!expCats.some(c=>c.id===cur.cat)){toast(expensePickerLevel==='subcategories'?'請選擇細項':'請先選擇支出大類');return;}cur.note=$('#noteInput').value.trim();cur.acct=$('#acctSel').value;const txDate=entryDateISO(),editingPlanId=cur.manualPlanId||null,editingRecurringKey=cur.recurringOverrideKey||null;
  if(cur.editId){const old=transactions.find(t=>t.id===cur.editId);if(old)applyBalance(old,-1);transactions=transactions.filter(t=>t.id!==cur.editId);}
  let t;if(cur.type==='transfer'){const from=$('#tfFrom').value,to=$('#tfTo').value;if(from===to){toast('轉出入帳戶相同');return;}const fee=Math.max(0,Math.round(parseFloat(($('#tfFee').value||'0').replace(/,/g,''))||0));t={id:'t'+rnd(),type:'transfer',amt,acct:from,to,note:cur.note,date:txDate};if(fee>0){t.fee=fee;t.feeBalanceApplied=true;}const fc=acctCcy(from),tc=acctCcy(to);if(fc!==tc){const entered=Math.round(parseFloat((($('#tfToAmt')&&$('#tfToAmt').value)||'0').replace(/,/g,''))||0);t.toAmt=entered||Math.round(amt*fx(fc)/fx(tc));t.fxRate=t.toAmt/amt;}}
  else{const acctC=acctCcy(cur.acct),inC=cur.ccy||acctC;let stored=amt;t={id:'t'+rnd(),type:cur.type,amt,cat:cur.cat,acct:cur.acct,note:cur.note,date:txDate};if(inC!==acctC){stored=Math.round(amt*fx(inC)/fx(acctC));t.amt=stored;t.occy=inC;t.oamt=amt;}}
