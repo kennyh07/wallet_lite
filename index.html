@@ -845,6 +845,8 @@ html.ios-home-screen .topbar{
   flex-shrink:0;
   z-index:30;
   isolation:auto;
+  background:var(--bg)!important;
+  background-image:none!important;
   transform:none!important;
   -webkit-transform:none!important;
   backdrop-filter:none!important;
@@ -2212,7 +2214,7 @@ function gdInitOnLoad(){if(!Store.get('gdConnected',false)||!gClientId())return;
 let toastT;function toast(m){const el=$('#toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2200);}
 $('#eyeBtn').onclick=()=>{hideAmt=!hideAmt;Store.set('hideAmt',hideAmt);$('#eyeBtn').innerHTML=hideAmt?ICON_EYEOFF:ICON_EYE;renderOverview();};
 function themeName(t){return t==='dark'?'深色':t==='green'?'墨綠':'淺色';}
-function syncThemeChrome(t){const theme=document.querySelector('meta[name="theme-color"]'),status=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(theme)theme.content=t==='dark'?'#101725':t==='green'?'#071d18':'#f4f2ee';if(status)status.content=t==='light'?'default':'black-translucent';}
+function syncThemeChrome(t){const theme=document.querySelector('meta[name="theme-color"]'),status=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');if(theme)theme.content=t==='dark'?'#101725':t==='green'?'#071d18':'#f4f2ee';if(status&&!document.documentElement.classList.contains('ios-home-screen'))status.content=t==='light'?'default':'black-translucent';}
 function initTheme(){const s=['light','dark','green'].includes(Store.get('theme','light'))?Store.get('theme','light'):'light';document.documentElement.setAttribute('data-theme',s);syncThemeChrome(s);}
 function toggleTheme(){const themes=['light','dark','green'],current=document.documentElement.getAttribute('data-theme')||'light',t=themes[(themes.indexOf(current)+1)%themes.length];document.documentElement.setAttribute('data-theme',t);syncThemeChrome(t);Store.set('theme',t);$('#setThemeVal').textContent='淺色 → 深色 → 墨綠';}
 function cycleIconStyle(){iconStyle=iconStyle==='emoji'?'daily':iconStyle==='daily'?'illustrated':'emoji';Store.set('iconStyle',iconStyle);$('#iconStyleVal').textContent=iconStyleName();renderOverview();renderRecords();renderStats();renderBudget();if($('#catSheet').classList.contains('open'))renderCatGridView();if($('#sheet').classList.contains('open'))renderCatGrid();if($('#recurSheet').classList.contains('open'))fillRecurCat();if($('#installmentSheet').classList.contains('open'))renderInstallmentSelectIcons();if($('#setSheet').classList.contains('open'))renderRecurList();toast('已套用 '+iconStyleName()+' 圖示');}
