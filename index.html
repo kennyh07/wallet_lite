@@ -1010,9 +1010,14 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
 .expense-mgr-action:disabled{opacity:.3;}
 .expense-mgr-subhead{display:flex;align-items:center;justify-content:space-between;margin:17px 2px 9px;font-size:13px;}
 .expense-mgr-subhead button{padding:6px 9px;border-radius:9px;background:var(--bg2);color:var(--accent);font-size:11px;font-weight:750;}
-.expense-mgr-children{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:0;max-height:none;}
-.expense-mgr-children .cat{padding:7px 2px;}
-.expense-mgr-children .cat .ic{width:42px;height:42px;}
+.expense-mgr-children{display:grid!important;grid-template-columns:1fr!important;gap:7px!important;padding:0!important;max-height:none!important;overflow:visible!important;}
+.expense-mgr-child-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:5px;border:1px solid var(--line);border-radius:13px;background:var(--card);}
+.expense-mgr-child-row .expense-mgr-child{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px;min-width:0;padding:4px 6px;text-align:left;}
+.expense-mgr-child-row .expense-mgr-child .ic{width:42px;height:42px;min-width:42px;}
+.expense-mgr-child-row .expense-mgr-child .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:750;}
+.expense-mgr-reorder{display:flex;gap:5px;}
+.expense-mgr-reorder button{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);color:var(--ink2);font-size:18px;font-weight:800;}
+.expense-mgr-reorder button:disabled{opacity:.28;}
 .expense-group-icon-picker{grid-template-columns:repeat(5,1fr);}
 .expense-group-icon-opt{width:42px;height:42px;border:1px solid var(--line);border-radius:12px;color:var(--ink2);background:var(--card);}
 .expense-group-icon-opt.on{border-color:var(--accent);color:var(--accent);background:var(--card2);}
@@ -1033,12 +1038,12 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
 .expense-major-grid .expense-major .mi .daily-icon{width:26px;height:26px;vertical-align:0;}
 .expense-major-grid .expense-major>span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis;font-size:14px;line-height:1.15;}
 .expense-major-grid .expense-major.on{background:var(--major);color:#fff;box-shadow:0 4px 12px color-mix(in srgb,var(--major) 28%,transparent);}
-.expense-sub-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:45px;gap:3px;max-height:139px;overflow-y:auto;overscroll-behavior:contain;}
-.expense-sub-grid .cat{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-width:0;min-height:45px;padding:0 1px;border-radius:10px;overflow:hidden;}
-.expense-sub-grid .cat .ic{width:25px;height:25px;min-width:25px;border-radius:8px;font-size:18px;}
-.expense-sub-grid .cat .ic .daily-icon{width:22px;height:22px;}
-.expense-sub-grid .cat .ic .daily-life-illustration{width:23px;height:23px;}
-.expense-sub-grid .cat .nm{max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px;line-height:1.15;}
+.expense-sub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:54px;gap:4px;max-height:139px;overflow-y:auto;overscroll-behavior:contain;}
+.expense-sub-grid .cat{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-width:0;min-height:54px;padding:1px 2px;border-radius:11px;overflow:hidden;}
+.expense-sub-grid .cat .ic{width:31px;height:31px;min-width:31px;border-radius:9px;font-size:22px;}
+.expense-sub-grid .cat .ic .daily-icon{width:27px;height:27px;}
+.expense-sub-grid .cat .ic .daily-life-illustration{width:29px;height:29px;}
+.expense-sub-grid .cat .nm{max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px;line-height:1.15;font-weight:750;}
 .expense-sub-empty{grid-column:1/-1;align-self:center;padding:12px 4px;text-align:center;color:var(--ink3);font-size:13px;}
 </style>
 </head>
@@ -2222,13 +2227,15 @@ function renderCatGridView(){catFormId='__list__';
  if(catMgrType==='expense'){
   const group=expenseGroups.find(g=>g.id===expenseMgrGroupId)||expenseGroups[0];if(!group){$('#catBody').innerHTML='<button class="save-btn" onclick="openExpenseGroupForm(null)">＋ 新增大類</button>';return;}
   const groups=expenseGroups.map(g=>`<div class="expense-mgr-parent ${g.id===group.id?'on':''}"><button class="expense-mgr-parent-pick" onclick="selectExpenseMgrGroup('${g.id}')"><span class="expense-mgr-group-icon" style="--major:${g.c}">${expenseGroupIcon(g)}</span><span class="expense-mgr-parent-name">${noticeEsc(g.n)}</span><small>${expenseCatsFor(g.id).length} 項</small></button><button class="expense-mgr-action" aria-label="編輯${noticeEsc(g.n)}大類" onclick="openExpenseGroupForm('${g.id}')">✎</button><button class="expense-mgr-action delete" aria-label="刪除${noticeEsc(g.n)}大類" onclick="deleteExpenseGroup('${g.id}')" ${expenseCatsFor(g.id).length?'disabled':''}>×</button></div>`).join('');
-  const kids=expenseCatsFor(group.id).map(c=>`<button class="cat expense-mgr-child" onclick="openCatForm('${c.id}','${group.id}')"><div class="ic" style="background:${c.c}22;color:${c.c}">${catIcon(c,'large')}</div><div class="nm">${noticeEsc(c.n)}</div></button>`).join('');
-  $('#catBody').innerHTML=`<div class="expense-mgr-actions"><button class="set-row" onclick="openExpenseGroupForm(null)">＋ 新增大類</button><button class="set-row add" onclick="openCatForm(null,'${group.id}')">＋ 新增「${noticeEsc(group.n)}」細項</button></div><div class="expense-mgr-label">第一層・大類</div><div class="expense-mgr-groups">${groups}</div><div class="expense-mgr-subhead"><b>${noticeEsc(group.n)}・第二層細項</b><button onclick="openCatForm(null,'${group.id}')">＋新增</button></div><div class="cat-grid expense-mgr-children">${kids||'<div class="set-empty">這個大類還沒有細項</div>'}</div><p class="hint">點大類切換細項；✎ 可改大類名稱與圖示，× 只能刪除沒有細項的大類。點細項可編輯、搬移或刪除。</p>`;return;
+  const groupKids=expenseCatsFor(group.id);
+  const kids=groupKids.map((c,i)=>`<div class="expense-mgr-child-row"><button class="cat expense-mgr-child" onclick="openCatForm('${c.id}','${group.id}')"><div class="ic" style="background:${c.c}22;color:${c.c}">${catIcon(c,'large')}</div><div class="nm">${noticeEsc(c.n)}</div></button><div class="expense-mgr-reorder"><button aria-label="上移${noticeEsc(c.n)}" title="上移" onclick="moveExpenseSubcategory('${c.id}',-1)" ${i===0?'disabled':''}>↑</button><button aria-label="下移${noticeEsc(c.n)}" title="下移" onclick="moveExpenseSubcategory('${c.id}',1)" ${i===groupKids.length-1?'disabled':''}>↓</button></div></div>`).join('');
+  $('#catBody').innerHTML=`<div class="expense-mgr-actions"><button class="set-row" onclick="openExpenseGroupForm(null)">＋ 新增大類</button><button class="set-row add" onclick="openCatForm(null,'${group.id}')">＋ 新增「${noticeEsc(group.n)}」細項</button></div><div class="expense-mgr-label">第一層・大類</div><div class="expense-mgr-groups">${groups}</div><div class="expense-mgr-subhead"><b>${noticeEsc(group.n)}・第二層細項</b><button onclick="openCatForm(null,'${group.id}')">＋新增</button></div><div class="cat-grid expense-mgr-children">${kids||'<div class="set-empty">這個大類還沒有細項</div>'}</div><p class="hint">點細項可編輯；使用 ↑↓ 調整順序，變更會立即保存。✎ 可改大類名稱與圖示，× 只能刪除沒有細項的大類。</p>`;return;
  }
  const cats=incCats;
  const grid=cats.map(c=>`<button class="cat" onclick="openCatForm('${c.id}')"><div class="ic" style="background:${c.c}22;color:${c.c}">${catIcon(c,'large')}</div><div class="nm">${c.n}</div></button>`).join('')+`<button class="cat" onclick="openCatForm(null)"><div class="ic" style="border:2px dashed var(--line);color:var(--ink3)">＋</div><div class="nm">新增</div></button>`;
  $('#catBody').innerHTML=`<div class="cat-grid" style="max-height:none;padding:0">${grid}</div><p class="hint">點任一分類可改名稱、圖示、顏色，或刪除沒被使用的分類。</p>`;}
 function selectExpenseMgrGroup(id){expenseMgrGroupId=id;expenseGroupId=id;renderCatGridView();}
+function moveExpenseSubcategory(id,dir){const cat=expCats.find(c=>c.id===id);if(!cat)return;const indexes=[];expCats.forEach((c,i)=>{if(c.groupId===cat.groupId)indexes.push(i);});const current=expCats.indexOf(cat),position=indexes.indexOf(current),next=position+dir;if(next<0||next>=indexes.length)return;const target=indexes[next],swap=expCats[current];expCats[current]=expCats[target];expCats[target]=swap;persistCats();renderCatGridView();renderCatGrid();toast('細項順序已更新');}
 function openExpenseGroupForm(id){expenseGroupFormId=id||null;const g=expenseGroups.find(x=>x.id===id);expenseGroupFormName=g?.n||'';expenseGroupFormIcon=g?.dk||'dining';expenseGroupFormColor=g?.c||'#ff8a5c';renderExpenseGroupForm();}
 function renderExpenseGroupForm(){const options=EXPENSE_GROUP_DEFAULTS.map(g=>`<button type="button" class="expense-group-icon-opt ${g.dk===expenseGroupFormIcon?'on':''}" title="${g.n}" aria-label="${g.n}圖示" onclick="expenseGroupFormIcon='${g.dk}';renderExpenseGroupForm()"><svg class="daily-icon" viewBox="0 0 24 24"><use href="#dl-${g.dk}"></use></svg></button>`).join('');$('#catBody').innerHTML=`<div class="field"><label>大類名稱</label><input id="expenseGroupName" value="${noticeEsc(expenseGroupFormName)}" placeholder="例如：家庭"></div><div class="field"><label>簡潔圖示</label><div class="picker expense-group-icon-picker">${options}</div></div><div class="field"><label>顏色</label><div class="picker">${COLORS.map(c=>`<button class="swatch ${c===expenseGroupFormColor?'on':''}" style="background:${c}" onclick="expenseGroupFormColor='${c}';renderExpenseGroupForm()"></button>`).join('')}</div></div><button class="save-btn" onclick="saveExpenseGroup()">儲存大類</button>${expenseGroupFormId?`<button class="set-row" style="margin-top:10px;justify-content:center" onclick="renderCatGridView()">‹ 返回大類與細項</button>`:''}`;}
 function saveExpenseGroup(){const name=($('#expenseGroupName')?.value||'').trim();if(!name){toast('請輸入大類名稱');return;}if(expenseGroups.some(g=>g.n===name&&g.id!==expenseGroupFormId)){toast('大類名稱已存在');return;}if(expenseGroupFormId){const g=expenseGroups.find(x=>x.id===expenseGroupFormId);if(!g)return;g.n=name;g.dk=expenseGroupFormIcon;g.c=expenseGroupFormColor;}else{const g={id:'group_'+rnd(),n:name,ic:'📦',c:expenseGroupFormColor,dk:expenseGroupFormIcon,ia:EXPENSE_GROUP_DEFAULTS.find(x=>x.dk===expenseGroupFormIcon)?.ia||'money/receipt'};expenseGroups.push(g);expenseMgrGroupId=g.id;expenseGroupId=g.id;cur.cat='';}Store.set('expenseGroups',expenseGroups);bump();renderCatGridView();renderCatGrid();toast(expenseGroupFormId?'大類已更新':'已新增大類');}
