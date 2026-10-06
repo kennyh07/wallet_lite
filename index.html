@@ -402,6 +402,12 @@ html.ios-safari-web #app{height:100%!important;min-height:0!important;max-height
 .grow .mv{width:38px;height:42px;border-radius:11px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;font-size:15px;color:var(--ink2);flex-shrink:0;}
 .grow .mv:disabled{opacity:.35;}
 .grow .mv.del{color:var(--expense);}
+.grow .sort-handle{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink3);font-size:23px;line-height:1;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;}
+.grow .sort-handle:active,.grow .sort-handle.active{color:var(--accent);background:var(--card2);}
+.grow.sort-row{transition:opacity .12s,transform .12s,background-color .12s,box-shadow .12s;}
+.grow.sort-row.sort-dragging{opacity:.58;transform:scale(.99);}
+.grow.sort-row.sort-drop-before{box-shadow:inset 0 3px 0 var(--accent);}
+.grow.sort-row.sort-drop-after{box-shadow:inset 0 -3px 0 var(--accent);}
 .grow .gcnt{min-width:24px;text-align:center;font-family:var(--num);font-size:13px;color:var(--ink3);font-weight:600;}
 
 .set-sec{font-size:12px;color:var(--ink3);font-weight:700;margin:18px 2px 8px;letter-spacing:.5px;}
@@ -1276,7 +1282,7 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
   </div>
 </div>
 
-<div class="sheet" id="grpSheet"><div class="sheet-head"><button class="entry-head-act confirm" onclick="closeGrp()" aria-label="完成">✓</button><strong>分組管理</strong><span style="width:42px"></span></div><div class="aform" id="grpBody"></div></div>
+<div class="sheet" id="grpSheet"><div class="sheet-head"><span style="width:42px"></span><strong>分組管理</strong><button class="entry-head-act confirm" onclick="closeGrp()" aria-label="完成">✓</button></div><div class="aform" id="grpBody"></div></div>
 
 <div class="sheet" id="recurSheet">
   <div class="sheet-head"><button class="x" onclick="closeRecur()">取消</button><strong id="recurTitle">新增循環交易</strong><button class="x" id="recurDel" style="color:var(--expense);visibility:hidden" onclick="deleteRecur()">刪除</button></div>
@@ -1293,9 +1299,9 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
   </div>
 </div>
 
-<div class="sheet" id="installmentSheet"><div class="sheet-head"><button class="entry-head-act confirm" onclick="closeInstallments()" aria-label="完成">✓</button><strong id="installmentTitle">分期付款</strong><span style="width:42px"></span></div><div class="aform" id="installmentBody"></div></div>
+<div class="sheet" id="installmentSheet"><div class="sheet-head"><span style="width:42px"></span><strong id="installmentTitle">分期付款</strong><button class="entry-head-act confirm" onclick="closeInstallments()" aria-label="完成">✓</button></div><div class="aform" id="installmentBody"></div></div>
 
-<div class="sheet" id="catSheet"><div class="sheet-head"><button class="entry-head-act confirm" onclick="closeCat()" aria-label="完成">✓</button><strong id="catTitle">分類管理</strong><span style="width:42px"></span></div><div class="aform" id="catBody"></div></div>
+<div class="sheet" id="catSheet"><div class="sheet-head"><span style="width:42px"></span><strong id="catTitle">分類管理</strong><button class="entry-head-act confirm" onclick="closeCat()" aria-label="完成">✓</button></div><div class="aform" id="catBody"></div></div>
 
 <div class="sheet" id="budgetSheet"><div class="sheet-head"><button class="x" onclick="closeBudget()">取消</button><strong id="budgetTitle">設定預算</strong><button class="x" id="budgetDel" style="color:var(--expense);visibility:hidden" onclick="deleteBudget()">刪除</button></div>
 <div class="aform"><div class="field"><label>支出分類</label><select id="bfCat"></select></div><div class="field"><label>每月預算金額</label><input id="bfAmt" inputmode="numeric" placeholder="0"></div><button class="save-btn" onclick="saveBudget()">儲存</button></div></div>
@@ -1312,11 +1318,11 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
  <button class="save-btn" onclick="saveGoal()">儲存目標</button>
 </div></div>
 
-<div class="sheet" id="debtSheet"><div class="sheet-head"><button class="entry-head-act confirm" onclick="closeDebt()" aria-label="完成">✓</button><strong id="debtTitle">應收 / 應付款項</strong><span style="width:42px"></span></div><div class="aform" id="debtBody"></div></div>
+<div class="sheet" id="debtSheet"><div class="sheet-head"><span style="width:42px"></span><strong id="debtTitle">應收 / 應付款項</strong><button class="entry-head-act confirm" onclick="closeDebt()" aria-label="完成">✓</button></div><div class="aform" id="debtBody"></div></div>
 
-<div class="sheet" id="aliasSheet"><div class="sheet-head"><button class="entry-head-act confirm" onclick="closeAlias()" aria-label="完成">✓</button><strong id="aliasTitle">記帳別名</strong><span style="width:42px"></span></div><div class="aform" id="aliasBody"></div></div>
+<div class="sheet" id="aliasSheet"><div class="sheet-head"><span style="width:42px"></span><strong id="aliasTitle">記帳別名</strong><button class="entry-head-act confirm" onclick="closeAlias()" aria-label="完成">✓</button></div><div class="aform" id="aliasBody"></div></div>
 
-<div class="sheet" id="tripSheet"><div class="sheet-head"><button class="entry-head-act confirm" onclick="closeTrip()" aria-label="完成">✓</button><strong id="tripTitle">旅行模式</strong><span style="width:42px"></span></div><div class="aform" id="tripBody"></div></div>
+<div class="sheet" id="tripSheet"><div class="sheet-head"><span style="width:42px"></span><strong id="tripTitle">旅行模式</strong><button class="entry-head-act confirm" onclick="closeTrip()" aria-label="完成">✓</button></div><div class="aform" id="tripBody"></div></div>
 <div class="sheet" id="tripDetailSheet"><div class="sheet-head"><button class="x close-icon" onclick="closeTripDetail()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong id="tripDetailTitle">旅行</strong><button class="x" id="tripEditBtn" style="color:var(--accent)" onclick="openTripForm(curTripId)">編輯</button></div><div class="aform" id="tripDetailBody"></div></div>
 
 <div class="sheet" id="compSheet"><div class="sheet-head"><button class="x close-icon" onclick="closeComp()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong>各分組資產佔比</strong><span style="width:32px"></span></div><div class="comp-wrap" id="compBody"></div></div>
@@ -2326,11 +2332,20 @@ function openGrp(){renderGrpSheet();$('#grpSheet').classList.add('open');syncMas
 function closeGrp(){$('#grpSheet').classList.remove('open');syncMask();}
 function renderGrpSheet(){const counts={};accounts.forEach(a=>counts[a.group]=(counts[a.group]||0)+1);
  const rows=groupOrder.map((g,i)=>{const accs=accounts.filter(a=>a.group===g);
-  const accRows=accs.map((a,k)=>`<div class="grow" style="margin-left:26px;margin-top:6px"><button class="mv" onclick="moveAcctOrder('${a.id}',-1)" ${k===0?'disabled':''}>↑</button><button class="mv" onclick="moveAcctOrder('${a.id}',1)" ${k===accs.length-1?'disabled':''}>↓</button><span style="flex:1;font-size:13.5px;font-weight:600;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${accountIconHTML(a)} ${a.n}</span></div>`).join('');
-  return `<div class="grow" ${i?'style="margin-top:14px"':''}><button class="mv" onclick="moveGroup(${i},-1)" ${i===0?'disabled':''}>↑</button><button class="mv" onclick="moveGroup(${i},1)" ${i===groupOrder.length-1?'disabled':''}>↓</button><input value="${String(g).replace(/"/g,'&quot;')}" onchange="renameGroup('${esc(g)}',this.value)"><span class="gcnt">${counts[g]||0}</span><button class="mv del" onclick="deleteGroup('${esc(g)}')" ${counts[g]?'disabled':''}>✕</button></div>`+accRows;}).join('');
- $('#grpBody').innerHTML=rows+`<div class="grow" style="margin-top:16px"><input id="newGrpName" placeholder="新增分組名稱…"><button class="save-btn" style="width:auto;margin:0;padding:11px 18px" onclick="addGroupFromInput()">新增</button></div><p class="hint">↑↓ 可調整分組順序，也可調整各分組內帳戶的順序。直接修改文字即可替分組改名。只有沒有帳戶的分組才能刪除。</p>`;}
-function moveGroup(i,dir){const j=i+dir;if(j<0||j>=groupOrder.length)return;const t=groupOrder[i];groupOrder[i]=groupOrder[j];groupOrder[j]=t;persistGroups();renderGrpSheet();renderOverview();}
-function moveAcctOrder(id,dir){const a=accounts.find(x=>x.id===id);if(!a)return;const idxs=[];accounts.forEach((x,i)=>{if(x.group===a.group)idxs.push(i);});const pos=idxs.indexOf(accounts.indexOf(a));const np=pos+dir;if(np<0||np>=idxs.length)return;const i1=idxs[pos],i2=idxs[np];const t=accounts[i1];accounts[i1]=accounts[i2];accounts[i2]=t;persist();renderGrpSheet();renderOverview();}
+  const accRows=accs.map(a=>`<div class="grow sort-row" data-sort-kind="account" data-sort-key="${noticeEsc(a.id)}" data-sort-group="${noticeEsc(g)}" style="margin-left:26px;margin-top:6px"><button type="button" class="sort-handle" aria-label="長按拖曳排序帳戶 ${noticeEsc(a.n)}" title="長按拖曳排序">⠿</button><span style="flex:1;font-size:13.5px;font-weight:600;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${accountIconHTML(a)} ${a.n}</span></div>`).join('');
+  return `<div class="grow sort-row" data-sort-kind="group" data-sort-key="${noticeEsc(g)}" ${i?'style="margin-top:14px"':''}><button type="button" class="sort-handle" aria-label="長按拖曳排序分組 ${noticeEsc(g)}" title="長按拖曳排序">⠿</button><input value="${noticeEsc(g)}" onchange="renameGroup('${esc(g)}',this.value)"><span class="gcnt">${counts[g]||0}</span><button class="mv del" onclick="deleteGroup('${esc(g)}')" ${counts[g]?'disabled':''}>✕</button></div>`+accRows;}).join('');
+ $('#grpBody').innerHTML=rows+`<div class="grow" style="margin-top:16px"><input id="newGrpName" placeholder="新增分組名稱…"><button class="save-btn" style="width:auto;margin:0;padding:11px 18px" onclick="addGroupFromInput()">新增</button></div><p class="hint">長按左側拖曳圖示可調整分組順序，也可調整各分組內帳戶順序。直接修改文字即可替分組改名；只有沒有帳戶的分組才能刪除。</p>`;}
+let grpSortState=null,grpSortFrame=0;
+function grpSortCanDrop(state,row){return !!row&&row!==state.row&&row.dataset.sortKind===state.kind&&(state.kind!=='account'||row.dataset.sortGroup===state.group);}
+function grpSortSetTarget(state,x,y){const found=document.elementsFromPoint(x,y).map(el=>el.closest&&el.closest('#grpBody .sort-row')).find(row=>grpSortCanDrop(state,row));document.querySelectorAll('#grpBody .sort-drop-before,#grpBody .sort-drop-after').forEach(row=>row.classList.remove('sort-drop-before','sort-drop-after'));state.target=null;if(!found)return;const before=y<found.getBoundingClientRect().top+found.getBoundingClientRect().height/2;found.classList.add(before?'sort-drop-before':'sort-drop-after');state.target={kind:found.dataset.sortKind,key:found.dataset.sortKey,group:found.dataset.sortGroup||'',before};}
+function grpSortAutoScroll(){if(grpSortFrame)return;const tick=()=>{const state=grpSortState;if(!state||!state.started){grpSortFrame=0;return;}const sheet=$('#grpSheet'),rect=sheet.getBoundingClientRect(),edge=66;if(state.y<rect.top+edge)sheet.scrollTop-=Math.max(5,Math.ceil((rect.top+edge-state.y)/6));else if(state.y>rect.bottom-edge)sheet.scrollTop+=Math.max(5,Math.ceil((state.y-(rect.bottom-edge))/6));grpSortSetTarget(state,state.x,state.y);grpSortFrame=requestAnimationFrame(tick);};grpSortFrame=requestAnimationFrame(tick);}
+function grpSortPointerDown(e){const handle=e.target.closest&&e.target.closest('#grpBody .sort-handle'),row=handle&&handle.closest('.sort-row');if(!handle||!row||!e.isPrimary||(typeof e.button==='number'&&e.button!==0)||!$('#grpSheet').classList.contains('open'))return;e.preventDefault();const state={handle,row,kind:row.dataset.sortKind,key:row.dataset.sortKey,group:row.dataset.sortGroup||'',pointerId:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,started:false,target:null,timer:0};state.timer=setTimeout(()=>{if(grpSortState!==state)return;state.started=true;row.classList.add('sort-dragging');handle.classList.add('active');try{handle.setPointerCapture(state.pointerId);}catch(_){}grpSortAutoScroll();},300);grpSortState=state;}
+function grpSortPointerMove(e){const state=grpSortState;if(!state||e.pointerId!==state.pointerId)return;state.x=e.clientX;state.y=e.clientY;if(!state.started){if(Math.hypot(state.x-state.startX,state.y-state.startY)>10){clearTimeout(state.timer);grpSortState=null;}return;}e.preventDefault();grpSortSetTarget(state,state.x,state.y);}
+function grpSortFinish(commit){const state=grpSortState;if(!state)return;clearTimeout(state.timer);if(grpSortFrame)cancelAnimationFrame(grpSortFrame);grpSortFrame=0;document.querySelectorAll('#grpBody .sort-row').forEach(row=>row.classList.remove('sort-dragging','sort-drop-before','sort-drop-after'));document.querySelectorAll('#grpBody .sort-handle.active').forEach(handle=>handle.classList.remove('active'));grpSortState=null;if(!commit||!state.started||!state.target)return;const target=state.target;if(state.kind==='group')reorderGroupByDrop(state.key,target.key,target.before);else reorderAccountByDrop(state.key,target.key,state.group,target.before);}
+function grpSortPointerUp(e){if(grpSortState&&e.pointerId===grpSortState.pointerId)grpSortFinish(true);}
+function grpSortPointerCancel(e){if(grpSortState&&e.pointerId===grpSortState.pointerId)grpSortFinish(false);}
+function reorderGroupByDrop(source,target,before){const from=groupOrder.indexOf(source);if(from<0||source===target)return;const [moved]=groupOrder.splice(from,1),to=groupOrder.indexOf(target);if(to<0){groupOrder.splice(from,0,moved);return;}groupOrder.splice(to+(before?0:1),0,moved);persistGroups();renderGrpSheet();renderOverview();}
+function reorderAccountByDrop(source,target,group,before){if(source===target)return;const indices=[];accounts.forEach((a,i)=>{if(a.group===group)indices.push(i);});const ordered=indices.map(i=>accounts[i]),from=ordered.findIndex(a=>a.id===source);if(from<0)return;const [moved]=ordered.splice(from,1),to=ordered.findIndex(a=>a.id===target);if(to<0)return;ordered.splice(to+(before?0:1),0,moved);indices.forEach((index,i)=>accounts[index]=ordered[i]);persist();renderGrpSheet();renderOverview();}
 function renameGroup(o,nn){nn=(nn||'').trim();if(!nn||nn===o){renderGrpSheet();return;}if(groupOrder.includes(nn)){toast('分組名稱重複');renderGrpSheet();return;}const idx=groupOrder.indexOf(o);if(idx<0)return;groupOrder[idx]=nn;accounts.forEach(a=>{if(a.group===o)a.group=nn;});collapsed=collapsed.map(g=>g===o?nn:g);persistGroups();renderGrpSheet();renderOverview();toast('分組已改名');}
 function addGroup(name){name=(name||'').trim();if(name&&!groupOrder.includes(name)){groupOrder.push(name);persistGroups();return true;}return false;}
 function addGroupFromInput(){if(addGroup($('#newGrpName').value)){renderGrpSheet();renderOverview();toast('已新增分組');}else toast('名稱空白或重複');}
@@ -2550,6 +2565,7 @@ let calSwipeStart=null;
 $('#recCal').addEventListener('touchstart',e=>{if(!e.target.closest('.cal-fixed'))return;const t=e.changedTouches[0];calSwipeStart={x:t.clientX,y:t.clientY};},{passive:true});
 $('#recCal').addEventListener('touchend',e=>{if(!calSwipeStart)return;const t=e.changedTouches[0],dx=t.clientX-calSwipeStart.x,dy=t.clientY-calSwipeStart.y;calSwipeStart=null;if(Math.abs(dx)<48||Math.abs(dx)<=Math.abs(dy))return;calShift(dx<0?1:-1);},{passive:true});
 document.addEventListener('pointerdown',e=>{const target=e.target;if(target&&target.id==='eipTotal'){target.readOnly=true;target.inputMode='none';openCalculator('installmentTotal');return;}if(target&&target.closest&&!target.closest('.acct-menu, .acct-trigger, #acctMenuBackdrop'))closeAllAccountMenus();if(calculatorTarget==='installmentTotal'&&target&&target.closest&&target.closest('#sheet .entry-scroll'))return;if(target&&target.closest&&!target.closest('#sheet .amt-line, #sheet .keys'))closeCalculator();});
+$('#grpBody').addEventListener('pointerdown',grpSortPointerDown);document.addEventListener('pointermove',grpSortPointerMove,{passive:false});document.addEventListener('pointerup',grpSortPointerUp);document.addEventListener('pointercancel',grpSortPointerCancel);window.addEventListener('blur',()=>grpSortFinish(false));
 
 function syncWebViewportHeight(){
   const root=document.documentElement;
