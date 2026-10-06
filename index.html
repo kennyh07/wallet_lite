@@ -1306,7 +1306,7 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
 <div class="sheet" id="budgetSheet"><div class="sheet-head"><button class="x" onclick="closeBudget()">取消</button><strong id="budgetTitle">設定預算</strong><button class="x" id="budgetDel" style="color:var(--expense);visibility:hidden" onclick="deleteBudget()">刪除</button></div>
 <div class="aform"><div class="field"><label>支出分類</label><select id="bfCat"></select></div><div class="field"><label>每月預算金額</label><input id="bfAmt" inputmode="numeric" placeholder="0"></div><button class="save-btn" onclick="saveBudget()">儲存</button></div></div>
 
-<div class="sheet" id="goalSheet"><div class="sheet-head"><button class="x" onclick="closeGoal()">取消</button><strong id="goalTitle">新增目標</strong><button class="x" id="goalDel" style="color:var(--expense);visibility:hidden" onclick="deleteGoal()">刪除</button></div>
+<div class="sheet" id="goalSheet"><div class="sheet-head"><button type="button" class="x close-icon" onclick="closeGoal()" aria-label="取消" title="取消"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><strong id="goalTitle">新增目標</strong><button type="button" class="x close-icon" id="goalDel" style="color:var(--expense);visibility:hidden" onclick="deleteGoal()" aria-label="刪除目標" title="刪除目標"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M5 7l1 14h12l1-14M9 7V4h6v3"/></svg></button></div>
 <div class="aform">
  <div class="field af-toprow"><div class="av af-prev" id="gfPrev"></div><div style="font-size:13px;color:var(--ink2)">預覽</div></div>
  <div class="field"><label>目標名稱</label><input id="gfName" placeholder="例如：日本旅遊基金"></div>
