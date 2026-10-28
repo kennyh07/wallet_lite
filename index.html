@@ -372,11 +372,12 @@ html.ios-safari-web #app{height:100%!important;min-height:0!important;max-height
 #sheet.calculator-open .keys{display:grid;}
 #sheet.calculator-open .entry-save{display:none;}
 #sheet.calculator-open .entry-note-row{display:none;}
+#sheet.calculator-open .pad-zone{padding-bottom:calc(30px + var(--safe));}
 .calculator-target{display:none;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px;padding:11px 14px;border:1px solid var(--accent);border-radius:14px;background:var(--input);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent);}
 .calculator-target span{font-size:13px;font-weight:700;color:var(--ink2);}
 .calculator-target b{font-family:var(--num);font-size:28px;font-weight:800;color:var(--ink);}
 #sheet.has-calculator-target .calculator-target{display:flex;}
-.key{height:44px;border-radius:14px;background:var(--bg2);font-family:var(--num);font-size:24px;font-weight:600;display:grid;place-items:center;transition:transform .08s,background .12s;}
+.key{height:44px;border-radius:14px;background:var(--bg2);font-family:var(--num);font-size:24px;font-weight:600;display:grid;place-items:center;transition:transform .08s,background .12s;touch-action:manipulation;}
 .key:active{transform:scale(.93);background:var(--line);}
 .key.op{color:var(--accent);font-weight:700;}
 .key.save{background:var(--accent);color:#fff;font-family:var(--sans);font-size:18px;font-weight:700;height:auto;}
@@ -2477,7 +2478,7 @@ openInstallmentFromEntry=function(){openInstallmentFromEntryBase();const acct=$(
 saveEntryInstallment=function(){const name=$('#eipName').value.trim(),total=Math.round(parseFloat(($('#eipTotal').value||'0').replace(/,/g,''))||0),count=parseInt($('#eipCount').value,10)||0,startDate=$('#eipStartDate').value,cat=$('#eipCat').value,acct=$('#eipAcct').value,account=accounts.find(a=>a.id===acct);if(!name||!total||count<2||!startDate){toast('請完成名稱、金額、期數與首期日期');return;}if(!account||!['信用卡','銀行'].includes(account.group)){toast('請選擇信用卡或銀行帳戶');return;}installments.push({id:'ip'+rnd(),name,total,count,per:Math.floor(total/count),start:startDate.slice(0,7),startDate,cat,acct,payAcct:'',payDay:null,paid:0,active:true});persistInstallments();const posted=postDueInstallments();closeSheet();renderOverview();renderRecords();renderStats();toast(posted?'已建立並入帳 '+posted+' 期':'分期付款已建立');};
 
 const setTypeBase=setType;
-setType=function(t,keepCat=false){setTypeBase(t,keepCat);const padTop=$('#sheet .pad-top'),scroll=$('#sheet .entry-scroll'),transferPick=$('#transferPick'),padZone=$('#sheet .pad-zone');if(!padTop||!scroll||!padZone)return;if(t==='expense'||t==='income')scroll.insertBefore(padTop,transferPick);else padZone.insertBefore(padTop,padZone.firstChild);};
+setType=function(t,keepCat=false){setTypeBase(t,keepCat);const padTop=$('#sheet .pad-top'),scroll=$('#sheet .entry-scroll'),categoryGrid=$('#catGrid'),padZone=$('#sheet .pad-zone');if(!padTop||!scroll||!padZone)return;if(t==='expense'||t==='income')scroll.insertBefore(padTop,categoryGrid);else padZone.insertBefore(padTop,padZone.firstChild);};
 const openInstallmentFromEntryWithChoices=openInstallmentFromEntry;
 openInstallmentFromEntry=function(){openInstallmentFromEntryWithChoices();const select=$('#eipAcct');if(!select)return;const selected=select.value,choices=groupOrder.flatMap(group=>accounts.filter(a=>a.group===group&&(a.group==='信用卡'||a.group==='銀行')));select.replaceChildren();choices.forEach(a=>{const option=document.createElement('option');option.value=a.id;option.textContent=accountIconText(a)+' '+a.n;select.appendChild(option);});select.value=choices.some(a=>a.id===selected)?selected:(choices[0]&&choices[0].id)||'';};
 const openInstallmentFromEntryWithStyledAccount=openInstallmentFromEntry;
