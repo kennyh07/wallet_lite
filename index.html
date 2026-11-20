@@ -182,6 +182,9 @@ html.ios-safari-web #app{height:100%!important;min-height:0!important;max-height
 .stats-fixed .month-nav .m{font-size:15px;}
 .stats-fixed .seg{margin-bottom:8px;}
 .stats-fixed .seg button{padding:7px;}
+.stats-fixed .stats-view-seg{margin:0 0 8px;}
+.stats-fixed .stats-view-seg button{font-size:12px;}
+.stats-fixed #statTypeSeg.is-hidden{display:none;}
 .stats-fixed .stat-sum{padding:10px 8px;margin-bottom:5px;}
 .stats-fixed .stat-cmp{margin-bottom:7px;font-size:11.5px;}
 .stats-fixed .donut-wrap{padding:8px;border-radius:18px;}
@@ -203,6 +206,26 @@ html.ios-safari-web #app{height:100%!important;min-height:0!important;max-height
 .leg .ic{font-size:17px;} .leg .nm{flex:1;font-size:14px;font-weight:600;}
 .leg .v{font-family:var(--num);font-size:14px;font-weight:700;}
 .leg .pc{font-size:11px;color:var(--ink3);font-family:var(--num);min-width:38px;text-align:right;}
+.trend-chart{width:100%;}
+.trend-chart h3{margin:0 0 3px;font-size:13px;color:var(--ink2);text-align:left;}
+.trend-chart .hint{margin:0 0 5px;font-size:10px;color:var(--ink3);text-align:left;}
+.trend-chart svg{display:block;width:100%;height:auto;overflow:visible;}
+.trend-chart .grid{stroke:var(--line);stroke-width:1;opacity:.72;}
+.trend-chart .axis-label{fill:var(--ink3);font:9px var(--num);}
+.trend-chart .month-label{fill:var(--ink3);font:8.5px var(--num);}
+.trend-chart .series{fill:none;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;}
+.trend-chart .point{stroke:var(--card);stroke-width:1.5;}
+.trend-legend{display:flex;justify-content:center;flex-wrap:wrap;gap:5px 12px;margin-top:3px;font-size:10px;color:var(--ink2);}
+.trend-legend span{display:inline-flex;align-items:center;gap:4px;}
+.trend-legend i{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.trend-list-title{padding:11px 2px 5px;font-size:12px;font-weight:750;color:var(--ink2);}
+.trend-row{display:grid;grid-template-columns:62px 1fr;gap:8px;align-items:center;padding:9px 4px;border-top:1px solid var(--line);}
+.trend-row .trend-month{font:700 11px var(--num);color:var(--ink);}
+.trend-row .trend-rate{display:block;margin-top:3px;font:650 9.5px var(--num);color:var(--accent);}
+.trend-values{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:9.5px;color:var(--ink3);white-space:nowrap;}
+.trend-values b{font:750 10px var(--num);color:var(--ink);}
+.trend-values .trend-net-positive{color:var(--income);}
+.trend-values .trend-net-negative{color:var(--expense);}
 
 .sheet-mask{position:fixed;inset:0;background:rgba(10,12,20,.5);backdrop-filter:blur(3px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility 0s linear .3s;z-index:40;}
 .sheet-mask.open{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s;}
@@ -1143,7 +1166,8 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
   <div class="screen hidden" id="scr-stats">
     <div class="stats-fixed"><div class="month-nav" id="statMonthNav"><button onclick="shiftMonth(-1)">‹</button><span class="m" id="statMonth"></span><button onclick="shiftMonth(1)">›</button></div>
     <div class="stats-trip-filter"><span>🧳</span><select id="statTripSel" onchange="setStatTrip(this.value)"></select></div>
-    <div class="seg"><button class="on" id="segExp" onclick="setStatType('expense')">支出</button><button id="segInc" onclick="setStatType('income')">收入</button></div></div>
+    <div class="seg" id="statTypeSeg"><button class="on" id="segExp" onclick="setStatType('expense')">支出</button><button id="segInc" onclick="setStatType('income')">收入</button></div>
+    <div class="seg stats-view-seg"><button class="on" id="statViewMonth" onclick="setStatView('month')">單月分析</button><button id="statViewTrend" onclick="setStatView('trend')">月趨勢</button></div></div>
     <div class="stats-fixed"><div id="statSummary"></div><div class="donut-wrap" id="donutWrap"></div></div>
     <div class="stats-scroll"><div class="stats-list" id="statList"></div></div>
   </div>
@@ -1560,7 +1584,7 @@ const CATMAP={};
 function rebuildCatMap(){for(const k in CATMAP)delete CATMAP[k];[...expCats,...incCats].forEach(c=>CATMAP[c.id]=c);}
 rebuildCatMap();
 
-let statType='expense',statRef=new Date();
+let statType='expense',statView='month',statRef=new Date();
 let recView=Store.get('recView','list'),calRef=new Date(),calSelected=null;
 let calMotion='';
 let cur={type:'expense',cat:expCats[0]?.id,acct:accounts[0]?.id,note:'',expr:'0',editId:null,date:null};
@@ -1936,15 +1960,25 @@ function renderFxRow(){const el=$('#fxLine');if(!el)return;const used=[...new Se
 
 /* stats */
 function setStatType(t){statType=t;$('#segExp').classList.toggle('on',t==='expense');$('#segInc').classList.toggle('on',t==='income');renderStats();}
+function setStatView(v){statView=v==='trend'?'trend':'month';$('#statViewMonth').classList.toggle('on',statView==='month');$('#statViewTrend').classList.toggle('on',statView==='trend');renderStats();}
 function shiftMonth(d){statRef=new Date(statRef.getFullYear(),statRef.getMonth()+d,1);renderStats();}
 let statTripId='';
 function setStatTrip(id){statTripId=trips.some(t=>t.id===id)?id:'';renderStats();}
 function fillStatTripSel(){const sel=$('#statTripSel');if(!sel)return;const valid=trips.some(t=>t.id===statTripId);if(!valid)statTripId='';sel.innerHTML='<option value="">全部帳本（按月）</option>'+trips.map(t=>`<option value="${t.id}">🧳 ${t.name}</option>`).join('');sel.value=statTripId;}
 function monthTotals(y,m,tripId=''){let inc=0,exp=0;transactions.forEach(t=>{const d=new Date(t.date);if(d.getFullYear()===y&&d.getMonth()===m&&(!tripId||t.trip===tripId)){inc+=incFlow(t);exp+=expFlow(t);}});return{inc,exp,net:inc-exp};}
+function renderStatTrend(wrap,list){const points=Array.from({length:12},(_,i)=>{const d=new Date(statRef.getFullYear(),statRef.getMonth()-11+i,1),v=monthTotals(d.getFullYear(),d.getMonth(),statTripId);return{y:d.getFullYear(),m:d.getMonth(),...v,rate:v.inc?v.net/v.inc*100:null};});
+ const W=360,H=224,L=43,R=318,T=19,B=184,range=points.map(p=>p.net),moneyLow=Math.min(0,...range),moneyHigh=Math.max(0,...points.map(p=>Math.max(p.inc,p.exp,p.net))),moneySpan=Math.max(1,moneyHigh-moneyLow),lo=moneyLow-(moneyLow<0?moneySpan*.06:0),hi=moneyHigh+moneySpan*.08,rateValues=points.filter(p=>p.rate!==null).map(p=>p.rate),rateLow=Math.min(0,...rateValues),rateHigh=Math.max(100,...rateValues),rateSpan=Math.max(1,rateHigh-rateLow),rlo=rateLow-(rateLow<0?rateSpan*.05:0),rhi=rateHigh+rateSpan*.03,x=i=>L+(R-L)*i/(points.length-1),ym=v=>B-(v-lo)/(hi-lo)*(B-T),yr=v=>B-(v-rlo)/(rhi-rlo)*(B-T),compact=v=>{const a=Math.abs(v);return a>=100000?`${(v/10000).toFixed(0)}萬`:a>=10000?`${(v/10000).toFixed(1)}萬`:a>=1000?`${(v/1000).toFixed(0)}k`:Math.round(v).toString();};
+ let grid='',axis='',xlabels='',incomePath='',expensePath='',netPath='',ratePath='',dots='',rateSegmentOpen=false;
+ for(let j=0;j<5;j++){const y=T+(B-T)*j/4,mv=hi-(hi-lo)*j/4,rv=rhi-(rhi-rlo)*j/4;grid+=`<line class="grid" x1="${L}" y1="${y}" x2="${R}" y2="${y}"/>`;axis+=`<text class="axis-label" x="${L-5}" y="${y+3}" text-anchor="end">${compact(mv)}</text><text class="axis-label" x="${R+5}" y="${y+3}" text-anchor="start">${Math.round(rv)}%</text>`;}
+ points.forEach((p,i)=>{const xx=x(i);xlabels+=`<text class="month-label" x="${xx}" y="${B+17}" text-anchor="middle">${p.m+1}月</text>`;incomePath+=(i?'L':'M')+`${xx},${ym(p.inc)} `;expensePath+=(i?'L':'M')+`${xx},${ym(p.exp)} `;netPath+=(i?'L':'M')+`${xx},${ym(p.net)} `;if(p.rate!==null){ratePath+=(rateSegmentOpen?'L':'M')+`${xx},${yr(p.rate)} `;rateSegmentOpen=true;dots+=`<circle class="point" cx="${xx}" cy="${yr(p.rate)}" r="2.8" fill="#9b8afb"><title>${p.y}/${pad2(p.m+1)} 儲蓄率 ${p.rate.toFixed(1)}%</title></circle>`;}else rateSegmentOpen=false;});
+ const series=(d,color)=>`<path class="series" d="${d}" stroke="${color}"/>`;wrap.innerHTML=`<div class="trend-chart"><h3>最近 12 個月收支趨勢</h3><p class="hint">金額左軸（TWD）・儲蓄率右軸</p><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="最近12個月收入、支出、淨成長與儲蓄率趨勢圖">${grid}${axis}${xlabels}${series(incomePath,'var(--income)')}${series(expensePath,'var(--expense)')}${series(netPath,'#f4b942')}${ratePath?series(ratePath,'#9b8afb'):''}${dots}</svg><div class="trend-legend"><span><i style="background:var(--income)"></i>收入</span><span><i style="background:var(--expense)"></i>支出</span><span><i style="background:#f4b942"></i>淨成長</span><span><i style="background:#9b8afb"></i>儲蓄率</span></div></div>`;
+ list.innerHTML=`<div class="trend-list-title">每月明細・最近月份在上</div><div class="trend-rows">${points.slice().reverse().map(p=>`<div class="trend-row"><div><span class="trend-month">${p.y}/${pad2(p.m+1)}</span><small class="trend-rate">儲蓄率 ${p.rate===null?'—':p.rate.toFixed(1)+'%'}</small></div><div class="trend-values"><span>入 $${fmtN(p.inc)}</span><span>支 $${fmtN(p.exp)}</span><b class="${p.net>=0?'trend-net-positive':'trend-net-negative'}">淨 ${p.net>=0?'+':'−'}$${fmtN(Math.abs(p.net))}</b></div></div>`).join('')}</div>`;
+}
 function renderStats(){fillStatTripSel();const trip=trips.find(t=>t.id===statTripId),isTrip=!!trip,nav=$('#statMonthNav'),y=statRef.getFullYear(),m=statRef.getMonth(),sums={};let total=0;
- nav.style.display=isTrip?'none':'';$('#statMonth').textContent=isTrip?'🧳 '+trip.name:(y+' / '+pad2(m+1));
+ $('#statTypeSeg').classList.toggle('is-hidden',statView==='trend');$('#statViewMonth').classList.toggle('on',statView==='month');$('#statViewTrend').classList.toggle('on',statView==='trend');nav.style.display=isTrip&&statView==='month'?'none':'';$('#statMonth').textContent=isTrip?`🧳 ${trip.name}${statView==='trend'?' · '+y+'/'+pad2(m+1):''}`:(y+' / '+pad2(m+1));
  const cm=isTrip?transactions.filter(t=>t.trip===statTripId).reduce((o,t)=>{o.inc+=incFlow(t);o.exp+=expFlow(t);return o;},{inc:0,exp:0}):monthTotals(y,m);if(isTrip)cm.net=cm.inc-cm.exp;const pm=monthTotals(m===0?y-1:y,(m+11)%12),diff=cm.net-(pm.net||0),netRate=cm.inc?cm.net/cm.inc*100:null,rateText=netRate===null?'—':netRate.toFixed(1)+'%',rateColor=cm.net>=0?'var(--income)':'var(--expense)',tripInfo=isTrip?tripStats(statTripId):null;
  $('#statSummary').innerHTML=`<div class="stat-sum"><div class="ss"><span>${isTrip?'旅程收入':'收入'}</span><b style="color:var(--income)">$${fmtN(cm.inc)}</b></div><div class="ss"><span>${isTrip?'旅程花費':'支出'}</span><b style="color:var(--expense)">$${fmtN(cm.exp)}</b></div><div class="ss ss-net"><span>淨成長</span><b style="color:${rateColor}">${cm.net>=0?'+':'-'}$${fmtN(Math.abs(cm.net))}</b><small style="color:${rateColor}">儲蓄率 ${rateText}</small></div></div><div class="stat-cmp">儲蓄率＝淨成長 ÷ 收入${cm.inc?'':'（無收入時顯示 —）'}　·　${isTrip?`${tripInfo.exps.length} 筆消費・${tripInfo.ndays} 天・日均 $${fmtN(tripInfo.total/(tripInfo.ndays||1))}`:`較上月淨成長 ${diff>=0?'▲ +':'▼ -'}$${fmtN(Math.abs(diff))}`}</div>`;
+ if(statView==='trend'){renderStatTrend($('#donutWrap'),$('#statList'));return;}
  transactions.forEach(t=>{const d=new Date(t.date);if((isTrip?t.trip!==statTripId:(d.getFullYear()!==y||d.getMonth()!==m)))return;
   if(statType==='expense'){if(t.type==='expense'){sums[t.cat]=(sums[t.cat]||0)+txTWD(t);total+=txTWD(t);}else if(t.type==='transfer'&&t.fee){sums['fee']=(sums['fee']||0)+feeTWD(t);total+=feeTWD(t);}}
   else if(statType==='income'&&t.type==='income'){sums[t.cat]=(sums[t.cat]||0)+txTWD(t);total+=txTWD(t);}});
