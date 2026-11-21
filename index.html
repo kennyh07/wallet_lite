@@ -457,6 +457,41 @@ html.ios-safari-web #app{height:100%!important;min-height:0!important;max-height
 .setting-child{width:calc(100% - 28px);margin-left:14px;}
 .setting-child .set-row{background:color-mix(in srgb,var(--card) 82%,var(--bg2));}
 .setting-child .hint{margin-left:2px;margin-right:2px;}
+.flexsum-overview{margin:0 0 14px;}
+.flexsum-overview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 3px 8px;}
+.flexsum-overview-head b{font-size:14px;color:var(--ink2);}
+.flexsum-overview-head button{padding:5px 2px;color:var(--accent);font-size:12px;font-weight:750;}
+.flexsum-overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+.flexsum-card{position:relative;min-width:0;overflow:hidden;padding:14px 13px 12px;text-align:left;border:1px solid var(--line);border-radius:17px;background:var(--card);color:var(--ink);box-shadow:var(--shadow);}
+.flexsum-card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--sum-color);}
+.flexsum-card:active{transform:scale(.985);}
+.flexsum-card .name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:750;}
+.flexsum-card .amount{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:7px;font:800 19px var(--num);color:var(--sum-color);}
+.flexsum-card .meta{display:block;margin-top:4px;font-size:11px;color:var(--ink3);}
+.flexsum-intro{margin:1px 1px 14px;color:var(--ink3);font-size:13px;line-height:1.5;}
+.flexsum-list{display:grid;gap:9px;margin-bottom:16px;}
+.flexsum-list-row{display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:8px;align-items:stretch;}
+.flexsum-list-edit{position:relative;min-width:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:13px 14px 13px 17px;text-align:left;border:1px solid var(--line);border-radius:15px;background:var(--card);color:var(--ink);}
+.flexsum-list-edit::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--sum-color);}
+.flexsum-list-edit .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:750;}
+.flexsum-list-edit .meta{margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;color:var(--ink3);}
+.flexsum-list-edit .amount{font:800 16px var(--num);color:var(--sum-color);white-space:nowrap;}
+.flexsum-delete{width:42px;border:1px solid color-mix(in srgb,var(--expense) 42%,var(--line));border-radius:13px;color:var(--expense);background:var(--card);display:grid;place-items:center;}
+.flexsum-delete svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.flexsum-account-list{display:grid;gap:7px;max-height:340px;overflow-y:auto;padding:2px;}
+.flexsum-account-group{margin:10px 3px 2px;font-size:12px;font-weight:750;color:var(--ink3);}
+.flexsum-account-group:first-child{margin-top:2px;}
+.flexsum-account-option{display:flex;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--line);border-radius:13px;background:var(--bg2);font-size:14px;font-weight:650;color:var(--ink);}
+.flexsum-account-option input{width:19px;height:19px;flex:0 0 19px;accent-color:var(--accent);}
+.flexsum-account-option .account-icon{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:var(--card);font-size:16px;overflow:hidden;}
+.flexsum-account-option .account-icon .daily-icon{width:18px;height:18px;}
+.flexsum-account-option .account-icon .account-art{width:22px;height:22px;object-fit:contain;}
+.flexsum-account-option .account-name{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.flexsum-account-option .account-bal{font:700 12px var(--num);color:var(--ink2);white-space:nowrap;}
+.flexsum-preview{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border-radius:15px;background:var(--bg2);border:1px solid var(--line);}
+.flexsum-preview span{font-size:13px;color:var(--ink2);font-weight:700;}
+.flexsum-preview b{font:800 19px var(--num);color:var(--accent);white-space:nowrap;}
+@media(max-width:350px){.flexsum-overview-grid{grid-template-columns:1fr}.flexsum-card .amount{font-size:20px;}}
 .set-row.add{justify-content:center;border-style:dashed;color:var(--accent);}
 .set-row.danger{color:var(--expense);}
 .set-val{font-size:13px;color:var(--ink3);font-weight:600;}
@@ -1128,6 +1163,7 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
     <div id="budgetPulse" style="display:none"></div>
     <div id="installmentPulse" style="display:none"></div>
     <div id="loanPulse" style="display:none"></div>
+    <div id="flexibleSums" style="display:none"></div>
     <div class="nw fade-in">
       <div class="lbl">總額</div>
       <div class="main"><span class="cur">TWD</span><span class="big" id="nwBig">0</span></div>
@@ -1281,6 +1317,7 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
     </div>
     <div class="settings-page" data-settings-page="accounts" hidden>
       <button class="set-row" onclick="openGrp()"><span>🗂️ 管理分組與帳戶排序</span><span class="set-val">›</span></button>
+      <button class="set-row" onclick="openFlexibleSums()"><span>🧮 靈活加總</span><span class="set-val" id="flexSumCount">›</span></button>
       <button class="set-row" onclick="openCatMgr('expense')"><span>🍜 編輯支出分類</span><span class="set-val">›</span></button>
       <button class="set-row" onclick="openCatMgr('income')"><span>💰 編輯收入分類</span><span class="set-val">›</span></button>
       <button class="set-row" onclick="openDebtMgr()"><span>💸 債務管理（房貸／車貸／學貸）</span><span class="set-val" id="debtCount">›</span></button>
@@ -1308,6 +1345,11 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
       <button class="set-row danger" onclick="resetData()"><span>♻️ 重設為範例資料</span></button>
     </div>
   </div>
+</div>
+
+<div class="sheet" id="flexSumSheet">
+  <div class="sheet-head"><button class="x close-icon" onclick="closeFlexibleSums()" aria-label="關閉"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m9 9 6 6m0-6-6 6"></path></svg></button><strong id="flexSumTitle">靈活加總</strong><span style="width:42px"></span></div>
+  <div class="aform" id="flexSumBody"></div>
 </div>
 
 <div class="sheet" id="grpSheet"><div class="sheet-head"><span style="width:42px"></span><strong>分組管理</strong><button class="entry-head-act confirm" onclick="closeGrp()" aria-label="完成">✓</button></div><div class="aform" id="grpBody"></div></div>
@@ -1571,6 +1613,7 @@ let plannedTransactions=Store.get('plannedTransactions',[]);
 let manualPlannedTransactions=Store.get('manualPlannedTransactions',[]),recurringOverrides=Store.get('recurringOverrides',[]);
 let aliases=Store.get('aliases',[]);
 let trips=Store.get('trips',[]),lastTrip=Store.get('lastTrip','');
+let flexibleSums=Store.get('flexibleSums',[]).filter(s=>s&&typeof s==='object').map(s=>({id:s.id||'fs'+rnd(),...s,accountIds:Array.isArray(s.accountIds)?s.accountIds:[]}));
 let showBudgetHome=Store.get('showBudgetHome',true);
 let fxRates=Store.get('fxRates',{TWD:1}),fxDate=Store.get('fxDate',null);
 if(!Store.get('goals_seeded')){if(!goals.length)goals=[{id:'g'+rnd(),n:'日本旅遊基金',target:60000,saved:18500,ic:'✈️',c:'#74c0fc'},{id:'g'+rnd(),n:'緊急預備金',target:300000,saved:215000,ic:'🛟',c:'#2bb673'}];Store.set('goals',goals);Store.set('goals_seeded',true);}
@@ -1632,6 +1675,7 @@ let calculatorTarget='amount',calculatorReplace=false;
 let editAcctId=null,afIcon=ICONS[0],afColor=COLORS[0],afImg=null;
 let catMgrType='expense',catFormId=null,cfName='',cfIcon='🍕',cfDaily='food',cfIllustration='daily/food',cfColor=COLORS[0];
 let cfGroupId='dining';
+let flexSumFormId=null;
 let recurType='expense',recurEditId=null;
 
 const $=s=>document.querySelector(s);
@@ -1658,6 +1702,7 @@ const persistManualPlans=()=>{Store.set('manualPlannedTransactions',manualPlanne
 const persistRecurringOverrides=()=>{Store.set('recurringOverrides',recurringOverrides);bump();queueDataRefresh();if(typeof syncNativeUpcomingNotifications==='function')syncNativeUpcomingNotifications();};
 const persistAliases=()=>{Store.set('aliases',aliases);bump();queueDataRefresh();};
 const persistTrips=()=>{Store.set('trips',trips);bump();queueDataRefresh();};
+const persistFlexibleSums=()=>{Store.set('flexibleSums',flexibleSums);bump();queueDataRefresh();};
 function repairTransferFeeBalances(){let repaired=0;transactions.forEach(t=>{if(t.type!=='transfer'||t.feeBalanceApplied||!(Number(t.fee)>0))return;const from=accounts.find(a=>a.id===t.acct);if(!from)return;from.bal-=Math.max(0,Number(t.fee)||0);t.feeBalanceApplied=true;repaired++;});if(repaired){Store.set('accounts',accounts);Store.set('transactions',transactions);bump();}return repaired;}
 function repairCalendarMonthSelection(){if(Store.get('calendarMonthRepairV1'))return 0;const affected=new Set(['t5zw9kgr','tlusiig2','tq0nzp51']);let repaired=0;transactions.forEach(t=>{if(affected.has(t.id)&&String(t.date||'').startsWith('2026-08-19')){t.date='2026-09-19T04:00:00.000Z';repaired++;}});Store.set('calendarMonthRepairV1',true);if(repaired){Store.set('transactions',transactions);bump();}return repaired;}
 function repairFutureTransactionBalances(){if(Store.get('futureTransactionPlanRepairV1'))return 0;const today=planStart(),kept=[],moved=[];transactions.forEach(t=>{const due=new Date(t.date);due.setHours(0,0,0,0);if(due>today){applyBalance(t,-1);moved.push({...t,id:'mp'+rnd(),source:'manual',sourceId:t.id});}else kept.push(t);});transactions=kept;if(moved.length){manualPlannedTransactions.push(...moved);Store.set('accounts',accounts);Store.set('transactions',transactions);Store.set('manualPlannedTransactions',manualPlannedTransactions);bump();}Store.set('futureTransactionPlanRepairV1',true);return moved.length;}
@@ -1689,7 +1734,7 @@ const pad2=n=>String(n).padStart(2,'0');
 const ymd=()=>{const d=new Date();return ''+d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate());};
 
 /* sheet mask sync */
-const SHEETS=['sheet','txActionSheet','acctSheet','grpSheet','daySheet','setSheet','recurSheet','installmentSheet','catSheet','budgetSheet','acctDetailSheet','cardBillSheet','noticeSheet','compSheet','goalSheet','debtSheet','aliasSheet','tripSheet','tripDetailSheet'];
+const SHEETS=['sheet','txActionSheet','acctSheet','grpSheet','daySheet','setSheet','flexSumSheet','recurSheet','installmentSheet','catSheet','budgetSheet','acctDetailSheet','cardBillSheet','noticeSheet','compSheet','goalSheet','debtSheet','aliasSheet','tripSheet','tripDetailSheet'];
 function anySheetOpen(){return SHEETS.some(id=>$('#'+id).classList.contains('open'));}
 function syncMask(){$('#mask').classList.toggle('open',anySheetOpen());}
 function closeAll(){SHEETS.forEach(id=>$('#'+id).classList.remove('open'));$('#mask').classList.remove('open');}
@@ -1772,9 +1817,27 @@ function renderCatBudgetHint(){const el=$('#catBudgetHint');if(!el)return;const 
 function renderInstallmentPulse(){const el=$('#installmentPulse');if(!el)return;const active=installments.filter(p=>!p.needsSetup&&p.active!==false&&(p.paid||0)<p.count);if(!active.length){el.style.display='none';return;}const rows=active.slice(0,2).map(p=>{const paid=p.paid||0,no=paid+1,d=installmentDate(p,paid),a=accounts.find(x=>x.id===p.acct);return `<div style="display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:12.5px"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🧾 ${p.name||'分期付款'}<small style="color:var(--ink3)"> · 已入帳 ${paid}/${p.count}</small></span><b style="font-family:var(--num);white-space:nowrap">$${fmtN(installmentAmount(p,paid))}</b></div><div style="font-size:11px;color:var(--ink3);margin-top:2px">繳費日 ${cardDateLabel(d)} · ${daysUntilLabel(d)} · 第 ${no}/${p.count} 期${a?' · '+a.n:''}</div>`;}).join('');el.style.display='block';el.innerHTML=`<div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 15px;margin-bottom:14px;box-shadow:var(--shadow)"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b style="font-size:14px">🧾 進行中的分期</b><button onclick="openInstallments()" style="font-size:12px;color:var(--accent);font-weight:700">管理 ${active.length} 筆 ›</button></div>${rows}${active.length>2?`<div style="font-size:11.5px;color:var(--ink3);margin-top:9px">另有 ${active.length-2} 筆進行中分期</div>`:''}</div>`;}
 function renderLoanPulse(){const el=$('#loanPulse');if(!el)return;const loans=debts.filter(d=>isLoan(d)&&!d.settled&&d.amt>0);if(!loans.length){el.style.display='none';return;}const rows=loans.slice(0,2).map(d=>{const info=loanInfo(d),original=Math.max(d.original||d.amt,d.amt),paid=Math.min(100,Math.round((original-d.amt)/original*100)),sym=ccyInfo(d.ccy||'TWD').s,due=d.dueDay?nextMonthlyDate(d.dueDay):null,dueText=due?' · 繳費日 '+cardDateLabel(due)+' · '+daysUntilLabel(due):' · 未設定繳費日';return '<div style="margin-top:9px"><div style="display:flex;justify-content:space-between;gap:10px;font-size:12.5px"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+info.ic+' '+(d.name||info.n)+'</span><b style="font-family:var(--num);color:var(--expense);white-space:nowrap">'+sym+fmtN(d.amt)+'</b></div><div style="height:5px;border-radius:4px;background:var(--bg2);overflow:hidden;margin-top:5px"><i style="display:block;height:100%;width:'+paid+'%;background:var(--income)"></i></div><div style="font-size:11px;color:var(--ink3);margin-top:3px">已償還 '+paid+'%'+(d.monthly?' · 每月 '+sym+fmtN(d.monthly):'')+dueText+'</div></div>';}).join('');el.style.display='block';el.innerHTML='<div style="background:var(--card);border:1px solid rgba(240,138,138,.32);border-radius:18px;padding:14px 15px;margin-bottom:14px;box-shadow:var(--shadow)"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b style="font-size:14px">🏦 進行中的貸款</b><button onclick="openDebtMgr()" style="font-size:12px;color:var(--accent);font-weight:700">管理 '+loans.length+' 筆 ›</button></div>'+rows+(loans.length>2?'<div style="font-size:11.5px;color:var(--ink3);margin-top:9px">另有 '+(loans.length-2)+' 筆進行中貸款</div>':'')+'</div>';}
 
+/* flexible account sums */
+const FLEX_SUM_COLORS=['#3b82f6','#22c55e','#8b5cf6','#f59e0b','#ec4899','#14b8a6'];
+function flexSumColor(sum,index){const c=sum&&sum.c;return /^#[0-9a-f]{6}$/i.test(c||'')?c:FLEX_SUM_COLORS[index%FLEX_SUM_COLORS.length];}
+function flexSumSelectedIds(sum){const ids=Array.isArray(sum?.accountIds)?sum.accountIds:[];return [...new Set(ids.filter(id=>accounts.some(a=>a.id===id)))];}
+function flexSumTotal(sum){return flexSumSelectedIds(sum).reduce((total,id)=>{const account=accounts.find(a=>a.id===id);return total+(account?Number(account.bal||0)*fx(account.ccy||'TWD'):0);},0);}
+function flexSumDisplay(total){return hideAmt?'••••':(total<0?'−':'')+'$'+fmtN(Math.abs(total));}
+function flexSumAccountBalance(account){const ccy=account.ccy||'TWD';return hideAmt?'••••':(account.bal<0?'−':'')+ccyInfo(ccy).s+fmtN(Math.abs(account.bal||0))+(ccy==='TWD'?'':' '+ccy);}
+function renderFlexibleSums(){const el=$('#flexibleSums');if(!el)return;const sums=flexibleSums.map((sum,index)=>({sum,index,ids:flexSumSelectedIds(sum)})).filter(x=>x.ids.length);if(!sums.length){el.style.display='none';el.innerHTML='';return;}el.style.display='block';el.innerHTML='<div class="flexsum-overview"><div class="flexsum-overview-head"><b>靈活加總</b><button type="button" onclick="openFlexibleSums()">管理</button></div><div class="flexsum-overview-grid">'+sums.map(({sum,index,ids})=>{const total=flexSumTotal(sum),color=flexSumColor(sum,index);return '<button type="button" class="flexsum-card" style="--sum-color:'+color+'" onclick="openFlexibleSumForm(\''+esc(sum.id)+'\')"><span class="name">'+noticeEsc(sum.n||'未命名合計')+'</span><span class="amount">'+flexSumDisplay(total)+'</span><span class="meta">'+ids.length+' 個帳戶 · TWD</span></button>';}).join('')+'</div></div>';}
+function renderFlexibleSumCount(){const el=$('#flexSumCount');if(el)el.textContent=flexibleSums.length?flexibleSums.length+' 組 ›':'›';}
+function openFlexibleSums(){renderFlexibleSumList();$('#flexSumSheet').classList.add('open');syncMask();}
+function closeFlexibleSums(){$('#flexSumSheet').classList.remove('open');syncMask();}
+function renderFlexibleSumList(){flexSumFormId=null;$('#flexSumTitle').textContent='靈活加總';const body=$('#flexSumBody');if(!body)return;const rows=flexibleSums.map((sum,index)=>{const ids=flexSumSelectedIds(sum),color=flexSumColor(sum,index),total=flexSumTotal(sum);return '<div class="flexsum-list-row"><button type="button" class="flexsum-list-edit" style="--sum-color:'+color+'" onclick="openFlexibleSumForm(\''+esc(sum.id)+'\')"><span><span class="name">'+noticeEsc(sum.n||'未命名合計')+'</span><span class="meta">'+(ids.length?ids.length+' 個帳戶':'尚未選擇帳戶')+'</span></span><span class="amount">'+flexSumDisplay(total)+'</span></button><button type="button" class="flexsum-delete" onclick="deleteFlexibleSum(\''+esc(sum.id)+'\')" aria-label="刪除 '+noticeEsc(sum.n||'靈活加總')+'" title="刪除"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M5 7l1 14h12l1-14M9 7V4h6v3"/></svg></button></div>';}).join('');body.innerHTML='<p class="flexsum-intro">建立自己的合計，例如「可用現金」或「旅遊資金」。選取的帳戶會依目前匯率換算為台幣並即時加總。</p>'+(rows?'<div class="flexsum-list">'+rows+'</div>':'<div class="set-empty">尚未建立靈活加總</div>')+'<button class="save-btn" type="button" onclick="openFlexibleSumForm()">＋ 新增靈活加總</button>';}
+function openFlexibleSumForm(id){const sum=id?flexibleSums.find(x=>x.id===id):null;if(id&&!sum){toast('找不到這個合計');renderFlexibleSumList();return;}flexSumFormId=sum?.id||null;$('#flexSumTitle').textContent=sum?'編輯靈活加總':'新增靈活加總';const selected=new Set(sum?.accountIds||[]);const orderedGroups=[...new Set([...groupOrder,...accounts.map(a=>a.group)])];const accountRows=orderedGroups.map(group=>{const items=accounts.filter(a=>a.group===group);if(!items.length)return '';return '<div class="flexsum-account-group">'+noticeEsc(group)+'</div>'+items.map(a=>'<label class="flexsum-account-option"><input type="checkbox" name="flexSumAcct" value="'+noticeEsc(a.id)+'" '+(selected.has(a.id)?'checked':'')+' onchange="updateFlexibleSumPreview()"><span class="account-icon">'+accountIconHTML(a)+'</span><span class="account-name">'+noticeEsc(a.n)+'</span><span class="account-bal">'+flexSumAccountBalance(a)+'</span></label>').join('');}).join('');$('#flexSumBody').innerHTML='<div class="field"><label>合計名稱</label><input id="flexSumName" maxlength="30" value="'+noticeEsc(sum?.n||'')+'" placeholder="例如：可用現金"></div><div class="field"><label>納入帳戶</label><div class="flexsum-account-list">'+(accountRows||'<div class="set-empty">請先新增帳戶</div>')+'</div></div><div class="flexsum-preview" id="flexSumPreview"></div><p class="hint">合計不會改變帳戶餘額，只會在總覽頁新增一張即時計算的資訊卡。</p><button class="save-btn" type="button" onclick="saveFlexibleSum()">儲存</button><button class="set-row" type="button" onclick="renderFlexibleSumList()"><span>‹ 返回清單</span></button>';updateFlexibleSumPreview();}
+function selectedFlexibleSumAccounts(){return [...document.querySelectorAll('#flexSumBody input[name="flexSumAcct"]:checked')].map(input=>input.value);}
+function updateFlexibleSumPreview(){const el=$('#flexSumPreview');if(!el)return;const ids=selectedFlexibleSumAccounts(),sum={accountIds:ids},total=flexSumTotal(sum);el.innerHTML='<span>目前合計（TWD）</span><b>'+flexSumDisplay(total)+'</b>';}
+function saveFlexibleSum(){const name=($('#flexSumName')?.value||'').trim(),accountIds=selectedFlexibleSumAccounts();if(!name){toast('請輸入合計名稱');return;}if(!accountIds.length){toast('請至少選擇一個帳戶');return;}if(flexSumFormId){const sum=flexibleSums.find(x=>x.id===flexSumFormId);if(!sum){toast('找不到這個合計');renderFlexibleSumList();return;}sum.n=name;sum.accountIds=accountIds;}else flexibleSums.push({id:'fs'+rnd(),n:name,accountIds,c:FLEX_SUM_COLORS[flexibleSums.length%FLEX_SUM_COLORS.length]});persistFlexibleSums();renderFlexibleSumCount();renderOverview();renderFlexibleSumList();toast('已儲存靈活加總');}
+function deleteFlexibleSum(id){const index=flexibleSums.findIndex(x=>x.id===id);if(index<0)return;const name=flexibleSums[index].n||'這個合計';if(!confirm('確定刪除「'+name+'」？'))return;flexibleSums.splice(index,1);persistFlexibleSums();renderFlexibleSumCount();renderOverview();renderFlexibleSumList();toast('已刪除靈活加總');}
+
 /* overview */
 const esc=s=>String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-function renderOverview(){const nwv=netWorth();checkRemind();renderLifeCard();renderBudgetPulse();renderInstallmentPulse();renderLoanPulse();if($('#acctDetailSheet').classList.contains('open')&&adId){const _a=accounts.find(x=>x.id===adId);if(_a)renderAcctDetail();else closeAcctDetail();}
+function renderOverview(){const nwv=netWorth();checkRemind();renderLifeCard();renderBudgetPulse();renderInstallmentPulse();renderLoanPulse();renderFlexibleSums();if($('#acctDetailSheet').classList.contains('open')&&adId){const _a=accounts.find(x=>x.id===adId);if(_a)renderAcctDetail();else closeAcctDetail();}
  $('#nwBig').textContent=hAbbr(nwv);$('#nwBig').classList.toggle('neg',nwv<0);$('#nwAsset').textContent=hAbbr(totalAsset());$('#nwLiab').textContent=hAbbr(totalLiab());
  const now=new Date(),w='日一二三四五六'[now.getDay()];$('#todayLabel').textContent=`${now.getFullYear()}/${pad2(now.getMonth()+1)}/${pad2(now.getDate())} 週${w}`;
  document.querySelectorAll('#rangeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.r===chartMode));buildChart();
@@ -2367,7 +2430,7 @@ function closeAcct(){$('#acctSheet').classList.remove('open');syncMask();}
 function saveAcct(){const name=$('#afName').value.trim();if(!name){toast('請輸入帳戶名稱');return;}const group=$('#afGroup').value==='__new__'?groupOrder[0]:$('#afGroup').value;const ccy=$('#afCcy').value||'TWD';const bal=Math.round(parseFloat(($('#afBal').value||'0').replace(/,/g,''))||0),cardCfg=group==='信用卡'?{ccStmtDay:parseInt($('#afStmtDay').value,10)||20,ccDueDay:parseInt($('#afDueDay').value,10)||5}:null;if(!groupOrder.includes(group))groupOrder.push(group);
  if(editAcctId){const a=accounts.find(x=>x.id===editAcctId);a.n=name;a.group=group;a.ccy=ccy;a.ic=afIcon;a.c=afColor;a.bal=bal;a.img=afImg||null;if(cardCfg)Object.assign(a,cardCfg);else{delete a.ccStmtDay;delete a.ccDueDay;delete a.ccRecon;}toast('帳戶已更新');}else{accounts.push({id:'a'+rnd(),n:name,group,ccy,ic:afIcon,c:afColor,bal,img:afImg||null,...(cardCfg||{})});if(!cur.acct)cur.acct=accounts[accounts.length-1].id;toast('已新增帳戶');}
  persistGroups();closeAcct();renderOverview();}
-function deleteAcct(){if(!editAcctId)return;const has=transactions.some(t=>t.acct===editAcctId||t.to===editAcctId);accounts=accounts.filter(a=>a.id!==editAcctId);if(has)transactions=transactions.filter(t=>t.acct!==editAcctId&&t.to!==editAcctId);if(cur.acct===editAcctId)cur.acct=accounts[0]?.id;persist();closeAcct();renderOverview();toast('帳戶已刪除');}
+function deleteAcct(){if(!editAcctId)return;const deletedId=editAcctId;const has=transactions.some(t=>t.acct===deletedId||t.to===deletedId);accounts=accounts.filter(a=>a.id!==deletedId);if(has)transactions=transactions.filter(t=>t.acct!==deletedId&&t.to!==deletedId);flexibleSums=flexibleSums.map(s=>({...s,accountIds:(s.accountIds||[]).filter(id=>id!==deletedId)}));Store.set('flexibleSums',flexibleSums);if(cur.acct===deletedId)cur.acct=accounts[0]?.id;persist();closeAcct();renderOverview();toast('帳戶已刪除');}
 
 /* group manage */
 function openGrp(){renderGrpSheet();$('#grpSheet').classList.add('open');syncMask();}
@@ -2433,7 +2496,7 @@ function deleteCat(){if(!catFormId||catFormId==='__list__')return;if(transaction
  if(catMgrType==='income')incCats=incCats.filter(c=>c.id!==catFormId);else expCats=expCats.filter(c=>c.id!==catFormId);delete budgets[catFormId];if(cur.cat===catFormId)cur.cat=expCats[0]?.id||'';persistCats();persist();rebuildCatMap();renderCatGridView();renderCatGrid();toast('細項已刪除');}
 /* settings */
 function iconStyleName(){return iconStyle==='emoji'?'Emoji':iconStyle==='daily'?'Daily Line':'Daily Life 插畫';}
-function openSet(){renderRecurList();renderFxRow();renderGdRow();renderRemindSet();renderLifeShareSet();const ac=$('#aliasCount');if(ac)ac.textContent=aliases.length?(aliases.length+' 條 ›'):'›';const tc=$('#tripCount');if(tc)tc.textContent=trips.length?(trips.length+' 趟 ›'):'›';const ic=$('#installmentCount');if(ic){const active=installments.filter(x=>x.active!==false).length;ic.textContent=active?active+' 筆進行中 ›':'›';}$('#setThemeVal').textContent='淺色 → 深色 → 墨綠';$('#iconStyleVal').textContent=iconStyleName();settingsBack();$('#setSheet').scrollTop=0;$('#setSheet').classList.add('open');syncMask();}
+function openSet(){renderRecurList();renderFxRow();renderGdRow();renderRemindSet();renderLifeShareSet();renderFlexibleSumCount();const ac=$('#aliasCount');if(ac)ac.textContent=aliases.length?(aliases.length+' 條 ›'):'›';const tc=$('#tripCount');if(tc)tc.textContent=trips.length?(trips.length+' 趟 ›'):'›';const ic=$('#installmentCount');if(ic){const active=installments.filter(x=>x.active!==false).length;ic.textContent=active?active+' 筆進行中 ›':'›';}$('#setThemeVal').textContent='淺色 → 深色 → 墨綠';$('#iconStyleVal').textContent=iconStyleName();settingsBack();$('#setSheet').scrollTop=0;$('#setSheet').classList.add('open');syncMask();}
 function openSettingsPage(key){const titles={appearance:'外觀',daily:'日常記帳',accounts:'帳戶、分類與債務',planning:'規劃與自動化',data:'同步、匯率與備份'};if(!titles[key])return;$('#settingsHome').hidden=true;$('#settingsDetail').hidden=false;document.querySelectorAll('.settings-page').forEach(page=>page.hidden=page.dataset.settingsPage!==key);$('#settingsPageTitle').textContent=titles[key];$('#setSheet').scrollTop=0;}
 function settingsBack(){$('#settingsHome').hidden=false;$('#settingsDetail').hidden=true;document.querySelectorAll('.settings-page').forEach(page=>page.hidden=true);$('#setSheet').scrollTop=0;}
 function closeSet(){$('#setSheet').classList.remove('open');syncMask();}
@@ -2538,18 +2601,18 @@ function csvCell(v){v=v==null?'':String(v);return /[",\r\n]/.test(v)?'"'+v.repla
 function exportCSV(){const head=['日期','類型','分類','帳戶','轉入帳戶','金額','備註'];const tl={expense:'支出',income:'收入',transfer:'轉帳'};
  const rows=[...transactions].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(t=>{const d=new Date(t.date);const date=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());const cat=t.type==='transfer'?'':(CATMAP[t.cat]?CATMAP[t.cat].n:'');const acc=accounts.find(a=>a.id===t.acct),to=accounts.find(a=>a.id===t.to);return [date,tl[t.type]||'',cat,acc?acc.n:'',to?to.n:'',t.amt,t.note||''];});
  const csv='\uFEFF'+[head,...rows].map(r=>r.map(csvCell).join(',')).join('\r\n');download('wallet_明細_'+ymd()+'.csv',csv,'text/csv;charset=utf-8');toast('已匯出 '+rows.length+' 筆明細 CSV');}
-function snapshot(){return {app:'小錢包',version:7,expenseTaxonomyVersion:1,savedAt:dataStamp,exportedAt:new Date().toISOString(),accounts,transactions,budgets,groupOrder,collapsed,expenseGroups,expCats,incCats,recurrings,installments,goals,debts,aliases,trips,fxRates,fxDate};}
+function snapshot(){return {app:'小錢包',version:8,expenseTaxonomyVersion:1,savedAt:dataStamp,exportedAt:new Date().toISOString(),accounts,transactions,budgets,groupOrder,collapsed,expenseGroups,expCats,incCats,recurrings,installments,goals,debts,aliases,trips,flexibleSums,fxRates,fxDate};}
 function applySnapshot(d){if(!d||!d.accounts||!d.transactions)throw 0;
- accounts=d.accounts;transactions=d.transactions;budgets=d.budgets||{};groupOrder=d.groupOrder||[...DEFGROUPS];collapsed=d.collapsed||[];expCats=d.expCats||DEF_EXP.map(c=>({...c}));incCats=d.incCats||DEF_INC.map(c=>({...c}));expenseGroups=Array.isArray(d.expenseGroups)?d.expenseGroups.map(g=>({...g})):EXPENSE_GROUP_DEFAULTS.map(g=>({...g}));normalizeExpenseTaxonomy(!d.expenseTaxonomyVersion);recurrings=d.recurrings||[];installments=d.installments||[];goals=d.goals||[];debts=d.debts||[];aliases=d.aliases||[];trips=d.trips||[];if(d.fxRates)fxRates=d.fxRates;if(d.fxDate)fxDate=d.fxDate;
+ accounts=d.accounts;transactions=d.transactions;budgets=d.budgets||{};groupOrder=d.groupOrder||[...DEFGROUPS];collapsed=d.collapsed||[];expCats=d.expCats||DEF_EXP.map(c=>({...c}));incCats=d.incCats||DEF_INC.map(c=>({...c}));expenseGroups=Array.isArray(d.expenseGroups)?d.expenseGroups.map(g=>({...g})):EXPENSE_GROUP_DEFAULTS.map(g=>({...g}));normalizeExpenseTaxonomy(!d.expenseTaxonomyVersion);recurrings=d.recurrings||[];installments=d.installments||[];goals=d.goals||[];debts=d.debts||[];aliases=d.aliases||[];trips=d.trips||[];flexibleSums=Array.isArray(d.flexibleSums)?d.flexibleSums.filter(s=>s&&typeof s==='object').map(s=>({id:s.id||'fs'+rnd(),...s,accountIds:Array.isArray(s.accountIds)?s.accountIds:[]})):[];if(d.fxRates)fxRates=d.fxRates;if(d.fxDate)fxDate=d.fxDate;
  accounts.forEach(a=>{if(!a.ccy)a.ccy='TWD';if(!groupOrder.includes(a.group))groupOrder.push(a.group);});rebuildCatMap();
- Store.set('accounts',accounts);Store.set('transactions',transactions);Store.set('budgets',budgets);Store.set('collapsed',collapsed);Store.set('groupOrder',groupOrder);Store.set('expenseGroups',expenseGroups);Store.set('expenseTaxonomyVersion',1);Store.set('expCats',expCats);Store.set('incCats',incCats);Store.set('recurrings',recurrings);Store.set('installments',installments);Store.set('goals',goals);Store.set('debts',debts);Store.set('aliases',aliases);Store.set('trips',trips);Store.set('fxRates',fxRates);Store.set('fxDate',fxDate);
+ Store.set('accounts',accounts);Store.set('transactions',transactions);Store.set('budgets',budgets);Store.set('collapsed',collapsed);Store.set('groupOrder',groupOrder);Store.set('expenseGroups',expenseGroups);Store.set('expenseTaxonomyVersion',1);Store.set('expCats',expCats);Store.set('incCats',incCats);Store.set('recurrings',recurrings);Store.set('installments',installments);Store.set('goals',goals);Store.set('debts',debts);Store.set('aliases',aliases);Store.set('trips',trips);Store.set('flexibleSums',flexibleSums);Store.set('fxRates',fxRates);Store.set('fxDate',fxDate);
  dataStamp=d.savedAt||Date.now();Store.set('dataStamp',dataStamp);}
 function exportBackup(){download('wallet_備份_'+ymd()+'.json',JSON.stringify(snapshot(),null,2),'application/json');toast('已匯出完整備份');}
 function importBackup(file){const r=new FileReader();r.onload=async()=>{const txt=r.result;let obj=null;
  try{obj=JSON.parse(txt);}catch(e){toast('檔案格式錯誤，無法還原');return;}
  if(obj&&obj.wmoze){const pw=prompt('請輸入此備份的密碼：');if(pw==null)return;try{obj=JSON.parse(await decryptText(txt,pw));}catch(e){toast('密碼錯誤或檔案毀損');return;}}
  try{applySnapshot(obj);closeAll();renderOverview();toast('已從備份還原');}catch(e){toast('檔案格式錯誤，無法還原');}};r.readAsText(file);}
-function resetData(){if(!confirm('確定清除所有資料並還原為範例？此動作無法復原。'))return;try{['accounts','transactions','budgets','collapsed','groupOrder','expenseGroups','expenseTaxonomyVersion','expCats','incCats','recurrings','installments','goals','debts','aliases','trips','lastTrip','goals_seeded','seed_v3','dataStamp'].forEach(k=>localStorage.removeItem(k));}catch(e){}location.reload();}
+function resetData(){if(!confirm('確定清除所有資料並還原為範例？此動作無法復原。'))return;try{['accounts','transactions','budgets','collapsed','groupOrder','expenseGroups','expenseTaxonomyVersion','expCats','incCats','recurrings','installments','goals','debts','aliases','trips','flexibleSums','lastTrip','goals_seeded','seed_v3','dataStamp'].forEach(k=>localStorage.removeItem(k));}catch(e){}location.reload();}
 
 /* Google Drive sync */
 const GD={token:null,exp:0};let gdTimer=null;
