@@ -1362,8 +1362,9 @@ html.ios-safari-web .topbar #notifyBadge{z-index:33;}
     <div class="field" id="rfCatWrap"><label>分類</label><select id="rfCat"></select></div>
     <div class="field" id="rfAcctWrap"><label id="rfAcctLbl">帳戶</label><select id="rfAcct"></select></div>
     <div class="field" id="rfToWrap" style="display:none"><label>轉入帳戶</label><select id="rfTo"></select></div>
-    <div class="field"><label>頻率</label><select id="rfFreq" onchange="rfFreqChange()"><option value="monthly">每月</option><option value="weekly">每週</option></select></div>
-    <div class="field"><label id="rfDayLbl">每月幾號</label><select id="rfDay"></select></div>
+    <div class="field"><label>頻率</label><select id="rfFreq" onchange="rfFreqChange()"><option value="monthly">每月</option><option value="quarterly">每季</option><option value="weekly">每週</option></select></div>
+    <div class="field" id="rfDayWrap"><label id="rfDayLbl">每月幾號</label><select id="rfDay"></select></div>
+    <div class="field" id="rfQuarterDateWrap" style="display:none"><label for="rfQuarterDate">首次日期</label><input id="rfQuarterDate" type="date" aria-label="循環交易首次日期"></div>
     <div class="field"><label>備註</label><input id="rfNote" placeholder="例如：薪水 / Netflix"></div>
     <button class="save-btn" onclick="saveRecur()">儲存</button>
   </div>
@@ -1749,12 +1750,13 @@ function go(tab){['home','records','stats','budget'].forEach(t=>$('#scr-'+t).cla
  const sc=$('.screen:not(.hidden)');if(sc)sc.scrollTop=0;}
 
 /* recurring engine */
-function firstNext(freq,day){const now=new Date();now.setHours(12,0,0,0);
+function firstNext(freq,day,anchorDate){const now=new Date();now.setHours(12,0,0,0);
  if(freq==='weekly'){const diff=(day-now.getDay()+7)%7;const d=new Date(now);d.setDate(now.getDate()+diff);return d.toISOString();}
+ if(freq==='quarterly'){const parts=String(anchorDate||'').split('-').map(Number);let d=parts.length===3&&parts.every(Number.isFinite)?new Date(parts[0],parts[1]-1,parts[2],12,0,0):new Date(now),today=new Date();today.setHours(0,0,0,0);const anchorDay=day||d.getDate();while(d<today)d=new Date(advance(d.toISOString(),'quarterly',anchorDay));return d.toISOString();}
  const dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();let d=new Date(now.getFullYear(),now.getMonth(),Math.min(day,dim),12,0,0);
  if(d<now){const ny=now.getMonth()===11?now.getFullYear()+1:now.getFullYear(),nm=(now.getMonth()+1)%12,dim2=new Date(ny,nm+1,0).getDate();d=new Date(ny,nm,Math.min(day,dim2),12,0,0);}return d.toISOString();}
 function advance(iso,freq,day){const d=new Date(iso);if(freq==='weekly'){d.setDate(d.getDate()+7);return d.toISOString();}
- const y=d.getFullYear(),m=d.getMonth(),ny=m===11?y+1:y,nm=(m+1)%12,dim=new Date(ny,nm+1,0).getDate();return new Date(ny,nm,Math.min(day,dim),12,0,0).toISOString();}
+ const months=freq==='quarterly'?3:1,y=d.getFullYear(),m=d.getMonth()+months,dim=new Date(y,m+1,0).getDate();return new Date(y,m,Math.min(day||d.getDate(),dim),12,0,0).toISOString();}
 function postDueRecurrings(){refreshPlannedTransactions();return 0;}
 
 /* Planned transactions are deliberately separate from real transactions: they only
@@ -2284,7 +2286,7 @@ function nextMonthlyDate(day){const now=new Date();now.setHours(0,0,0,0);const m
 function upcomingNotifications(){
  const today=new Date();today.setHours(0,0,0,0);const limit=new Date(today);limit.setDate(limit.getDate()+15);const rows=[];
  const add=(row,includeOverdue=false)=>{const date=new Date(row.date);date.setHours(0,0,0,0);if((date>today||(includeOverdue&&date<today))&&date<=limit)rows.push({...row,date,isOverdue:date<today});};
- recurrings.filter(r=>r.active!==false&&r.nextDate).forEach(r=>{const cat=CATMAP[r.cat]||{},isIncome=r.type==='income',isTransfer=r.type==='transfer',acct=accounts.find(a=>a.id===r.acct),planned=plannedTransactions.find(p=>(p.source==='recurring'||p.source==='recurringOverride')&&p.sourceId===r.id&&dayKey(p.date)===dayKey(r.nextDate));add({id:'recur-'+r.id+'-'+new Date(r.nextDate).toISOString().slice(0,10),plannedId:planned?.id,date:r.nextDate,type:isIncome?'income':isTransfer?'transfer':'expense',icon:isIncome?'💰':isTransfer?'↔️':(cat.ic||'🔄'),title:r.note||cat.n||(isIncome?'循環收入':'循環支出'),meta:(r.freq==='weekly'?'每週':'每月')+' · '+(acct?.n||'未設定帳戶'),amount:planned?.amt??r.amt,ccy:acct?.ccy||'TWD'});});
+ recurrings.filter(r=>r.active!==false&&r.nextDate).forEach(r=>{const cat=CATMAP[r.cat]||{},isIncome=r.type==='income',isTransfer=r.type==='transfer',acct=accounts.find(a=>a.id===r.acct),planned=plannedTransactions.find(p=>(p.source==='recurring'||p.source==='recurringOverride')&&p.sourceId===r.id&&dayKey(p.date)===dayKey(r.nextDate));add({id:'recur-'+r.id+'-'+new Date(r.nextDate).toISOString().slice(0,10),plannedId:planned?.id,date:r.nextDate,type:isIncome?'income':isTransfer?'transfer':'expense',icon:isIncome?'💰':isTransfer?'↔️':(cat.ic||'🔄'),title:r.note||cat.n||(isIncome?'循環收入':'循環支出'),meta:(r.freq==='weekly'?'每週':r.freq==='quarterly'?'每季':'每月')+' · '+(acct?.n||'未設定帳戶'),amount:planned?.amt??r.amt,ccy:acct?.ccy||'TWD'});});
  installments.filter(p=>p.active!==false&&!p.needsSetup&&(p.paid||0)<p.count).forEach(p=>{const paid=p.paid||0,acct=accounts.find(a=>a.id===p.acct),cat=CATMAP[p.cat]||{},date=installmentDate(p,paid),plannedId=planKey('installment',p.id,date,paid+1);add({id:'installment-'+p.id+'-'+(paid+1),plannedId,date,type:'expense',icon:'🧾',title:p.name||p.note||'分期付款',meta:'第 '+(paid+1)+'/'+p.count+' 期'+(date<today?' · 逾期待繳':'')+(acct?' · '+acct.n:''),amount:installmentAmount(p,paid),ccy:acct?.ccy||'TWD'},true);});
  debts.filter(d=>isLoan(d)&&!d.settled&&d.amt>0&&d.dueDay).forEach(d=>{const info=loanInfo(d),acct=accounts.find(a=>a.id===d.acct),date=nextMonthlyDate(d.dueDay);add({id:'loan-'+d.id+'-'+date.toISOString().slice(0,10),date,type:'expense',icon:info.ic,title:d.name||info.n,meta:'貸款繳款 · 每月 '+d.dueDay+' 日'+(acct?' · '+acct.n:''),amount:d.monthly||d.amt,ccy:d.ccy||acct?.ccy||'TWD'});});
  manualPlannedTransactions.forEach(p=>{const acct=accounts.find(a=>a.id===p.acct),cat=CATMAP[p.cat]||{},type=p.type||'expense';add({id:'manual-'+p.id,plannedId:isCreditCardDuePlan(p)?p.id:null,date:p.date,type,icon:type==='income'?'💰':type==='transfer'?'↔️':(cat.ic||'🗓️'),title:p.note||cat.n||(type==='income'?'預計收入':'預計支出'),meta:'待確認'+(acct?' · '+acct.n:''),amount:p.amt,ccy:acct?.ccy||'TWD'});});
@@ -2530,24 +2532,25 @@ function openSettingsPage(key){const titles={appearance:'外觀',daily:'日常�
 function settingsBack(){$('#settingsHome').hidden=false;$('#settingsDetail').hidden=true;document.querySelectorAll('.settings-page').forEach(page=>page.hidden=true);$('#setSheet').scrollTop=0;}
 function closeSet(){$('#setSheet').classList.remove('open');syncMask();}
 function renderRecurList(){if(!recurrings.length){$('#recurList').innerHTML='<div class="set-empty">尚無循環交易</div>';return;}
- $('#recurList').innerHTML=recurrings.map(r=>{const c=CATMAP[r.cat]||{id:'other',ic:'🔄',n:'',c:'#5b86e5'};const acc=accounts.find(a=>a.id===r.acct);const freqL=r.freq==='weekly'?('每週'+'日一二三四五六'[r.day]):('每月'+r.day+'號');const sgn=r.type==='income'?'+':r.type==='expense'?'-':'';const nd=new Date(r.nextDate);const ndl=(nd.getMonth()+1)+'/'+nd.getDate();const icon=r.type==='transfer'?transferIcon('large'):catIcon(c,'large');const col=r.type==='transfer'?'#5b86e5':c.c;
+ $('#recurList').innerHTML=recurrings.map(r=>{const c=CATMAP[r.cat]||{id:'other',ic:'🔄',n:'',c:'#5b86e5'};const acc=accounts.find(a=>a.id===r.acct);const anchor=r.anchorDate||r.nextDate||'',anchorLabel=/^\d{4}-\d{2}-\d{2}$/.test(anchor)?Number(anchor.slice(5,7))+'/'+Number(anchor.slice(8,10)):'指定日期',freqL=r.freq==='weekly'?('每週'+'日一二三四五六'[r.day]):r.freq==='quarterly'?('每季（自 '+anchorLabel+' 起）'):('每月'+r.day+'號');const sgn=r.type==='income'?'+':r.type==='expense'?'-':'';const nd=new Date(r.nextDate);const ndl=(nd.getMonth()+1)+'/'+nd.getDate();const icon=r.type==='transfer'?transferIcon('large'):catIcon(c,'large');const col=r.type==='transfer'?'#5b86e5':c.c;
   return `<button class="recur-row" onclick="openRecurForm('${r.id}')"><div class="ic" style="background:${col}22;color:${col}">${icon}</div><div class="mid"><div class="rn">${r.note||c.n||'循環交易'}</div><div class="rs">${freqL} · 下次 ${ndl}${acc?' · '+acc.n:''}</div></div><div class="rv">${sgn}$${fmtN(r.amt)}</div></button>`;}).join('');}
 
 /* recurring form */
 function fillRecurCat(){const cats=recurType==='income'?incCats:expCats;$('#rfCat').innerHTML=cats.map(c=>`<option value="${c.id}">${c.ic} ${c.n}</option>`).join('');}
 function fillRecurAccts(){const o=orderedAccounts().map(a=>`<option value="${a.id}">${accountIconText(a)} ${a.n}</option>`).join('');$('#rfAcct').innerHTML=o;$('#rfTo').innerHTML=o;}
 function setRecurType(t){recurType=t;document.querySelectorAll('.recur-typeseg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$('#rfCatWrap').style.display=t==='transfer'?'none':'block';$('#rfToWrap').style.display=t==='transfer'?'block':'none';$('#rfAcctLbl').textContent=t==='transfer'?'轉出帳戶':'帳戶';fillRecurCat();}
-function populateRfDay(freq,sel){if(freq==='weekly'){$('#rfDayLbl').textContent='每週星期幾';$('#rfDay').innerHTML=[0,1,2,3,4,5,6].map(d=>`<option value="${d}">星期${'日一二三四五六'[d]}</option>`).join('');}else{$('#rfDayLbl').textContent='每月幾號';let o='';for(let d=1;d<=31;d++)o+=`<option value="${d}">${d} 號</option>`;$('#rfDay').innerHTML=o;}if(sel!=null)$('#rfDay').value=sel;}
-function rfFreqChange(){populateRfDay($('#rfFreq').value,$('#rfFreq').value==='weekly'?1:5);}
+function populateRfDay(freq,sel){const quarterly=freq==='quarterly';$('#rfDayWrap').style.display=quarterly?'none':'block';$('#rfQuarterDateWrap').style.display=quarterly?'block':'none';if(freq==='weekly'){$('#rfDayLbl').textContent='每週星期幾';$('#rfDay').innerHTML=[0,1,2,3,4,5,6].map(d=>`<option value="${d}">星期${'日一二三四五六'[d]}</option>`).join('');}else{$('#rfDayLbl').textContent='每月幾號';let o='';for(let d=1;d<=31;d++)o+=`<option value="${d}">${d} 號</option>`;$('#rfDay').innerHTML=o;}if(sel!=null)$('#rfDay').value=sel;}
+function recurDateInputValue(value){const d=value?new Date(value):new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function rfFreqChange(){const freq=$('#rfFreq').value;populateRfDay(freq,freq==='weekly'?1:5);}
 function openRecurForm(id){if(!accounts.length){toast('請先新增帳戶');return;}recurEditId=(typeof id==='string')?id:null;fillRecurAccts();
- if(recurEditId){const r=recurrings.find(x=>x.id===recurEditId);$('#recurTitle').textContent='編輯循環交易';$('#recurDel').style.visibility='visible';setRecurType(r.type);$('#rfAmt').value=r.amt;$('#rfFreq').value=r.freq;populateRfDay(r.freq,r.day);if(r.type==='transfer'){$('#rfAcct').value=r.acct;$('#rfTo').value=r.to;}else{$('#rfCat').value=r.cat;$('#rfAcct').value=r.acct;}$('#rfNote').value=r.note||'';}
- else{$('#recurTitle').textContent='新增循環交易';$('#recurDel').style.visibility='hidden';setRecurType('expense');$('#rfAmt').value='';$('#rfFreq').value='monthly';populateRfDay('monthly',5);$('#rfNote').value='';}
+ if(recurEditId){const r=recurrings.find(x=>x.id===recurEditId);$('#recurTitle').textContent='編輯循環交易';$('#recurDel').style.visibility='visible';setRecurType(r.type);$('#rfAmt').value=r.amt;$('#rfFreq').value=r.freq;populateRfDay(r.freq,r.day);$('#rfQuarterDate').value=recurDateInputValue(r.anchorDate||r.nextDate);if(r.type==='transfer'){$('#rfAcct').value=r.acct;$('#rfTo').value=r.to;}else{$('#rfCat').value=r.cat;$('#rfAcct').value=r.acct;}$('#rfNote').value=r.note||'';}
+ else{$('#recurTitle').textContent='新增循環交易';$('#recurDel').style.visibility='hidden';setRecurType('expense');$('#rfAmt').value='';$('#rfFreq').value='monthly';populateRfDay('monthly',5);$('#rfQuarterDate').value=recurDateInputValue();$('#rfNote').value='';}
  $('#recurSheet').classList.add('open');syncMask();}
 function closeRecur(){$('#recurSheet').classList.remove('open');syncMask();}
-function saveRecur(){const amt=Math.round(parseFloat(($('#rfAmt').value||'0').replace(/,/g,''))||0);if(!amt){toast('請輸入金額');return;}const freq=$('#rfFreq').value,day=parseInt($('#rfDay').value,10),note=$('#rfNote').value.trim();
- const obj={id:recurEditId||'r'+rnd(),type:recurType,amt,freq,day,note,active:true,acct:$('#rfAcct').value};
+function saveRecur(){const amt=Math.round(parseFloat(($('#rfAmt').value||'0').replace(/,/g,''))||0);if(!amt){toast('請輸入金額');return;}const freq=$('#rfFreq').value,quarterDate=$('#rfQuarterDate').value;if(freq==='quarterly'&&!quarterDate){toast('請選擇首次日期');return;}const day=freq==='quarterly'?parseInt(quarterDate.slice(-2),10):parseInt($('#rfDay').value,10),note=$('#rfNote').value.trim();
+ const obj={id:recurEditId||'r'+rnd(),type:recurType,amt,freq,day,note,active:true,acct:$('#rfAcct').value,anchorDate:freq==='quarterly'?quarterDate:null};
  if(recurType==='transfer'){obj.to=$('#rfTo').value;if(obj.to===obj.acct){toast('轉出入帳戶相同');return;}}else obj.cat=$('#rfCat').value;
- obj.nextDate=firstNext(freq,day);
+ obj.nextDate=firstNext(freq,day,quarterDate);
  if(recurEditId){const i=recurrings.findIndex(r=>r.id===recurEditId);recurrings[i]=obj;}else recurrings.push(obj);
  persistRecur();const posted=postDueRecurrings();closeRecur();renderRecurList();renderOverview();toast(posted?('已儲存，並補入 '+posted+' 筆到期交易'):'循環交易已儲存');}
 function deleteRecur(){if(!recurEditId)return;recurrings=recurrings.filter(r=>r.id!==recurEditId);persistRecur();closeRecur();renderRecurList();toast('已刪除循環交易');}
